@@ -1,6 +1,7 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/index/index",
+    "pages/audiotest"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",
