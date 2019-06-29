@@ -1,7 +1,13 @@
 {
   "pages": [
+    "pages/login/login",
+    "pages/register/register",
     "pages/index/index",
-    "pages/audiotest/audiotest"
+    "pages/about/home/home",
+    "pages/application/home/home",
+    "pages/home/home/home",
+    "pages/finding/home/home",
+	"pages/audiotest/audiotest"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",

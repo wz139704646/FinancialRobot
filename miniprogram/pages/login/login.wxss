@@ -1,0 +1,48 @@
+/*width 750rpx*/
+
+.loginAvatar {
+  background-color: #646262;
+  height: 400rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.loginBox {
+  width: 100%;
+  height: 100%;
+}
+
+.loginButtonBox {
+  margin-top: 220rpx;
+}
+
+.inputBox {
+  margin-top: 100rpx;
+}
+
+.button-login {
+  background-color: #4966e7;
+  width: 30vw;
+  border-radius: 12px;
+  color:white;  
+}
+
+.otherButtonBox{
+  margin-top: 5rpx;
+}
+
+.left-text{
+  position: absolute;
+  left:5px;
+  font-size: 14px;
+  color:dodgerblue;
+}
+
+.right-text{
+  position: absolute;
+  right: 5px;
+  font-size: 14px;
+  color:dodgerblue;
+}

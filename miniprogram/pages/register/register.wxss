@@ -1,0 +1,10 @@
+.registerButtonBox {
+  margin-top: 220rpx;
+}
+
+.button-register {
+  background-color: #4966e7;
+  width: 30vw;
+  border-radius: 12px;
+  color:white;  
+}
