@@ -7,15 +7,16 @@
 		"postcss": true,
 		"minified": true,
 		"newFeature": true,
-		"nodeModules": true,
 		"autoAudits": false,
-		"checkInvalidKey": true
+		"checkInvalidKey": true,
+		"nodeModules": true
 	},
 	"appid": "wxff583d5a15014e3e",
 	"projectname": "fr",
 	"libVersion": "2.7.2",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
+	"cloudfunctionTemplateRoot": "cloudfunctionTemplate",
 	"condition": {
 		"search": {
 			"current": -1,
@@ -33,33 +34,13 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 3,
+			"current": 0,
 			"list": [
 				{
-					"id": -1,
-					"name": "login",
-					"pathName": "pages/login/login",
+					"id": 0,
+					"name": "audio",
+					"pathName": "pages/audiotest/audiotest",
 					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "register",
-					"pathName": "pages/register/register",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "applicationList",
-					"pathName": "pages/application/home/home",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "index",
-					"pathName": "pages/index/index",
 					"scene": null
 				}
 			]
