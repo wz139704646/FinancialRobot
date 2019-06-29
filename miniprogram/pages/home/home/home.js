@@ -62,5 +62,12 @@ Page({
    */
   onShareAppMessage: function () {
 
+  },
+
+  changeToTalk(e){
+    wx.navigateTo({
+      url: '/pages/home/talk/talk',
+    })
   }
+
 })

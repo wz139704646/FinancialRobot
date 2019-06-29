@@ -1,0 +1,4 @@
+/* pages/home/talk/talk.wxss */
+page{
+  padding-bottom: 100rpx;
+}
