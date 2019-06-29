@@ -1,6 +1,5 @@
 <scroll-view scroll-y="{{modalName==null}}" class="page {{modalName!=null?'show':''}}">
-  <cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
-    <view slot="backText">返回</view>
+  <cu-custom bgColor="bg-gradual-pink">
     <view slot="content">应用</view>
   </cu-custom>
   <view class="cu-bar bg-white solid-bottom margin-top">

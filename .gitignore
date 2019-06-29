@@ -1,2 +1,5 @@
 # MAC
 .DS_Store
+
+# miniprogram
+project.config.json
