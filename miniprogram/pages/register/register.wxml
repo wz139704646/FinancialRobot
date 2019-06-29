@@ -1,0 +1,12 @@
+<cu-custom bgColor="bg-gradual-blue" isBack="{{true}}"><view slot="backText">返回</view><view slot="content">注册账号</view></cu-custom>
+<view>
+  <van-field label="账号" value="{{ account }}" placeholder="请输入手机号" left-icon='friends-o' border="{{ true }}" clearable bind:input="getAccountValue" icon="question-o" bind:click-icon="accountTip" error-message="{{accountError}}" />
+  <van-field type='password' label="密码" value="{{ passwd }}" placeholder="请输入密码" left-icon='eye-o' border="{{ true }}" clearable bind:input="getPasswdValue" error-message="{{passwdError}}" />
+  <van-field type='password' label="确认密码" value="{{ vpasswd }}" placeholder="请确认密码" left-icon='browsing-history-o' border="{{ true }}" clearable bind:input="getVpasswdValue" error-message="{{passwdError}}" />
+  <van-field value="{{ messagecode }}" center clearable label="短信验证码" left-icon='comment-o' placeholder="请输入验证码" border="{{ false }}" use-button-slot>
+    <van-button slot="button" size="small" type="primary" bindtap='getVerificationCode' disable="{{disable}}" >{{codename}}</van-button>
+  </van-field>
+</view>
+<view class='registerButtonBox'>
+  <button bindtap='register' class='button-register'>注册</button>
+</view>

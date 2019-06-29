@@ -1,19 +1,30 @@
-<!--index.wxml-->
+<home wx:if="{{PageCur=='home'}}"></home>
+<application wx:if="{{PageCur=='application'}}"></application>
+<finding wx:if="{{PageCur=='finding'}}"></finding>
+<about wx:if="{{PageCur=='about'}}"></about>
 <view class="cu-bar tabbar bg-white shadow foot">
-  <view class="action" bindtap="NavChange" data-cur="basics">
-    
-    <view class="{{PageCur=='basics'?'text-green':'text-gray'}}">元素</view>
+  <view class="action" bindtap="NavChange" data-cur="home">
+    <view class='cuIcon-cu-image'>
+      <image src="/imgs/home{{PageCur=='home'?'_cur':''}}.png"></image>
+    </view>
+    <view class="{{PageCur=='home'?'text-green':'text-gray'}}">首页</view>
   </view>
-  <view class="action" bindtap="NavChange" data-cur="component">
-    
-    <view class="{{PageCur=='component'?'text-green':'text-gray'}}">组件</view>
+  <view class="action" bindtap="NavChange" data-cur="application">
+    <view class='cuIcon-cu-image'>
+      <image src="/imgs/app{{PageCur=='application'?'_cur':''}}.png"></image>
+    </view>
+    <view class="{{PageCur=='application'?'text-green':'text-gray'}}">应用</view>
   </view>
-  <view class="action" bindtap="NavChange" data-cur="plugin">
-    
-    <view class="{{PageCur=='plugin'?'text-green':'text-gray'}}">扩展</view>
+  <view class="action" bindtap="NavChange" data-cur="finding">
+    <view class='cuIcon-cu-image'>
+      <image src="/imgs/find{{PageCur=='finding'?'_cur':''}}.png"></image>
+    </view>
+    <view class="{{PageCur=='finding'?'text-green':'text-gray'}}">发现</view>
   </view>
   <view class="action" bindtap="NavChange" data-cur="about">
-    
+    <view class='cuIcon-cu-image'>
+      <image src="/imgs/about{{PageCur=='about'?'_cur':''}}.png"></image>
+    </view>
     <view class="{{PageCur=='about'?'text-green':'text-gray'}}">关于</view>
   </view>
 </view>

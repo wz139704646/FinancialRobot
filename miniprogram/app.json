@@ -1,6 +1,12 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/login/login",
+    "pages/register/register",
+    "pages/index/index",
+    "pages/about/home/home",
+    "pages/application/home/home",
+    "pages/home/home/home",
+    "pages/finding/home/home"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",
