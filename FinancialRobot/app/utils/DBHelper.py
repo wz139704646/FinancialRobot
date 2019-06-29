@@ -1,12 +1,13 @@
 import pymysql
+from app import config
 def add():
     conn = pymysql.connect(
-        host='42.159.81.168',
-        port=3306,
+        host=config.host,
+        port=config.port,
+        user=config.user,
+        password=config.password,
+        charset=config.charset,
         db="test",
-        user="root",
-        password="Wdrs145669***",
-        charset="utf8"
     )
     print(conn)
     # 游标
