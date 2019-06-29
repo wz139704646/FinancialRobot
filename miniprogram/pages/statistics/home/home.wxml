@@ -1,0 +1,56 @@
+<!--miniprogram/pages/finding/home/home.wxml-->
+<scroll-view scroll-y class='scrollPage'>
+  <cu-custom bgColor="bg-gradual-pink">
+    <view slot="content" class='text-shadow'>
+      <text class='text-xl text-white'>统计数据</text>
+    </view>
+  </cu-custom>
+
+  <view class="cu-card case {{isCard?'no-card':''}} margin-top">
+    <block wx:for="{{statis}}" wx:key="{{index}}">
+      <van-panel use-header-slot custom-class="margin-bottom">
+        <view slot="header">
+          <view class="cu-bar bg-white solid-bottom">
+            <view class='action'>
+              <text class='cuIcon-titles text-blue '></text> {{item.title}}
+            </view>
+            <view hidden='{{!item.showPeriod}}' class="cu-capsule radius margin-right">
+              <block wx:for="{{item.period}}" wx:for-item="per" wx:for-index="perIdx" wx:key="perIdx">
+                <view class="cu-tag {{item.showIdx==perIdx ? 'bg-blue' : 'line-blue'}}" bindtap='chooseDayOrMonth' data-stat="{{index}}" data-per="{{perIdx}}">
+                  {{per.title}}
+                </view>
+              </block>
+            </view>
+          </view>
+        </view>
+        <view>
+          <view class="cu-item padding-sm radius shadow-wrap bg-white">
+            <view class="image">
+              <image src="http://workfile.wangjubao.com/125_81_1420529454274.png" mode="widthFix"></image>
+              <view class="cu-tag bg-red">新</view>
+              <!-- <view class="cu-bar bg-shadeBottom">
+            <text class="text-cut">我已天理为凭，踏入这片荒芜，不再受凡人的枷锁遏制。我已天理为凭，踏入这片荒芜，不再受凡人的枷锁遏制。</text>
+          </view> -->
+            </view>
+            <view class="cu-list menu-avatar">
+              <!-- <view class="cu-item">
+                <view class="cu-avatar round lg" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg);"></view>
+            <view class="content flex-sub">
+                <view class="text-grey">正义天使 凯尔</view>
+                <view class="text-gray text-sm flex justify-between">
+                  十天前
+                  <view class="text-gray text-sm">
+                    <text class="cuIcon-attentionfill margin-lr-xs"></text> 10
+                    <text class="cuIcon-appreciatefill margin-lr-xs"></text> 20
+                    <text class="cuIcon-messagefill margin-lr-xs"></text> 30
+                  </view>
+                </view>
+              </view> -->
+            </view>
+          </view>
+        </view>
+      </van-panel>
+    </block>
+  </view>
+
+</scroll-view>
