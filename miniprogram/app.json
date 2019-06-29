@@ -7,7 +7,8 @@
     "pages/application/home/home",
     "pages/home/home/home",
     "pages/statistics/home/home",
-	"pages/audiotest/audiotest"
+	"pages/audiotest/audiotest",
+    "pages/home/talk/talk"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",
