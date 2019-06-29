@@ -1,0 +1,38 @@
+<!--pages/home/talk/talk.wxml-->
+<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">聊天</view>
+</cu-custom>
+<scroll-view scroll-y scroll-into-view='{{toView}}' style='height: {{scrollHeight}}'>
+<block wx:key wx:for='{{msgList}}' wx:for-index='index'>
+  <!-- 聊天的模版 -->
+  <view class="cu-chat">
+    <view class="cu-item self" wx:if='{{item.speaker=="customer"}}' id='msg-{{index}}'>
+      <view class="main">
+        <view class="content bg-green shadow">
+          <text>{{item.content}}</text>
+        </view>
+      </view>
+      <view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
+      <!-- <view class="date">{{item.date}}</view> -->
+    </view>
+
+    <view class="cu-item" wx:if='{{item.speaker=="server"}}' id='msg-{{index}}'>
+      <view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big143004.jpg);"></view>
+      <view class="main">
+        <view class="content shadow">
+          <text>{{item.content}}</text>
+        </view>
+      </view>
+      <!-- <view class="date">{{item.date}}</view> -->
+    </view>
+  </view>
+</block>
+</scroll-view>
+<view class="cu-bar foot input {{inputBottom!=0?'cur':''}}" style="bottom:{{inputBottom}}px">
+  <view class="action">
+    <text class="cuIcon-sound text-grey"></text>
+  </view>
+  <input class="solid-bottom" bindconfirm='sendMsg' value='{{inputVal}}' confirm-type='send' bindfocus="InputFocus" bindblur="InputBlur" adjust-position="{{false}}" focus="{{false}}" maxlength="300" cursor-spacing="10"></input>
+
+</view>
