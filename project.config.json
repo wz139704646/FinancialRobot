@@ -37,9 +37,10 @@
 			"current": 0,
 			"list": [
 				{
-					"id": -1,
+					"id": 0,
 					"name": "audio",
-					"pathName": "pages/audiotest",
+					"pathName": "pages/audiotest/audiotest",
+					"query": "",
 					"scene": null
 				}
 			]
