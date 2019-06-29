@@ -6,7 +6,8 @@
     "pages/about/home/home",
     "pages/application/home/home",
     "pages/home/home/home",
-    "pages/finding/home/home"
+    "pages/finding/home/home",
+    "pages/home/talk/talk"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",
