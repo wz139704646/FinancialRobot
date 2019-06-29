@@ -2,8 +2,8 @@
   "usingComponents": {
     "home": "/pages/home/home/home",
     "application": "/pages/application/home/home",
-    "finding": "/pages/finding/home/home",
-    "about": "/pages/about/home/home"
+    "statistics": "/pages/statistics/home/home",
+    "my": "/pages/my/home/home"
   }
 }
 

@@ -1,7 +1,7 @@
 <home wx:if="{{PageCur=='home'}}"></home>
 <application wx:if="{{PageCur=='application'}}"></application>
-<finding wx:if="{{PageCur=='finding'}}"></finding>
-<about wx:if="{{PageCur=='about'}}"></about>
+<statistics wx:if="{{PageCur=='statistics'}}"></statistics>
+<my wx:if="{{PageCur=='my'}}"></my>
 <view class="cu-bar tabbar bg-white shadow foot">
   <view class="action" bindtap="NavChange" data-cur="home">
     <view class='cuIcon-cu-image'>
@@ -15,16 +15,16 @@
     </view>
     <view class="{{PageCur=='application'?'text-green':'text-gray'}}">应用</view>
   </view>
-  <view class="action" bindtap="NavChange" data-cur="finding">
+  <view class="action" bindtap="NavChange" data-cur="statistics">
     <view class='cuIcon-cu-image'>
-      <image src="/imgs/find{{PageCur=='finding'?'_cur':''}}.png"></image>
+      <image src="/imgs/stat{{PageCur=='statistics'?'_cur':''}}.png"></image>
     </view>
-    <view class="{{PageCur=='finding'?'text-green':'text-gray'}}">发现</view>
+    <view class="{{PageCur=='statistics'?'text-green':'text-gray'}}">统计</view>
   </view>
-  <view class="action" bindtap="NavChange" data-cur="about">
+  <view class="action" bindtap="NavChange" data-cur="my">
     <view class='cuIcon-cu-image'>
-      <image src="/imgs/about{{PageCur=='about'?'_cur':''}}.png"></image>
+      <image src="/imgs/my{{PageCur=='my'?'_cur':''}}.png"></image>
     </view>
-    <view class="{{PageCur=='about'?'text-green':'text-gray'}}">关于</view>
+    <view class="{{PageCur=='my'?'text-green':'text-gray'}}">我的</view>
   </view>
 </view>

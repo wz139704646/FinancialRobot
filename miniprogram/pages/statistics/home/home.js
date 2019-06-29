@@ -5,7 +5,30 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    statis: [
+      {
+        title: '利润趋势分析',
+        showMonth: false,
+        showPeriod: true,
+        period: [
+          {
+            title: '本日'
+          },
+          {
+            title: '本月'
+          },
+          {
+            title: '本年'
+          }
+        ],
+        showIdx: 0
+      },
+      {
+        title: '资产增长分析',
+        showMonth: true,
+        showPeriod: false
+      }
+    ]
   },
 
   /**
@@ -62,5 +85,17 @@ Page({
    */
   onShareAppMessage: function () {
 
+  },
+
+  chooseDayOrMonth: function(e) {
+    // console.log(e)
+    // console.log(this.data.statis)
+    let stat = e.currentTarget.dataset.stat
+    let per = e.currentTarget.dataset.per
+    let statis = this.data.statis
+    statis[stat].showIdx = per 
+    this.setData({
+      statis: statis
+    })
   }
 })

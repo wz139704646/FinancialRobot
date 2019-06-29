@@ -3,10 +3,10 @@
     "pages/login/login",
     "pages/register/register",
     "pages/index/index",
-    "pages/about/home/home",
+    "pages/my/home/home",
     "pages/application/home/home",
     "pages/home/home/home",
-    "pages/finding/home/home",
+    "pages/statistics/home/home",
 	"pages/audiotest/audiotest"
   ],
   "window": {
