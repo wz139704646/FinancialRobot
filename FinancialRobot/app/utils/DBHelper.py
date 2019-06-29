@@ -1,24 +1,44 @@
 import pymysql
 from app import config
-def add():
-    conn = pymysql.connect(
-        host=config.host,
-        port=config.port,
-        user=config.user,
-        password=config.password,
-        charset=config.charset,
-        db="test",
-    )
-    print(conn)
-    # 游标
-    cls=conn.cursor()
-    # row = cls.execute("insert into orders value (1,2,null,null)")
 
 
-    cls.execute("select * from student")
-    c = cls.fetchall()
-    print(c)
+class MyHelper():
 
-    cls.close()
-    conn.close()
-add()
+    def connection(self):
+        try:
+            self.conn = pymysql.connect(host=config.host,
+                                        port=config.port,
+                                        user=config.user,
+                                        passwd=config.password,
+                                        db=config.dbname,
+                                        charset=config.charset)
+        except Exception as e:
+            print(e)
+        self.cls = self.conn.cursor()
+        print(self.conn)
+
+    def free(self):
+        self.cls.close()
+        self.conn.close()
+
+    def executeUpdate(self, sql, param=[]):
+        try:
+            self.connection()
+            row = self.cls.execute(sql, param)
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+        finally:
+            self.free()
+        return row
+
+    def executeQuery(self, sql, param=[]):
+        try:
+            self.connection()
+            self.cls.execute(sql, param)
+            result = self.cls.fetchall()
+        except Exception as e:
+            print(e)
+        finally:
+            self.free()
+        return result
