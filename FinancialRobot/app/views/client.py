@@ -5,4 +5,4 @@ client = Blueprint("client", __name__)
 
 @client.route("/login", methods=['GET', 'POST'])
 def login():
-    return render_template("index.html")
+    return render_template("login.html")
