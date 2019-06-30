@@ -7,21 +7,16 @@ class Goods():
     # __name       #商品名称
     # __sellprice  #商品售价 与进货表中的进价想减得出利润
     # __number     #商品剩余数量
-<<<<<<< Updated upstream
-    def __init__(self, id, name, companyId, sprice, number):
-=======
+
     def __init__(self, id, name, companyId, sprice, number,type,unitInfo):
->>>>>>> Stashed changes
         self.__id = id
         self.__name = name
         self.__companyId = companyId
         self.__sellprice = sprice
         self.__number = number
-<<<<<<< Updated upstream
-=======
         self.__type = type
         self.__unitInfo = unitInfo
->>>>>>> Stashed changes
+
 
     def getId(self):
         return self.__id
@@ -52,8 +47,6 @@ class Goods():
 
     def setNumber(self, value):
         self.__number = value
-<<<<<<< Updated upstream
-=======
 
     def getType(self):
         return self.__type
@@ -66,4 +59,4 @@ class Goods():
 
     def setUnitInfo(self, value):
         self.__unitInfo = value
->>>>>>> Stashed changes
+

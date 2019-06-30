@@ -6,11 +6,7 @@ class Company:
         self.__name = name
         self.__place = place
 
-<<<<<<< Updated upstream
     # __id                 #公司的编号
-=======
-    __id                 #公司的编号
->>>>>>> Stashed changes
     # __name               #公司的名称
     # __place              #公司的地址
     def getId(self):
