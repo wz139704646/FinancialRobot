@@ -7,8 +7,26 @@
     "pages/application/home/home",
     "pages/home/home/home",
     "pages/statistics/home/home",
-	"pages/audiotest/audiotest",
-    "pages/home/talk/talk"
+	  "pages/audiotest/audiotest",
+    "pages/home/talk/talk",
+    
+  
+    "pages/application/sellList/sellList",
+    "pages/application/newCustomer/newCustomer",
+    "pages/application/customerList/customerList",
+    "pages/application/searchRecent/searchRecent",
+
+    
+    "pages/application/newSupplier/newSupplier",
+    "pages/application/supplierList/supplierList",
+
+   
+
+    
+    "pages/application/newGood/newGood",
+    "pages/application/goodList/goodList"
+
+   
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",

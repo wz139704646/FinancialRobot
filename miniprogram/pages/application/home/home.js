@@ -3,99 +3,151 @@ Page({
   data: {
     StatusBar: app.globalData.StatusBar,
     CustomBar: app.globalData.CustomBar,
-    iconList: [{
-      icon: 'cardboardfill',
+    sellIconList: [{
+      icon: 'shop',
       color: 'red',
       badge: 0,
-      name: 'VR'
+      name: '销售记录',
+      url: "/pages/application/sellList/sellList"
     }, {
-      icon: 'recordfill',
+      icon: 'friendadd',
       color: 'orange',
-      badge: 1,
-      name: '录像'
+      badge: 0,
+      name: '新增客户',
+      url: "/pages/application/newCustomer/newCustomer"
     }, {
-      icon: 'picfill',
+      icon: 'peoplelist',
       color: 'yellow',
       badge: 0,
-      name: '图像'
+      name: '客户列表',
+      url: "/pages/application/customerList/customerList"
     }, {
-      icon: 'noticefill',
+      icon: 'search',
       color: 'olive',
-      badge: 22,
-      name: '通知'
-    }, {
-      icon: 'upstagefill',
-      color: 'cyan',
       badge: 0,
-      name: '排行榜'
-    }, {
-      icon: 'clothesfill',
-      color: 'blue',
-      badge: 0,
-      name: '皮肤'
-    }, {
-      icon: 'discoverfill',
-      color: 'purple',
-      badge: 0,
-      name: '发现'
-    }, {
-      icon: 'questionfill',
-      color: 'mauve',
-      badge: 0,
-      name: '帮助'
-    }, {
-      icon: 'commandfill',
-      color: 'purple',
-      badge: 0,
-      name: '问答'
-    }, {
-      icon: 'brandfill',
-      color: 'mauve',
-      badge: 0,
-      name: '版权'
+      name: '查看近期',
+      url: "/pages/application/searchRecent/searchRecent"
     }],
-    gridCol:3,
+    buyIconList: [{
+      icon: 'deliver_fill',
+      color: 'red',
+      badge: 0,
+      name: '采购记录',
+      url:''
+    }, {
+      icon: 'friendaddfill',
+      color: 'orange',
+      badge: 0,
+      name: '新增供应商',
+      url:'/pages/application/newSupplier/newSupplier'
+    }, {
+      icon: 'expressman',
+      color: 'yellow',
+      badge: 0,
+      name: '供应商列表',
+        url:'/pages/application/supplierList/supplierList'
+    }, {
+      icon: 'file',
+      color: 'olive',
+      badge: 0,
+      name: '采购开单',
+      url:''
+    }],
+    fundIconList: [{
+      icon: 'sponsor',
+      color: 'red',
+      badge: 0,
+      name: '收款记录',
+      url:''
+    }, {
+      icon: 'sponsor',
+      color: 'orange',
+      badge: 0,
+      name: '付款记录',
+      url: ''
+    }, {
+      icon: 'recharge',
+      color: 'yellow',
+      badge: 0,
+      name: '其他收入记录',
+      url: ''
+    }, {
+      icon: 'recharge',
+      color: 'olive',
+      badge: 0,
+      name: '其他支出记录',
+      url: ''
+    }, {
+      icon: 'moneybag',
+      color: 'orange',
+      badge: 0,
+      name: '资金流水',
+      url: ''
+    }, {
+      icon: 'newshot',
+      color: 'yellow',
+      badge: 0,
+      name: '资金转账记录',
+      url: ''
+    }, {
+      icon: 'creative',
+      color: 'olive',
+      badge: 0,
+      name: '利润分析',
+      url: ''
+    }],
+    storeIconList: [{
+      icon: 'goods',
+      color: 'red',
+      badge: 0,
+      name: '新增商品',
+      url: '/pages/application/newGood/newGood'
+    }, {
+      icon: 'list',
+      color: 'orange',
+      badge: 0,
+      name: '商品列表',
+      url: '/pages/application/goodList/goodList'
+    }, {
+      icon: 'deliver',
+      color: 'yellow',
+      badge: 0,
+      name: '调拨记录',
+      url: ''
+    }, {
+      icon: 'search',
+      color: 'olive',
+      badge: 0,
+      name: '查看近期',
+      url: ''
+    }],
+    financialIconList: [{
+      icon: 'ticket',
+      color: 'red',
+      badge: 0,
+      name: '凭证',
+      url: ''
+    }, {
+      icon: 'copy',
+      color: 'yellow',
+      badge: 0,
+      name: '报表',
+      url: ''
+    }, {
+      icon: 'sort',
+      color: 'yellow',
+      badge: 0,
+      name: '科目余额',
+      url: ''  
+    }, {
+      icon: 'edit',
+      color: 'olive',
+      badge: 0,
+      name: '日记账',
+      url: ''
+    }],
+    gridCol: 4,
     skin: false
-  },
-  showModal(e) {
-    this.setData({
-      modalName: e.currentTarget.dataset.target
-    })
-  },
-  hideModal(e) {
-    this.setData({
-      modalName: null
-    })
-  },
-  gridchange: function (e) {
-    this.setData({
-      gridCol: e.detail.value
-    });
-  },
-  gridswitch: function (e) {
-    this.setData({
-      gridBorder: e.detail.value
-    });
-  },
-  menuBorder: function (e) {
-    this.setData({
-      menuBorder: e.detail.value
-    });
-  },
-  menuArrow: function (e) {
-    this.setData({
-      menuArrow: e.detail.value
-    });
-  },
-  menuCard: function (e) {
-    this.setData({
-      menuCard: e.detail.value
-    });
-  },
-  switchSex: function (e) {
-    this.setData({
-      skin: e.detail.value
-    });
   },
 
   // ListTouch触摸开始
@@ -112,27 +164,10 @@ Page({
     })
   },
 
-  // ListTouch计算滚动
-  ListTouchEnd(e) {
-    if (this.data.ListTouchDirection =='left'){
-      this.setData({
-        modalName: e.currentTarget.dataset.target
-      })
-    } else {
-      this.setData({
-        modalName: null
-      })
-    }
-    this.setData({
-      ListTouchDirection: null
-    })
-  },
-
-  show(e){
-    wx.showToast({
-      title: '手机号不能为空',
-      icon: 'none',
-      duration: 1000
+  show(e) {
+    console.log("navigate")
+    wx.navigateTo({
+      url: e.currentTarget.id,
     })
   }
 })
