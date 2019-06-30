@@ -5,7 +5,7 @@ class Customer():
     # __name       #顾客名称
     # __phone      #顾客电话
     # __credit     #顾客信誉信息 从花旗API获得
-    # __companyId  #顾客所属公司 从登陆信息获得
+    #companyId  #顾客所属公司 从登陆信息获得
 
     def __init__(self, id, name, phone, companyId):
         self.__ID = id

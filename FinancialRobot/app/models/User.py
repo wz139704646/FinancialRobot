@@ -4,7 +4,6 @@ class User:
     def __init__(self, account, password, id, phone, position):
         self.__account = account
         self.__password = password
-        self.__phone = phone
         self.__position = position
         self.__ID = id
 
@@ -19,12 +18,6 @@ class User:
 
     def setAccount(self, value):
         self.__account = value
-
-    def getPhone(self):
-        return self.__phone
-
-    def setPhone(self, value):
-        self.__phone = value
 
     def getPosition(self):
         return self.__position
