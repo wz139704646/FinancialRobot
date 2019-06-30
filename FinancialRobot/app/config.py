@@ -3,4 +3,4 @@ port = 3306
 user = "root"
 password = "Wdrs145669***"
 charset = "utf8"
-dbname="test"
+dbname="FinancialRobot"

@@ -40,6 +40,7 @@ class MyHelper(object):
             self.conn.commit()
         except Exception as e:
             print(e)
+            self.conn.rollback()
         finally:
             self.free()
         return row
