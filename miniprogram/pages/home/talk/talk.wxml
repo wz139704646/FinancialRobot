@@ -1,38 +1,45 @@
 <!--pages/home/talk/talk.wxml-->
 <cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
   <view slot="backText">返回</view>
-  <view slot="content">聊天</view>
+  <view slot="content">Fbot</view>
 </cu-custom>
-<scroll-view scroll-y scroll-into-view='{{toView}}' style='height: {{scrollHeight}}'>
-<block wx:key wx:for='{{msgList}}' wx:for-index='index'>
-  <!-- 聊天的模版 -->
-  <view class="cu-chat">
-    <view class="cu-item self" wx:if='{{item.speaker=="customer"}}' id='msg-{{index}}'>
-      <view class="main">
-        <view class="content bg-green shadow">
-          <text>{{item.content}}</text>
+<scroll-view scroll-y scroll-into-view='{{toView}}' style='height: {{scrollHeight}};' class='margin-bottom'>
+  <block wx:key wx:for='{{msgList}}' wx:for-index='index'>
+    <!-- 聊天的模版 -->
+    <view class="cu-chat">
+      <view class="cu-item self" wx:if='{{item.speaker=="customer"}}' id='msg-{{index}}'>
+        <view class="main">
+          <view class="content bg-green shadow">
+            <text>{{item.content}}</text>
+          </view>
         </view>
+        <view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
+        <!-- <view class="date">{{item.date}}</view> -->
       </view>
-      <view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
-      <!-- <view class="date">{{item.date}}</view> -->
-    </view>
 
-    <view class="cu-item" wx:if='{{item.speaker=="server"}}' id='msg-{{index}}'>
-      <view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big143004.jpg);"></view>
-      <view class="main">
-        <view class="content shadow">
-          <text>{{item.content}}</text>
+      <view class="cu-item" wx:if='{{item.speaker=="server"}}' id='msg-{{index}}'>
+        <view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big143004.jpg);"></view>
+        <view class="main">
+          <view class="content shadow">
+            <text>{{item.content}}</text>
+          </view>
         </view>
+        <!-- <view class="date">{{item.date}}</view> -->
       </view>
-      <!-- <view class="date">{{item.date}}</view> -->
     </view>
-  </view>
-</block>
+  </block>
 </scroll-view>
 <view class="cu-bar foot input {{inputBottom!=0?'cur':''}}" style="bottom:{{inputBottom}}px">
-  <view class="action">
-    <text class="cuIcon-sound text-grey"></text>
+  <view class="action" bindtap='changeInputType'>
+    <text class="{{soundInput ? 'cuIcon-keyboard' : 'cuIcon-sound'}} text-black"></text>
   </view>
-  <input class="solid-bottom" bindconfirm='sendMsg' value='{{inputVal}}' confirm-type='send' bindfocus="InputFocus" bindblur="InputBlur" adjust-position="{{false}}" focus="{{false}}" maxlength="300" cursor-spacing="10"></input>
-
+  <input hidden='{{soundInput}}' class="solid-bottom" bindconfirm='sendMsg' value='{{inputVal}}' bindinput='InputChange' confirm-type='send' bindfocus="InputFocus" bindblur="InputBlur" adjust-position="{{false}}" focus="{{false}}" maxlength="300" cursor-spacing="10"></input>
+  <button hidden='{{!soundInput}}' style='width:100%;' class='cu-btn text-lg margin-right bg-gray' catchtouchstart='recordBegins' catchtouchend='recordEnds'>
+    <text class='text-black {{recordStarted ? "cuIcon-voicefill" : "cuIcon-voice" }}'></text>{{recordStarted ? '松开 发送' : '按住 说话'}}
+  </button>
+  <button disabled="{{soundInput}}" type="" class="cu-btn bg-cyan shadow" bindtap='sendByTapping'>
+    <view class='text-xxl'>
+      <text class="cuIcon-pullright"></text>
+    </view>
+  </button>
 </view>

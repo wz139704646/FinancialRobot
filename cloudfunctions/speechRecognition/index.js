@@ -80,5 +80,5 @@ exports.main = async (event, context) => {
 
   console.log(resp.body)
   
-  return resp.body
+  return JSON.parse(resp.body)
 }
