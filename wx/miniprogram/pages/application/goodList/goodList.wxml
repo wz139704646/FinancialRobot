@@ -1,2 +1,5 @@
 <!--pages/application/goodList/goodList.wxml-->
-<text>pages/application/goodList/goodList.wxml</text>
+<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">货物列表</view>
+</cu-custom>

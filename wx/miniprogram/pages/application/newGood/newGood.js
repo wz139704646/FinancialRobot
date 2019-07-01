@@ -5,58 +5,41 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    gindex: null,
+    uindex: null,
+    sindex: null,
+    unit: ['个', 'kg', '袋', '瓶', '箱'],
+    goodtype: ['食品类','服装类','鞋帽类','日用品类','家具类','家用电器类','纺织品类','五金电料类','厨具类'],
+    store: ['仓库1','仓库2','仓库3']
   },
-
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-
+  unitChange(e) {
+    console.log(e);
+    this.setData({
+      uindex: e.detail.value
+    })
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
+  goodChange(e) {
+    console.log(e);
+    this.setData({
+      gindex: e.detail.value
+    })
   },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
+  storeChange(e) {
+    console.log(e);
+    this.setData({
+      sindex: e.detail.value
+    })
   },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
+  addsuccess(e){
+    wx.showToast({
+      title: 'add success',
+    })
   },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
+  addfail(e){
+    wx.showToast({
+      title: 'add fail',
+    })
   },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
   /**
    * 用户点击右上角分享
    */

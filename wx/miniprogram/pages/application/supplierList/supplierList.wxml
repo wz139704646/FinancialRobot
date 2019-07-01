@@ -1,2 +1,5 @@
 <!--pages/application/supplierList/supplierList.wxml-->
-<text>pages/application/supplierList/supplierList.wxml</text>
+<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">供应商列表</view>
+</cu-custom>
