@@ -1,4 +1,5 @@
 var app = getApp()
+const util = require('../../utils/util.js')
 
 Page({
 
@@ -9,7 +10,7 @@ Page({
     passwd: "",
     account: "",
     accountError: "",
-    namepasswdError: "",
+    passwdError: "",
     messagecode:"",
     state: true,
     loginText:"验证码登录"
@@ -73,7 +74,7 @@ Page({
 
   accountTip: function(e){
     wx.showToast({
-      title: '输入代表队账号',
+      title: '输入手机号',
       icon: "none"
     })
   },
@@ -85,10 +86,10 @@ Page({
     })
   },
 
-  onNameChange: function (e) {
+  onPwdChange: function (e) {
     // console.log(e)
     this.setData({
-      name: e.detail
+      passwd: e.detail
     })
   },
 
@@ -115,64 +116,71 @@ Page({
   },  
 
   login: function(e){
-    console.log(e)
+    if(this.data.account == ""){
+      this.setData({
+        accountError: "未输入账号",
+        passwdError: ""
+      })
+      return
+    } else if(this.data.passwd == ""){
+      this.setData({
+        accountError: "",
+        passwdError: "未输入密码"
+      })
+      return
+    }
 
+    let account = this.data.account
+    let pwd = this.data.passwd
+    // console.log('original text: '+pwd)
+    console.log("account: "+account)
+    let crypted = util.encryptPasswd(this.data.passwd)
+    console.log("crypted pwd: " + crypted)
     wx.navigateTo({
       url: '../index/index',
     })
 
-  //   if(this.data.account == ""){
-  //     this.setData({
-  //       accountError: "未输入账号"
-  //     })
-  //     return
-  //   } else if(this.data.passwd == ""){
-  //     this.setData({
-  //       nameError: "未输入密码"
-  //     })
-  //     return
-  //   }
-
-  //   wx.request({
-  //     url: app.globalData.loginUrl,
-  //     data:{
-  //       account: this.data.account,
-  //       name: this.data.passwd
-  //     },
-  //     method: "POST",
-  //     header: {
-  //       "Content-Type": 'application/x-www-form-urlencoded'
-  //     },
-  //     success: res => {
-  //       console.log(res)
-  //       if(!res.data.flag){
-  //         if(!res.data.account){
-  //           this.setData({
-  //             accountError: "账号错误",
-  //             account: ""
-  //           })
-  //         } else {
-  //           this.setData({
-  //             nameError: "姓名错误",
-  //             name: ""
-  //           })
-  //         }
-  //       } else {
-  //         app.globalData.idnum = res.data.idnum
-  //         app.globalData.name = this.data.name
-  //         app.globalData.account = this.data.account
-  //         if(res.data.leader) {
-  //           wx.redirectTo({
-  //             url: '../final/final'
-  //           })
-  //         } else {
-  //           wx.switchTab({
-  //             url: '../score/score',
-  //           })
-  //         }
-  //       }
-  //     }
-  //   })
+    wx.request({
+      url: 'http://192.168.137.132:5000/login',
+      data: JSON.stringify({
+        account: account,
+        passwd: crypted,
+        type: 0
+      }),
+      method: "POST",
+      header: {
+        "Content-Type": 'application/json'
+      },
+      success: res => {
+        console.log(res)
+        // if(!res.data.flag){
+        //   if(!res.data.account){
+        //     this.setData({
+        //       accountError: "账号错误",
+        //       account: ""
+        //     })
+        //   } else {
+        //     this.setData({
+        //       nameError: "姓名错误",
+        //       name: ""
+        //     })
+        //   }
+        // } else {
+        //   app.globalData.idnum = res.data.idnum
+        //   app.globalData.name = this.data.name
+        //   app.globalData.account = this.data.account
+        //   if(res.data.leader) {
+        //     wx.redirectTo({
+        //       url: '../final/final'
+        //     })
+        //   } else {
+        //     wx.switchTab({
+        //       url: '../score/score',
+        //     })
+        //   }
+        // }
+      }
+    })
   }
 
 })
