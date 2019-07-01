@@ -1,20 +1,24 @@
 import unittest
 import base64
 import binascii
+import json
 from hashlib import sha1
+
 from app.dao.CompanyDao import CompanyDao
+from app.dao.UserDao import UserDao
 from app.utils.DBHelper import MyHelper
 
 
 class MylTest(unittest.TestCase):
     def test1(self):
-        connect = MyHelper()
-        result = connect.executeQuery("select * from Warehouse")
-        print(result)
+        userdao=UserDao()
+        result = userdao.query_all()
+        j = json.dumps(UserDao.to_dict(result))
+        print(j)
 
     def test2(self):
         com = CompanyDao()
-        #com.add('4', '诈骗公司', '北美')
+        # com.add('4', '诈骗公司', '北美')
         print(com.queryAll())
 
     def test3(self):

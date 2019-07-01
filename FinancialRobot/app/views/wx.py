@@ -5,6 +5,7 @@ from hashlib import sha1
 import json
 import base64
 
+from app.dao.UserDao import UserDao
 from app.utils.DBHelper import MyHelper
 
 wx = Blueprint("wx", __name__)
@@ -25,9 +26,8 @@ def userRegister():
     store_in = binascii.hexlify(store)
     strpass = str(store_in, 'utf-8')
     print(strpass)
-    helper = MyHelper()
-    row = helper.executeUpdate("insert into User (account, password, CompanyId) values (%s,%s,%s)",
-                               [account, strpass, companyId])
+    user_dao = UserDao()
+    row = user_dao.add(account, strpass, companyId)
     if row == 1:
         return True
     else:
@@ -35,11 +35,11 @@ def userRegister():
 
 
 @wx.route("/checkAccount")
-def checkAccount():
+def check_account():
     account = request.args.get("account")
     # 到数据库中进行查询
-    helper = MyHelper()
-    result = helper.executeQuery("select * from User where account=%s", [account])
+    user_dao = UserDao()
+    result = user_dao.query_by_account(account)
     size = len(result)
     if size == 0:
         return True
@@ -49,25 +49,21 @@ def checkAccount():
 
 @wx.route("/login", methods=['POST'])
 def login():
-    account = request.form.get("account")
-    password = request.form.get("passwd")
-    store = base64.b64decode(password)
-    store_in = binascii.hexlify(store)
-    strpass=str(store_in,'utf-8')
-    print(strpass)
+    login_type = request.form['type']
+    if login_type == 0:
+        account = request.form.get("account")
+        password = request.form.get("passwd")
+        store = base64.b64decode(password)
+        store_in = binascii.hexlify(store)
+        strpass = str(store_in, 'utf-8')
+        print(strpass)
 
-    helper = MyHelper()
-    result = helper.executeQuery("select * from User where account=%s and password=%s ",
-                                 [account, strpass])
-    size = len(result)
-    if size == 1:
-        # (())
-        # 获取用户id
-        uid = result[0][0]
-        # 将用户id保存到会话中
-        session['uid'] = uid
-        r = helper.executeQuery("select * from goods where uid=%s", [uid])
-        return render_template("index.html", r=r)
+        user_dao = UserDao()
+        result = user_dao.query_check_login(account, strpass)
+        size = len(result)
+        if size == 1:
+            return json.dumps(UserDao.to_dict(result))
 
-    else:
-        return render_template("login.html")
+        else:
+            return False
+
