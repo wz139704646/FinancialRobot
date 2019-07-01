@@ -11,6 +11,6 @@
   "dependencies": {
     "wx-server-sdk": "latest",
     "got": "latest",
-    "crypto": "latest"
+    "crypto-js": "latest"
   }
 }

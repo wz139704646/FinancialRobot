@@ -1,3 +1,5 @@
+// import Toast from 'vant-weapp/toast/toast';
+
 const app = getApp();
 var inputVal = '';
 var msgList = [];
@@ -70,6 +72,7 @@ Page({
     // this.setData({
     //   cusHeadIcon: app.globalData.userInfo.avatarUrl,
     // });
+
   },
 
   sendMsg: function (e) {
@@ -139,14 +142,15 @@ Page({
       that.setData({
         recordStarted: true
       })
-      wx.showToast({
-        title: '录音中',
-        duration: 30000,
-        image: '/imgs/voice.gif'
-      })
+      // wx.showToast({
+      //   title: '录音中',
+      //   duration: 30000,
+      //   image: '/imgs/voice.gif'
+      // })
+      
     })
     recorder.onStop(res => {
-      wx.hideToast()
+      // wx.hideToast()
       this.setData({
         recordStarted: false
       })

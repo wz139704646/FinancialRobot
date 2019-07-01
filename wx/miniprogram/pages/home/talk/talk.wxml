@@ -3,6 +3,7 @@
   <view slot="backText">返回</view>
   <view slot="content">Fbot</view>
 </cu-custom>
+<!-- <van-toast id="van-toast" /> -->
 <scroll-view scroll-y scroll-into-view='{{toView}}' style='height: {{scrollHeight}};' class='margin-bottom'>
   <block wx:key wx:for='{{msgList}}' wx:for-index='index'>
     <!-- 聊天的模版 -->
@@ -42,4 +43,16 @@
       <text class="cuIcon-pullright"></text>
     </view>
   </button>
+
+  <view class="cu-modal {{recordStarted ? 'show' : '' }}">
+  <view class="cu-dialog bg-black" style='width: 120px; opacity: 0.85'>
+    <!-- <view class="bg-img" style="background-image: url('/imgs/voice.gif');height:300rpx;">
+    </view> -->
+    <image src='/imgs/voice.gif' mode='aspectFit' class='margin-top' style='height: 70px; margin-bottom: -10px;'></image>
+    <view class="cu-bar bg-black">
+      <view class="action flex-sub solid-left text-white" style='height: 20px;'>录音中</view>
+    </view>
+  </view>
+</view>
+
 </view>
