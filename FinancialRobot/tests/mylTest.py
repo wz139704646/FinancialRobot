@@ -1,5 +1,7 @@
 import unittest
 import base64
+import binascii
+from hashlib import sha1
 from app.dao.CompanyDao import CompanyDao
 from app.utils.DBHelper import MyHelper
 
@@ -16,8 +18,15 @@ class MylTest(unittest.TestCase):
         print(com.queryAll())
 
     def test3(self):
-        a = 'sadfsd98'
-        b = base64.b64encode(a.encode('utf-8'))
-        print(str(b, 'utf-8'))
-        b = base64.b64decode(b)
-        print(str(b, 'utf-8'))
+        a = '123456'
+        s = sha1()
+        s.update(a.encode('utf-8'))
+        c = s.digest()
+        print(c)
+        b = base64.b64encode(c)
+        print(b)
+        d = b.decode()
+        print(d)
+        e = base64.b64decode(b)
+        f = binascii.hexlify(e)
+        print(str(f, 'utf-8'))

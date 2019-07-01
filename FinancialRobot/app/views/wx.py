@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request
+import binascii
+
+from flask import Blueprint, render_template, request, session
 from hashlib import sha1
 import json
 import base64
@@ -17,14 +19,29 @@ def hello():
 @wx.route("/userRegister", methods=["POST"])
 def userRegister():
     account = request.form.get("account")
-    password = request.form.get("passwd")
-    print(password)
-    password = base64.b64decode(str(password, 'utf-8'))
     companyId = request.form.get("companyId")
+    password = request.form.get("passwd")
+    store = base64.b64decode(password)
+    store_in = binascii.hexlify(store)
+    strpass = str(store_in, 'utf-8')
+    print(strpass)
     helper = MyHelper()
     row = helper.executeUpdate("insert into User (account, password, CompanyId) values (%s,%s,%s)",
-                               [account, password, companyId])
+                               [account, strpass, companyId])
     if row == 1:
+        return True
+    else:
+        return False
+
+
+@wx.route("/checkAccount")
+def checkAccount():
+    account = request.args.get("account")
+    # 到数据库中进行查询
+    helper = MyHelper()
+    result = helper.executeQuery("select * from User where account=%s", [account])
+    size = len(result)
+    if size == 0:
         return True
     else:
         return False
@@ -32,4 +49,25 @@ def userRegister():
 
 @wx.route("/login", methods=['POST'])
 def login():
-    return render_template("login.html")
+    account = request.form.get("account")
+    password = request.form.get("passwd")
+    store = base64.b64decode(password)
+    store_in = binascii.hexlify(store)
+    strpass=str(store_in,'utf-8')
+    print(strpass)
+
+    helper = MyHelper()
+    result = helper.executeQuery("select * from User where account=%s and password=%s ",
+                                 [account, strpass])
+    size = len(result)
+    if size == 1:
+        # (())
+        # 获取用户id
+        uid = result[0][0]
+        # 将用户id保存到会话中
+        session['uid'] = uid
+        r = helper.executeQuery("select * from goods where uid=%s", [uid])
+        return render_template("index.html", r=r)
+
+    else:
+        return render_template("login.html")
