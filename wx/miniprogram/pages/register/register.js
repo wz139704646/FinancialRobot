@@ -65,7 +65,7 @@ Page({
       return false;
     } else {
       wx.request({
-        data: {},
+        data: data.stringify({}),
         //'url': 接口地址,
         success(res) {
           console.log(res.data.data)
