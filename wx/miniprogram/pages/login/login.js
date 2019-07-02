@@ -17,7 +17,39 @@ Page({
   },
 
   /**
-   * 生命周期函数--监听页面加载
+   * 生命周期函数
+   * <view class="DrawerClose {{modalName=='viewModal'?'show':''}}" bindtap="hideModal">
+			<text class="cuIcon-pullright"></text>
+		</view>
+		<scroll-view scroll-y class="DrawerWindow {{modalName=='viewModal'?'show':''}}">
+			<view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg">
+				<view class="cu-item arrow" wx:for="{{20}}" wx:key="index">
+					<view class="content">
+						<text class="cuIcon-github text-grey"></text>
+						<text class="text-grey">{{index +1}}</text>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+    
+    <view class="DrawerClose {{modalName=='viewModal'?'show':''}}" bindtap="hideModal">
+			<text class="cuIcon-pullright"></text>
+		</view>
+		<scroll-view scroll-y class="DrawerWindow {{modalName=='viewModal'?'show':''}}">
+			<view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg">
+				<view class="cu-item arrow" wx:for="{{20}}" wx:key="index">
+					<view class="content">
+						<text class="cuIcon-github text-grey"></text>
+						<text class="text-grey">{{index +1}}</text>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+    
+    
+    
+    
+    --监听页面加载
    */
   onLoad: function (options) {
     console.log()
@@ -136,9 +168,6 @@ Page({
     console.log("account: "+account)
     let crypted = util.encryptPasswd(this.data.passwd)
     console.log("crypted pwd: " + crypted)
-    wx.navigateTo({
-      url: '../index/index',
-    })
 
     wx.request({
       url: 'http://192.168.137.132:5000/login',
@@ -153,6 +182,9 @@ Page({
       },
       success: res => {
         console.log(res)
+        wx.navigateTo({
+          url: '../index/index',
+        })
         // if(!res.data.flag){
         //   if(!res.data.account){
         //     this.setData({

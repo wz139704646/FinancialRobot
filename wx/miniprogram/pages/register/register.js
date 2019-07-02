@@ -5,12 +5,96 @@ const app = getApp()
 Page({
 
   data: {
+    StatusBar: app.globalData.StatusBar,
+    CustomBar: app.globalData.CustomBar,
     account:'',
     passwd:'',
     vpasswd:'',
     messagecode:'',
-    codename:'发送验证码'
+    indexToast: false,
+    codename:'发送验证码',
+    clist: [
+      {
+        indexName: 'A',
+        items: [
+          {
+            id: 0,
+            name: '123',
+            address: 'hhhh'
+          },
+          {
+            id: 4,
+            name: '456',
+            address: 'hhhh'
+          }
+        ]
+      },
+      {
+        indexName: 'B',
+        items: [
+          {
+            id: 1,
+            name: '798',
+            address: 'hhhh'
+          }
+        ]
+      },
+      {
+        indexName: 'C',
+        items: [
+          {
+            id: 2,
+            name: '123',
+            address: 'hhhh'
+          }
+        ]
+      },
+      {
+        indexName: 'D',
+        items: [
+          {
+            id: 2,
+            name: '123',
+            address: 'hhhh'
+          }
+        ]
+      },
+      {
+        indexName: 'E',
+        items: [
+          {
+            id: 2,
+            name: '123',
+            address: 'hhhh'
+          }
+        ]
+      },
+      {
+        indexName: 'F',
+        items: [
+          {
+            id: 2,
+            name: '123',
+            address: 'hhhh'
+          }
+        ]
+      }
+    ]
     
+  },
+
+  calScroll: function() {
+    let that = this;
+    wx.createSelectorQuery().select('.indexBar-box').boundingClientRect(function (res) {
+      that.setData({
+        boxTop: res.top
+      })
+    }).exec();
+    wx.createSelectorQuery().select('.indexes').boundingClientRect(function (res) {
+      that.setData({
+        barTop: res.top
+      })
+    }).exec()
   },
 
   accountTip: function (e) {
@@ -155,6 +239,76 @@ Page({
       //   url: '../add/add',
       // })
     }
+  },
+
+  selectCompany: function(e) {
+    // console.log(e)
+    let path = e.currentTarget.dataset
+    this.setData({
+      company: path
+    })
+    this.hideModal(e)
+  },
+
+  hideModal: function(e){
+    this.setData({
+      modalName: null
+    })
+  },
+
+  showModal(e) {
+    this.setData({
+      modalName: e.currentTarget.dataset.target
+    })
+    this.calScroll()
+    
+  },
+
+  //触发全部开始选择
+  tStart() {
+    this.setData({
+      indexToast: true
+    })
+  },
+
+  //触发结束选择
+  tEnd() {
+    let id = this.data.listCur
+      
+    this.setData({
+      indexToast: false,
+      listCurID: id
+    })
+  },
+
+  //滑动选择Item
+  tMove(e) {
+    let y = e.touches[0].clientY,
+      offsettop = this.data.boxTop,
+      that = this;
+    //判断选择区域,只有在选择区才会生效
+    if (y > offsettop) {
+      let num = parseInt((y - offsettop) / 20);
+      console.log("num:"+num)
+      this.setData({
+        listCur: that.data.clist[num].indexName,
+      })
+    };
+  },
+
+  getCur(e) {
+    let id = e.target.id
+    this.setData({
+      indexToast: true,
+      listCur: this.data.clist[e.target.id].indexName,
+    })
+  },
+
+  setCur(e) {
+    this.setData({
+      indexToast: false,
+      listCur: this.data.listCur,
+    })
   },
 
 })

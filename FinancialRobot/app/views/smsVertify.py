@@ -2,6 +2,7 @@ import json
 import random
 import re
 import threading
+import builtins
 
 from flask import Blueprint, request, session
 from qcloudsms_py import SmsSingleSender
@@ -10,7 +11,9 @@ from qcloudsms_py.httpclient import HTTPError
 sms = Blueprint("sms", __name__)
 due = 60 * 5
 sms.secret_key = 'sms service 134578631325'
-lock = threading.Lock()
+
+# lock = threading.Lock()
+builtins.globals()['verify_code_lock'] = lock = threading.Lock()
 
 
 @sms.route('/sendSMS', methods=["POST"])
