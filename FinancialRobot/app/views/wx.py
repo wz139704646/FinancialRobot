@@ -72,7 +72,6 @@ def login():
         size = len(res)
         if size == 1:
             return json.dumps(return_success(UserDao.to_dict(res)))
-
         else:
             return json.dumps(return_unsuccess('Error: No such user'))
     # 验证码登陆

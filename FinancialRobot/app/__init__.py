@@ -8,6 +8,6 @@ def create_app():
     app = Flask(__name__)
     app.register_blueprint(wx)
     app.register_blueprint(client, url_prefix='/client')
-    app.register_blueprint(web, url_prefix='/web')
+    app.register_blueprint(web)
     return app
 
