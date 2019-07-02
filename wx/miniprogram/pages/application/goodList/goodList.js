@@ -1,66 +1,59 @@
 // pages/application/goodList/goodList.js
 Page({
-
+  
   /**
    * 页面的初始数据
    */
   data: {
-
+    goodList: [
+      {
+        name:"小马",
+        category:"动物",
+        price:"10000",
+        amount:3,
+        imgurl:"/imgs/1.jpg",
+        description:"这是一只草拟吗"
+      },
+      {
+        name: "小马",
+        category: "动物",
+        price: "10000",
+        amount: 3,
+        imgurl: "http://pic37.nipic.com/20140113/8800276_184927469000_2.png",
+        description: "这是一只草拟吗"
+      },
+      {
+        name: "小马",
+        category: "动物",
+        price: "10000",
+        amount: 3,
+        imgurl: "http://pic37.nipic.com/20140113/8800276_184927469000_2.png",
+        description: "这是一只草拟吗"
+      },
+      {
+        name: "小马",
+        category: "动物",
+        price: "10000",
+        amount: 3,
+        imgurl: "http://pic37.nipic.com/20140113/8800276_184927469000_2.png",
+        description: "这是一只草拟吗"
+      },
+      {
+        name: "小马",
+        category: "动物",
+        price: "10000",
+        amount: 3,
+        imgurl: "http://pic37.nipic.com/20140113/8800276_184927469000_2.png",
+        description: "这是一只草拟吗"
+      },
+      {
+        name: "小马",
+        category: "动物",
+        price: "10000",
+        amount: 3,
+        imgurl: "http://pic37.nipic.com/20140113/8800276_184927469000_2.png",
+        description: "这是一只草拟吗"
+      }
+    ]
   },
-
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  }
 })

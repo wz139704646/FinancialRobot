@@ -7,8 +7,8 @@ Page({
   data: {
     tindex:null,
     rindex:null,
-    type: ['1', '2', '3', '瓶', '箱'],
-    range: ['1', '1', '1', '瓶', '箱']
+    type: [],
+    range: []
   },
   typeChange(e) {
     console.log(e);
