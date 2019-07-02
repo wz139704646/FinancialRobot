@@ -7,6 +7,7 @@ import base64
 
 from app.dao.UserDao import UserDao
 from app.utils.DBHelper import MyHelper
+from app.utils.res_json import *
 
 wx = Blueprint("wx", __name__)
 wx.secret_key = 'secret_key_1'
@@ -49,21 +50,25 @@ def check_account():
 
 @wx.route("/login", methods=['POST'])
 def login():
-    login_type = request.form['type']
+    _json = request.json
+    login_type = _json['type']
+    # 账号密码登陆
     if login_type == 0:
-        account = request.form.get("account")
-        password = request.form.get("passwd")
+        account = _json['account']
+        password = _json['passwd']
         store = base64.b64decode(password)
         store_in = binascii.hexlify(store)
         strpass = str(store_in, 'utf-8')
         print(strpass)
 
         user_dao = UserDao()
-        result = user_dao.query_check_login(account, strpass)
-        size = len(result)
+        res = user_dao.query_check_login(account, strpass)
+        size = len(res)
         if size == 1:
-            return json.dumps(UserDao.to_dict(result))
+            return json.dumps(return_success(UserDao.to_dict(res)))
 
         else:
-            return False
-
+            return json.dumps(return_unsuccess('Error: No such user'))
+    # 验证码登陆
+    else:
+        return False

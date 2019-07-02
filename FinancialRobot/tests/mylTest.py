@@ -7,13 +7,13 @@ from hashlib import sha1
 from app.dao.CompanyDao import CompanyDao
 from app.dao.UserDao import UserDao
 from app.utils.DBHelper import MyHelper
-
+from app.utils.res_json import *
 
 class MylTest(unittest.TestCase):
     def test1(self):
         userdao=UserDao()
         result = userdao.query_all()
-        j = json.dumps(UserDao.to_dict(result))
+        j = json.dumps(return_success(UserDao.to_dict(result)))
         print(j)
 
     def test2(self):
