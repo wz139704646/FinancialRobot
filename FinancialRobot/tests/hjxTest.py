@@ -40,11 +40,17 @@ class Test3(unittest.TestCase):
         supquery.add(supid, supname, supphone, site, taxpayerNumber, bankaccount, bankname, supcid)
 class Test4(unittest.TestCase):
     def test4(self):
-        queryAllsup = SupplierDao()
+        queryAllsup = CustomerDao()
         supresult = queryAllsup.queryAll()
-        print(supresult)
-        supresu_json = json.dumps(SupplierDao.to_dict(supresult), ensure_ascii=False)
-        print(supresu_json)
+
+
+       # print(json.dumps(return_success({'customerList': CustomerDao.to_dict(supresult)}),
+                        #    ensure_ascii=False))
+        print(json.dumps(return_success(CustomerDao.to_dict(supresult)),ensure_ascii = False))
+       # supresu_json = json.dumps(CustomerDao.to_dict(supresult), ensure_ascii=False)
+        #print(supresu_json)
+
+     #   print(json.dumps(return_success(supresu_json)))
 class Test5(unittest.TestCase):
     def test5(self):
         queryAllsup = SupplierDao()
@@ -69,11 +75,13 @@ class Test6(unittest.TestCase):
 class Test7(unittest.TestCase):
     def test7(self):
         queryAllsup = CustomerDao()
-        supresult = queryAllsup.query_byCompanyId("2")
+        supresult = queryAllsup.query_byCompanyId("5")
         size = len(supresult)
         print(supresult)
         supresu_json = json.dumps(CustomerDao.to_dict(supresult), ensure_ascii=False)
-        print(size)
+        id = supresu_json['id']
+
+        print(id)
         print(supresu_json)
 class Test8(unittest.TestCase):
     def test8(self):
@@ -86,3 +94,12 @@ class Test8(unittest.TestCase):
         size = len(result)
         print(size)
         print(result)
+class Test9(unittest.TestCase):
+    def test9(self):
+        jsonranklist = [{"xlid": "cxh", "xldigitid": 123456, "topscore": 2000, "topplaytime": "2009-08-20"},
+                        {"xlid": "zd", "xldigitid": 123456, "topscore": 1500, "topplaytime": "2009-11-20"}];
+
+        name = jsonranklist['xlid']
+        phone = jsonranklist['xldigitid']
+        print(name)
+        print(phone)

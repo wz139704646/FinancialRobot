@@ -26,9 +26,10 @@ class GoodsDao:
     def add(self, name, sellprice, companyId, type, unitInfo):
         id = uuid.uuid3(uuid.NAMESPACE_OID, name + companyId)
         connection = MyHelper()
-        connection.executeUpdate(
+        row=connection.executeUpdate(
             "insert into Goods (id, name, sellprice, companyId, type, unitInfo) VALUES (%s,%s,%s,%s,%s,%s)",
             [str(id), name, sellprice, companyId, type, unitInfo])
+        return row
 
     def query_by_companyId(self, companyId, name, type):
         _param = [companyId]
