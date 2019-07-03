@@ -1,5 +1,6 @@
 const app = getApp();
 var inputVal = '';
+
 Page({
   data: {
     StatusBar: app.globalData.StatusBar,
@@ -7,58 +8,58 @@ Page({
     hidden: true,
     customerList:[
       {
-        name:'zjj',
+        name:'z',
         phone:'123345678',
-        imgurl:'/imgs/app.png'
+        imgurl:'/imgs/app.png',
       }, {
-        name: 'zjj',
+        name: 'y',
         phone: '123345678',
         imgurl: '/imgs/app.png'
       }, {
-        name: 'zjj',
+        name: 'u',
         phone: '123345678',
         imgurl: '/imgs/app.png'
       }, {
-        name: 'zjj',
+        name: 'a',
         phone: '123345678',
         imgurl: '/imgs/app.png'
       }, {
-        name: 'zjj',
+        name: 'e',
         phone: '123345678',
         imgurl: '/imgs/app.png'
-      }, {
-        name: 'zjj',
-        phone: '123345678',
-        imgurl: '/imgs/app.png'
-      }, {
-        name: 'zjj',
-        phone: '123345678',
-        imgurl: '/imgs/app.png'
-      }, {
-        name: 'zjj',
-        phone: '123345678',
-        imgurl: '/imgs/app.png'
-      }, {
-        name: 'zjj',
-        phone: '123345678',
-        imgurl: '/imgs/app.png'
-      }, {
-        name: 'zjj',
-        phone: '123345678',
-        imgurl: '/imgs/app.png'
-      },
+      }
 
+    ],
+
+    pycustomerList:[
     ]
   },
-  onLoad() {
-    let list = [];
-    for (let i = 0; i < 26; i++) {
-      list[i] = String.fromCharCode(65 + i)
+  initpycustomerList(){
+    for (let j = 0; j < 26; j++) {
+      this.data.pycustomerList.push({
+        first: String.fromCharCode(65 + j),
+        cList: []
+      })
     }
+    console.log(this.data.pycustomerList)
+    console.log("A".charCodeAt(0))
+    console.log("a".toUpperCase())
+    for (let i = 0; i < this.data.customerList.length - 1; i++) {
+      //let j = this.data.customerList[i].name
+      //这里改获得首字母的方法
+      let j = this.data.customerList[i].name
+      let k = j.toUpperCase().charCodeAt(0)
+      this.data.pycustomerList[k - 65].cList.push(this.data.customerList[i])
+    }
+    console.log(this.data.pycustomerList)
+  },
+  onLoad() {
+    this.initpycustomerList()
+
     this.setData({
-      list: list,
-      listCur: list[0]
-    })
+      pycustomerList: this.data.pycustomerList,
+      listCur: this.data.pycustomerList[0]
+    });
   },
   onReady() {
     let that = this;
@@ -77,7 +78,7 @@ Page({
   getCur(e) {
     this.setData({
       hidden: false,
-      listCur: this.data.list[e.target.id],
+      listCur: this.data.pycustomerList[e.target.id].first,
     })
   },
 
@@ -86,6 +87,7 @@ Page({
       hidden: true,
       listCur: this.data.listCur
     })
+
   },
   //滑动选择Item
   tMove(e) {
@@ -96,7 +98,7 @@ Page({
     if (y > offsettop) {
       let num = parseInt((y - offsettop) / 20);
       this.setData({
-        listCur: that.data.list[num]
+        listCur: that.data.pycustomerList[num].first
       })
     };
   },
@@ -114,16 +116,17 @@ Page({
       hidden: true,
       listCurID: this.data.listCur
     })
+    console.log(this.data.listCurID)
   },
   indexSelect(e) {
     let that = this;
     let barHeight = this.data.barHeight;
-    let list = this.data.list;
+    let pycustomerList = this.data.pycustomerList;
     let scrollY = Math.ceil(list.length * e.detail.y / barHeight);
     for (let i = 0; i < list.length; i++) {
       if (scrollY < i + 1) {
         that.setData({
-          listCur: list[i],
+          listCur: pycustomerList[i],
           movableY: i * 20
         })
         return false
@@ -138,5 +141,6 @@ Page({
     wx.showToast({
       title: '正在搜索',
     })
+    //
   },
 });
