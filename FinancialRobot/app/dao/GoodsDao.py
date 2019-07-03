@@ -35,8 +35,8 @@ class GoodsDao:
         _param = [companyId]
         _sql = "select * from Goods where companyId = %s"
         if name:
-            _sql += " and name = %s"
-            _param.append(name)
+            _sql += " and name like %s"
+            _param.append('%'+name+'%')
         if type:
             _sql += " and type = %s"
             _param.append(type)
