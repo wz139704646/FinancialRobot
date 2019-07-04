@@ -1,7 +1,7 @@
 #!/usr/bin/env python 
 # -*- coding:utf-8 -*-
 class User:
-    def __init__(self, account, password, id, phone, position):
+    def __init__(self, account, password, id, position):
         self.__account = account
         self.__password = password
         self.__position = position
