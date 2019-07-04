@@ -12,10 +12,11 @@ exports.main = async(event, context) => {
   }
   // console.log(pinyin('中国', config).join(''))
   let array = JSON.parse(event.jsonStr)
+  console.log(typeof(array))
   let options = event.options
   let field = options ? options.field : undefined
-  let py = opetions ? options.pinyin : undefined
-  let init = opetions ? options.initial : undefined
+  let py = options ? options.pinyin : undefined
+  let init = options ? options.initial : undefined
   let ordered = options ? options.ordered : undefined
   for (let i = 0; i < array.length; i++) {
     let itempy = ""

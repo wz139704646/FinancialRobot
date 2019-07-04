@@ -13,74 +13,30 @@ Page({
     messagecode:'',
     indexToast: false,
     codename:'发送验证码',
-    clist: [
-      {
-        indexName: 'A',
-        items: [
-          {
-            id: 0,
-            name: '123',
-            address: 'hhhh'
-          },
-          {
-            id: 4,
-            name: '456',
-            address: 'hhhh'
-          }
-        ]
-      },
-      {
-        indexName: 'B',
-        items: [
-          {
-            id: 1,
-            name: '798',
-            address: 'hhhh'
-          }
-        ]
-      },
-      {
-        indexName: 'C',
-        items: [
-          {
-            id: 2,
-            name: '123',
-            address: 'hhhh'
-          }
-        ]
-      },
-      {
-        indexName: 'D',
-        items: [
-          {
-            id: 2,
-            name: '123',
-            address: 'hhhh'
-          }
-        ]
-      },
-      {
-        indexName: 'E',
-        items: [
-          {
-            id: 2,
-            name: '123',
-            address: 'hhhh'
-          }
-        ]
-      },
-      {
-        indexName: 'F',
-        items: [
-          {
-            id: 2,
-            name: '123',
-            address: 'hhhh'
-          }
-        ]
-      }
-    ]
     
+  },
+
+  divide2Sections: function(list) {
+    let cl = []
+    console.log(list)
+    for(let i=0; i<list.length; i++) {
+      if(cl.length == 0){
+        cl = [{
+          indexName: list[i].init,
+          items: [list[i]]
+        }]
+      } else {
+        if(cl[cl.length-1].indexName < list[i].init){
+          cl.push({
+            indexName: list[i].init,
+            items: [list[i]]
+          })
+        } else{
+          cl[cl.length-1].items.push(list[i])
+        }
+      }
+    }
+    return cl
   },
 
   calScroll: function() {
@@ -257,8 +213,42 @@ Page({
   },
 
   showModal(e) {
+    let that = this
+    wx.request({
+      url: 'http://192.168.151.233:5000/query_Company',
+      method: 'GET',
+      success: res => {
+        console.log(res)
+        let coms = res.data.result
+        wx.cloud.callFunction({
+          name: 'convert2pinyin',
+          data: {
+            jsonStr: JSON.stringify(coms),
+            options: {
+              field: 'name',
+              pinyin: 'pinyin',
+              initial: 'init',
+              ordered: 'asc'
+            }
+          }
+        }).then( result => {
+          console.log(result)
+          let cl = that.divide2Sections(result.result)
+          this.setData({
+            clist: cl
+          }, _res => {
+            wx.hideToast()
+          })
+        })
+      }
+    })
     this.setData({
       modalName: e.currentTarget.dataset.target
+    })
+    wx.showToast({
+      title: '',
+      icon: 'loading',
+      duration: 5000
     })
     this.calScroll()
     
