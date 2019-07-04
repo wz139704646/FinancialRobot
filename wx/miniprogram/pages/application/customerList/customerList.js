@@ -7,27 +7,7 @@ Page({
     CustomBar: app.globalData.CustomBar,
     hidden: true,
     customerList:[
-      {
-        name:'z',
-        phone:'123345678',
-        imgurl:'/imgs/app.png',
-      }, {
-        name: 'y',
-        phone: '123345678',
-        imgurl: '/imgs/app.png'
-      }, {
-        name: 'u',
-        phone: '123345678',
-        imgurl: '/imgs/app.png'
-      }, {
-        name: 'a',
-        phone: '123345678',
-        imgurl: '/imgs/app.png'
-      }, {
-        name: 'e',
-        phone: '123345678',
-        imgurl: '/imgs/app.png'
-      }
+      
 
     ],
 
@@ -39,9 +19,9 @@ Page({
   getCustomerList(){
     var that = this
     wx.request({
-      url: 'http://192.168.137.132:5000/queryAllCustomer',
+      url: 'http://127.0.0.1:5000/queryAllCustomer',
       data: JSON.stringify({
-        conpanyId:app.globalData.conpanyId
+        companyId:5
       }),
       method: "POST",
       header: {
@@ -49,9 +29,9 @@ Page({
       },
       success: res => {
         console.log(res)
-        console.log(res.customerList)
+        console.log(res.result)
         this.setData({
-          customerList:res.customerList
+          customerList:res.result
         })
         that.initCustomerList()
       }
@@ -67,7 +47,7 @@ Page({
         options: {
           field: 'name',
           pinyin: 'pinyin',
-          init:'firstletter'
+          initial:'firstletter'
         }
       },
       success: res => {
@@ -80,8 +60,7 @@ Page({
       }
     })
   },
-
-  initpycustomerList(){
+  addElement(){
     for (let j = 0; j < 26; j++) {
       this.data.pycustomerList.push({
         first: String.fromCharCode(65 + j),
@@ -91,19 +70,38 @@ Page({
     // console.log(this.data.pycustomerList)
     // console.log("A".charCodeAt(0))
     // console.log("a".toUpperCase())
-    for (let i = 0; i < this.data.customerList.length - 1; i++) {
+    
+  },
+  delElement(){
+    //shanchu
+    var k = 0
+    for (let j = 0; j < 26 - k; j++) {
+      if (this.data.pycustomerList[j].cList.length == 0) {
+        this.data.pycustomerList.slice(j)
+        j--
+        k++
+      }
+    }
+  },
+  initpycustomerList(){
+    addElement()
+
+    for (let i = 0; i < this.data.customerList.length; i++) {
       let j = this.data.customerList[i].firstletter
       let k = j.charCodeAt(0)
       this.data.pycustomerList[k - 65].cList.push(this.data.customerList[i])
     }
     console.log(this.data.pycustomerList)
+
+    delElement()
+    this.setData({
+      pycustomerList: this.data.pycustomerList,
+      pyallcustomerList:this.data.pycustomerList,
+      listCur: this.data.pycustomerList[0]
+    });
   },
   onLoad() {
     this.getCustomerList()
-    this.setData({
-      pycustomerList: this.data.pycustomerList,
-      listCur: this.data.pycustomerList[0]
-    });
   },
   onReady() {
     let that = this;
@@ -189,21 +187,23 @@ Page({
       })
     }else{
       this.data.pycustomerList=[]
-      for (let i = 0; i < this.data.customerList.length - 1; i++) {
+      addElement()
+      for (let i = 0; i < this.data.customerList.length; i++) {
         let j = this.data.customerList[i].pinyin
-        let k = j.charCodeAt(0)
-        if(j.search(inputVal) != -1){
+        let k = j.toUpperCase().charCodeAt(0)
+        let l = this.data.customerList[i].name
+        if(j.indexOf(inputVal) != -1 || l.indexOf(inputVal) != -1){
           this.data.pycustomerList[k - 65].cList.push(this.data.customerList[i])
-        }else{
-          wx.showToast({
-            title: '查询不到该客户信息',
-          })
-          this.setData({
-            pycustomerList: this.data.pyallcustomerList
-          })
         }
       }
+      delElement()
       console.log(this.data.pycustomerList)
+
+      this.setData({
+        pycustomerList: this.data.pycustomerList,
+        listCur: this.data.pycustomerList[0]
+      });
     }
+
   },
 });
