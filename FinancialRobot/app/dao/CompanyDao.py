@@ -21,7 +21,8 @@ class CompanyDao:
 
     def add(self, id, name, place):
         conn = MyHelper()
-        conn.executeUpdate("insert into Company (id, name, place) VALUES (%s,%s,%s)", [id, name, place])
+        row=conn.executeUpdate("insert into Company (id, name, place) VALUES (%s,%s,%s)", [id, name, place])
+        return row
 
 
 

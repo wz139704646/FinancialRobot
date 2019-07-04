@@ -24,9 +24,10 @@ class UserDao:
 
     def add(self, account, password, companyid):
         connection = MyHelper()
-        connection.executeUpdate('insert into User(account, \
+        row=connection.executeUpdate('insert into User(account, \
         password, CompanyId, ID, phone, position) \
          values (%s,%s,%s)', [account, password, companyid])
+        return row
 
     def query_by_account(self, account):
         helper = MyHelper()
