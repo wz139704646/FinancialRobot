@@ -31,9 +31,56 @@ Page({
 
     ],
 
-    pycustomerList:[
-    ]
+    pycustomerList:[],
+
+    pyallcustomerList:[],
   },
+
+  getCustomerList(){
+    var that = this
+    wx.request({
+      url: 'http://192.168.137.132:5000/queryAllCustomer',
+      data: JSON.stringify({
+        conpanyId:app.globalData.conpanyId
+      }),
+      method: "POST",
+      header: {
+        "Content-Type": 'application/json'
+      },
+      success: res => {
+        console.log(res)
+        console.log(res.customerList)
+        this.setData({
+          customerList:res.customerList
+        })
+        that.initCustomerList()
+      }
+    })
+  },
+
+  initCustomerList() {
+    var that = this
+    wx.cloud.callFunction({
+      name: 'convert2pinyin',
+      data: {
+        jsonStr: JSON.stringify(this.data.customerList),
+        options: {
+          field: 'name',
+          pinyin: 'pinyin',
+          init:'firstletter'
+        }
+      },
+      success: res => {
+        console.log('添加成功')
+        console.log(res)
+        that.initpycustomerList()
+      },
+      fail: err => {
+        console.error('fail')
+      }
+    })
+  },
+
   initpycustomerList(){
     for (let j = 0; j < 26; j++) {
       this.data.pycustomerList.push({
@@ -41,21 +88,18 @@ Page({
         cList: []
       })
     }
-    console.log(this.data.pycustomerList)
-    console.log("A".charCodeAt(0))
-    console.log("a".toUpperCase())
+    // console.log(this.data.pycustomerList)
+    // console.log("A".charCodeAt(0))
+    // console.log("a".toUpperCase())
     for (let i = 0; i < this.data.customerList.length - 1; i++) {
-      //let j = this.data.customerList[i].name
-      //这里改获得首字母的方法
-      let j = this.data.customerList[i].name
-      let k = j.toUpperCase().charCodeAt(0)
+      let j = this.data.customerList[i].firstletter
+      let k = j.charCodeAt(0)
       this.data.pycustomerList[k - 65].cList.push(this.data.customerList[i])
     }
     console.log(this.data.pycustomerList)
   },
   onLoad() {
-    this.initpycustomerList()
-
+    this.getCustomerList()
     this.setData({
       pycustomerList: this.data.pycustomerList,
       listCur: this.data.pycustomerList[0]
@@ -138,9 +182,28 @@ Page({
     inputVal = e.detail.value
   },
   search(e) {
-    wx.showToast({
-      title: '正在搜索',
-    })
-    //
+    console.log("正在搜索")
+    if(inputVal == ""){
+      this.setData({
+        pycustomerList:this.data.pyallcustomerList
+      })
+    }else{
+      this.data.pycustomerList=[]
+      for (let i = 0; i < this.data.customerList.length - 1; i++) {
+        let j = this.data.customerList[i].pinyin
+        let k = j.charCodeAt(0)
+        if(j.search(inputVal) != -1){
+          this.data.pycustomerList[k - 65].cList.push(this.data.customerList[i])
+        }else{
+          wx.showToast({
+            title: '查询不到该客户信息',
+          })
+          this.setData({
+            pycustomerList: this.data.pyallcustomerList
+          })
+        }
+      }
+      console.log(this.data.pycustomerList)
+    }
   },
 });
