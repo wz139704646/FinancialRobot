@@ -10,6 +10,7 @@
     "pages/audiotest/audiotest",
     "pages/home/talk/talk",
     "pages/application/sellList/sellList",
+    "pages/application/buyList/buyList",
     "pages/application/newCustomer/newCustomer",
     "pages/application/customerList/customerList",
     "pages/application/searchRecent/searchRecent",

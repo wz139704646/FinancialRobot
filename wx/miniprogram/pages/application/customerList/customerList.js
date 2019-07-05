@@ -29,9 +29,9 @@ Page({
       },
       success: res => {
         console.log(res)
-        console.log(res.result)
+        console.log(res.data.result)
         this.setData({
-          customerList:res.result
+          customerList:res.data.result
         })
         that.initCustomerList()
       }
@@ -53,6 +53,9 @@ Page({
       success: res => {
         console.log('添加成功')
         console.log(res)
+        this.setData({
+          customerList:res.result
+        })
         that.initpycustomerList()
       },
       fail: err => {
@@ -77,27 +80,28 @@ Page({
     var k = 0
     for (let j = 0; j < 26 - k; j++) {
       if (this.data.pycustomerList[j].cList.length == 0) {
-        this.data.pycustomerList.slice(j)
+        this.data.pycustomerList.splice(j,1)
         j--
         k++
       }
     }
+    console.log(this.data.pycustomerList)
   },
   initpycustomerList(){
-    addElement()
+    var that = this
+    that.addElement()
 
     for (let i = 0; i < this.data.customerList.length; i++) {
       let j = this.data.customerList[i].firstletter
       let k = j.charCodeAt(0)
       this.data.pycustomerList[k - 65].cList.push(this.data.customerList[i])
     }
-    console.log(this.data.pycustomerList)
 
-    delElement()
+    that.delElement()
     this.setData({
       pycustomerList: this.data.pycustomerList,
       pyallcustomerList:this.data.pycustomerList,
-      listCur: this.data.pycustomerList[0]
+      listCur: this.data.pycustomerList[0].first
     });
   },
   onLoad() {
@@ -168,7 +172,7 @@ Page({
     for (let i = 0; i < list.length; i++) {
       if (scrollY < i + 1) {
         that.setData({
-          listCur: pycustomerList[i],
+          listCur: pycustomerList[i].first,
           movableY: i * 20
         })
         return false
@@ -180,6 +184,7 @@ Page({
     inputVal = e.detail.value
   },
   search(e) {
+    var that = this
     console.log("正在搜索")
     if(inputVal == ""){
       this.setData({
@@ -187,7 +192,7 @@ Page({
       })
     }else{
       this.data.pycustomerList=[]
-      addElement()
+      that.addElement()
       for (let i = 0; i < this.data.customerList.length; i++) {
         let j = this.data.customerList[i].pinyin
         let k = j.toUpperCase().charCodeAt(0)
@@ -196,12 +201,12 @@ Page({
           this.data.pycustomerList[k - 65].cList.push(this.data.customerList[i])
         }
       }
-      delElement()
+      that.delElement()
       console.log(this.data.pycustomerList)
 
       this.setData({
         pycustomerList: this.data.pycustomerList,
-        listCur: this.data.pycustomerList[0]
+        listCur: this.data.pycustomerList[0].first
       });
     }
 

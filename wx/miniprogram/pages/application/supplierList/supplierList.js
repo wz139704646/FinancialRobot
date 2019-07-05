@@ -19,7 +19,7 @@ Page({
   getSupplierList() {
     var that = this
     wx.request({
-      url: 'http://192.168.151.233:5000/queryAllSupplier',
+      url: 'http://127.0.0.1:5000/queryByCompanyId',
       data: JSON.stringify({
         companyId: 5
       }),
@@ -29,9 +29,9 @@ Page({
       },
       success: res => {
         console.log(res)
-        console.log(res.result)
+        console.log(res.data.result)
         this.setData({
-          supplierList: res.result
+          supplierList: res.data.result
         })
         that.initSupplierList()
       }
@@ -53,6 +53,9 @@ Page({
       success: res => {
         console.log('添加成功')
         console.log(res)
+        this.setData({
+          supplierList:res.result
+        })
         that.initpysupplierList()
       },
       fail: err => {
@@ -73,27 +76,29 @@ Page({
     var k = 0
     for (let j = 0; j < 26 - k; j++) {
       if (this.data.pysupplierList[j].sList.length == 0) {
-        this.data.pysupplierList.slice(j)
+        this.data.pysupplierList.splice(j,1)
         j--
         k++
       }
     }
   },
   initpysupplierList() {
-    addElement()
+    var that = this
+    that.addElement()
     
     for (let i = 0; i < this.data.supplierList.length; i++) {
       let j = this.data.supplierList[i].firstletter
       let k = j.charCodeAt(0)
-      this.data.pysupplierList[k - 65].cList.push(this.data.supplierList[i])
+      this.data.pysupplierList[k - 65].sList.push(this.data.supplierList[i])
     }
     console.log(this.data.pysupplierList)
 
-    delElement()
+    that.delElement()
+    console.log(this.data.pysupplierList)
     this.setData({
       pysupplierList: this.data.pysupplierList,
       pyallsupplierList: this.data.pysupplierList,
-      listCur: this.data.pysupplierList[0]
+      listCur: this.data.pysupplierList[0].first
     });
   },
   onLoad() {
@@ -114,9 +119,11 @@ Page({
   },
   //获取文字信息
   getCur(e) {
+    console.log(e)
+    console.log(this.data.pysupplierList[e.target.id].first)
     this.setData({
       hidden: false,
-      listCur: this.data.pycustomerList[e.target.id].first,
+      listCur: this.data.pysupplierList[e.target.id].first,
     })
   },
 
@@ -164,7 +171,7 @@ Page({
     for (let i = 0; i < list.length; i++) {
       if (scrollY < i + 1) {
         that.setData({
-          listCur: pysupplierList[i],
+          listCur: pysupplierList[i].first,
           movableY: i * 20
         })
         return false
@@ -197,7 +204,7 @@ Page({
 
       this.setData({
         pysupplierList: this.data.pysupplierList,
-        listCur: this.data.pysupplierList[0]
+        listCur: this.data.pysupplierList[0].first
       });
     }
   },

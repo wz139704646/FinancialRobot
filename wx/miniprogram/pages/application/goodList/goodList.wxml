@@ -3,11 +3,11 @@
   <view slot="backText">返回</view>
   <view slot="content">商品列表</view>
 </cu-custom>
-<block wx:key wx:for='{{goodList}}' wx:for-index='index'>
+<block wx:key wx:for='{{goodsList}}' wx:for-index='index'>
 <van-card num="{{item.amount}}" tag="{{item.category}}" price="{{item.price}}" desc="{{item.description}}" title="{{item.name}}" thumb="{{item.imgurl}}" thumb-mode="aspectFill">
     <view slot="footer">
-      <van-button size="mini">商品分析</van-button>
-      <van-button size="mini">查看详情</van-button>
+      <van-button size="mini" bindtap='navigateToGoodAnalyse'>商品分析</van-button>
+      <van-button size="mini" bindtap='navigateToGoodInfo'>查看详情</van-button>
     </view>
   </van-card>
 </block>
