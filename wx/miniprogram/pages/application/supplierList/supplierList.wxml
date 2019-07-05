@@ -3,3 +3,39 @@
   <view slot="backText">返回</view>
   <view slot="content">供应商列表</view>
 </cu-custom>
+<view class="cu-bar bg-white search fixed" style="top:{{CustomBar}}px;">
+  <view class="search-form round">
+    <text class="cuIcon-search"></text>
+    <input type="text" placeholder="输入搜索的关键词" confirm-type="search" bindconfirm='search' value='{{inputVal}}' bindinput='inputChange'></input>
+  </view>
+  <view class="action">
+    <button class="cu-btn bg-gradual-green shadow-blur round" bindtap='search'>搜索</button>
+  </view>
+</view>
+<scroll-view scroll-y class="indexes" scroll-into-view="indexes-{{listCurID}}" style="height:calc(100vh - {{CustomBar}}px - 50px)"  scroll-with-animation="true" enable-back-to-top="true">
+  <block wx:for="{{pysupplierList}}" wx:key>
+    <view class="padding indexItem-{{pysupplierList[index].first}}" id="indexes-{{pysupplierList[index].first}}" data-index="{{pysupplierList[index].first}}">{{pysupplierList[index].first}}</view>
+    <view class="cu-list menu-avatar no-padding">
+      <view class="cu-item" wx:for="{{item.sList}}" wx:for-item="sList" wx:key>
+        <view class="cu-avatar round" style="background-image:url({{sList.imgurl}});"></view>
+        <view class="content">
+          <view class="text-black">
+            {{sList.name}}
+          </view>
+          <view class="text-gray text-sm">
+            {{sList.phone}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</scroll-view>
+<view class="indexBar" style="height:calc(100vh - {{CustomBar}}px - 50px)">
+  <view class="indexBar-box" bindtouchstart="tStart" bindtouchend="tEnd" catchtouchmove="tMove">
+    <view class="indexBar-item" wx:for="{{pysupplierList}}" wx:key id="{{index}}" bindtouchstart="getCur" bindtouchend="setCur">{{item.first}}</view>
+  </view>
+</view>
+<!--选择显示-->
+<view hidden="{{hidden}}" class="indexToast">
+  {{listCur}}
+</view>
