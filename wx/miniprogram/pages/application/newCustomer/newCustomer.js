@@ -31,9 +31,9 @@ Page({
   addsuccess(e) {
 
     wx.request({
-      url: 'http://192.168.151.233:5000/addCustomer',
+      url: 'http://127.0.0.1:5000/addCustomer',
       data: JSON.stringify({
-        companyId: 55,
+        companyId: 5,
         name: name,
         phone: phone,
         bankAccount: bankaccount,
@@ -47,6 +47,9 @@ Page({
         wx.showToast({
           title: 'add success',
         })
+        console.log(res)
+      },
+      fail:res => {
         console.log(res)
       }
     })

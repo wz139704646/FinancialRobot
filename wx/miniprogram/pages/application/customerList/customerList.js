@@ -21,7 +21,7 @@ Page({
     wx.request({
       url: 'http://127.0.0.1:5000/queryAllCustomer',
       data: JSON.stringify({
-        companyId:5
+        companyId:"5"
       }),
       method: "POST",
       header: {
@@ -70,13 +70,8 @@ Page({
         cList: []
       })
     }
-    // console.log(this.data.pycustomerList)
-    // console.log("A".charCodeAt(0))
-    // console.log("a".toUpperCase())
-    
   },
   delElement(){
-    //shanchu
     var k = 0
     for (let j = 0; j < 26 - k; j++) {
       if (this.data.pycustomerList[j].cList.length == 0) {

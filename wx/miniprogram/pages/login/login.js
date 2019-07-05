@@ -131,7 +131,7 @@ Page({
     console.log("crypted pwd: " + crypted)
 
     wx.request({
-      url: 'http://192.168.137.132:5000/login',
+      url: 'http://127.0.0.1:5000/login',
       data: JSON.stringify({
         account: account,
         passwd: crypted,
