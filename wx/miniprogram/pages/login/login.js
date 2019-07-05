@@ -2,10 +2,6 @@ var app = getApp()
 const util = require('../../utils/util.js')
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
     passwd: "",
     account: "",
@@ -16,41 +12,6 @@ Page({
     loginText:"验证码登录"
   },
 
-  /**
-   * 生命周期函数
-   * <view class="DrawerClose {{modalName=='viewModal'?'show':''}}" bindtap="hideModal">
-			<text class="cuIcon-pullright"></text>
-		</view>
-		<scroll-view scroll-y class="DrawerWindow {{modalName=='viewModal'?'show':''}}">
-			<view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg">
-				<view class="cu-item arrow" wx:for="{{20}}" wx:key="index">
-					<view class="content">
-						<text class="cuIcon-github text-grey"></text>
-						<text class="text-grey">{{index +1}}</text>
-					</view>
-				</view>
-			</view>
-		</scroll-view>
-    
-    <view class="DrawerClose {{modalName=='viewModal'?'show':''}}" bindtap="hideModal">
-			<text class="cuIcon-pullright"></text>
-		</view>
-		<scroll-view scroll-y class="DrawerWindow {{modalName=='viewModal'?'show':''}}">
-			<view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg">
-				<view class="cu-item arrow" wx:for="{{20}}" wx:key="index">
-					<view class="content">
-						<text class="cuIcon-github text-grey"></text>
-						<text class="text-grey">{{index +1}}</text>
-					</view>
-				</view>
-			</view>
-		</scroll-view>
-    
-    
-    
-    
-    --监听页面加载
-   */
   onLoad: function (options) {
     console.log()
   },

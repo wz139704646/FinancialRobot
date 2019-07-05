@@ -215,7 +215,7 @@ Page({
   showModal(e) {
     let that = this
     wx.request({
-      url: 'http://192.168.151.233:5000/query_Company',
+      url: 'http://127.0.0.1:5000/query_Company',
       method: 'GET',
       success: res => {
         console.log(res)

@@ -1,9 +1,10 @@
 Page({
   data: {
-    PageCur: 'home'
+    PageCur: 'application'
   },
   NavChange(e) {
     console.log("navigate change")
+    console.log(e)
     this.setData({
       PageCur: e.currentTarget.dataset.cur
     })
@@ -15,4 +16,10 @@ Page({
       path: '/pages/login/login'
     }
   },
+  NavToTalk(){
+    wx.navigateTo({
+      url: '/pages/talk/talk',
+    })
+    console.log("navigate")
+  }
 })

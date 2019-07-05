@@ -1,6 +1,5 @@
 {
   "usingComponents": {
-    "home": "/pages/home/home/home",
     "application": "/pages/application/home/home",
     "statistics": "/pages/statistics/home/home",
     "my": "/pages/my/home/home"
