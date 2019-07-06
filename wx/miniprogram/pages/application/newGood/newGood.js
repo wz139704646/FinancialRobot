@@ -15,7 +15,7 @@ Page({
     unitInfo: ['个', 'kg', '袋', '瓶', '箱'],
     type: ['食品类','服装类','鞋帽类','日用品类','家具类','家用电器类','纺织品类','五金电料类','厨具类'],
     store: ['仓库1','仓库2','仓库3'],
-    sellprice: 0
+    sellprice: ''
   },
   nameChange(e) {
     console.log(e);
@@ -62,7 +62,8 @@ Page({
         sellprice: this.data.sellprice,
         type: this.data.type[this.data.gindex],
         unitInfo: this.data.unitInfo[this.data.uindex],
-
+        // barcode:this.data.linecode
+        
       }),
       method: "POST",
       header: {
@@ -73,7 +74,7 @@ Page({
           title: 'add success',
         })
         console.log(res)
-        that.upload()
+        that.upload(res)
       }
     })
 
@@ -108,13 +109,13 @@ Page({
       urls: this.data.imageList
     })
   },
-  upload(){
+  upload(e){
     wx.request({
       url: 'http://127.0.0.1:5000/pic/upload',
       filename:this.data.imageList[0],
+      id: e.id,
       success: result => {
         console.log(result)
-        //let d = JSON.parse(result.data)
       }
     })
   },
