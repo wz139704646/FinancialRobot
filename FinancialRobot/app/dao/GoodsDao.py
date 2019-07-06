@@ -23,7 +23,7 @@ class GoodsDao:
         connection = MyHelper()
         return connection.executeQuery("select * from Goods")
 
-    def add(self, name, sellprice, companyId, type, unitInfo):
+    def add(self, name, sellprice, companyId, type, unitInfo,photo):
         id = uuid.uuid3(uuid.NAMESPACE_OID, name + companyId)
         connection = MyHelper()
         row=connection.executeUpdate(
