@@ -1,7 +1,7 @@
 <scroll-view scroll-y class="scrollPage">
   <view class="UCenter-bg">
     <view class='cu-avatar xl margin-bottom round' style='background-image:url(http://mmbiz.qpic.cn/mmbiz_png/TavSduTtyTBgseu8ksuE8FmpWLE0PsFCIKDgaET6ZgjMIic6z5R5L5lsc6u1GTFrSzicLT5DK3prfF3NHQ7Ze8ow/0.png);'></view>
-    <view class="text-xl">Financial Robot
+    <view class="text-xl">Fibot
       <text class="text-df">v0.1.0</text>
     </view>
     <view class="margin-top-sm">
@@ -28,7 +28,7 @@
   </view>
   <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg radius">
     <view class="cu-item arrow">
-      <view class="content" bindtap="CopyLink" data-link="https://github.com/weilanwl/ColorUI">
+      <view class="content" bindtap="CopyLink" data-link="https://github.com/wz139704646/FinancialRobot">
         <text class="cuIcon-github text-grey"></text>
         <text class="text-grey">GitHub</text>
       </view>
@@ -58,11 +58,12 @@
       </button>
     </view>
     <view class="cu-item arrow">
-      <navigator class="content" url="/pages/my/test/list" hover-class="none">
+      <button class="cu-btn content" bindtap='showLogout'>
         <text class="cuIcon-exit text-red"></text>
         <text class="text-grey">退出登录</text>
-      </navigator>
+      </button> 
     </view>
   </view>
   <view class="cu-tabbar-height"></view>
 </scroll-view>
+<van-dialog use-slot show="{{ logoutModal }}" show-cancel-button bind:confirm="logout" bind:close="closeLogout" title="确认退出" show-confirm-button></van-dialog>

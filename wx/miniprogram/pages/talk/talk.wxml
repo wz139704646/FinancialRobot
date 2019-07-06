@@ -1,7 +1,7 @@
 <!--pages/home/talk/talk.wxml-->
 <cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
   <view slot="backText">返回</view>
-  <view slot="content">Fbot</view>
+  <view slot="content">Fibot</view>
 </cu-custom>
 <!-- <van-toast id="van-toast" /> -->
 <scroll-view scroll-y scroll-into-view='{{toView}}' style='height: {{scrollHeight}};' class='margin-bottom'>

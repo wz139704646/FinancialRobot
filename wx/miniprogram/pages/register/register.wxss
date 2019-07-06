@@ -1,5 +1,5 @@
 page{
-  background-image: var(--gradualGreen);
+  background-image: var(--gradualBlue);
   width: 100vw;
   overflow: hidden;
 }

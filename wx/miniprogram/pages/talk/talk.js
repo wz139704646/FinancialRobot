@@ -16,7 +16,7 @@ function initData(that) {
   msgList = [{
     speaker: 'server',
     contentType: 'text',
-    content: '欢迎使用财务机器人,请问您有什么指示'
+    content: '欢迎使用财务机器人Fibot,请问您有什么指示'
   }
   ]
   that.setData({

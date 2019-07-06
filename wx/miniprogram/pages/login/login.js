@@ -137,7 +137,9 @@ Page({
     let pwd = state ? this.data.passwd : this.data.messagecode
     // console.log('original text: '+pwd)
     // console.log("account: " + account)
-    pwd = util.encryptPasswd(this.data.passwd)
+    if(state){
+      pwd = util.encryptPasswd(this.data.passwd)
+    }
     // console.log("crypted pwd: " + crypted)
 
     wx.request({

@@ -1,3 +1,5 @@
+const app = getApp()
+
 Component({
   options: {
     addGlobalClass: true,
@@ -6,6 +8,7 @@ Component({
     starCount: 0,
     forksCount: 0,
     visitTotal: 0,
+    logoutModal: false,
   },
   attached() {
     console.log("success")
@@ -74,5 +77,25 @@ Component({
         current: 'https://image.weilanwl.com/color2.0/zanCode.jpg' // 当前显示图片的http链接      
       })
     },
+
+    showLogout: function(e){
+      this.setData({
+        logoutModal: true
+      })
+    },
+
+    closeLogout: function(e){
+      this.setData({
+        logoutModal: false
+      })
+    },
+
+    logout: function(e){
+      app.globalData.companyId = null
+      app.globalData.position = null
+      wx.redirectTo({
+        url: '/pages/login/login',
+      })
+    }
   }
 })

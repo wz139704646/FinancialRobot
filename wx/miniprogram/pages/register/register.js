@@ -1,6 +1,7 @@
 // pages/storageConsole/storageConsole.js
 
 const app = getApp()
+const util = require("../../utils/util.js")
 
 Page({
 
@@ -104,17 +105,26 @@ Page({
       })
       return false;
     } else {
-      let com = _this.clist[path.section].items[path.row]
       wx.request({
-        data: data.stringify({
+        data: JSON.stringify({
           account: _this.data.account,
           type: 1
         }),
-        //'url': 接口地址,
+        method: 'POST',
+        url: 'http://localhost:5000/getVerification',
         success(res) {
-          console.log(res.data.data)
+          console.log(res.data)
+          if(!res.data.success){
+            wx.showToast({
+              title: res.data.errMsg,
+              icon: 'none',
+              duration: 1000
+            })
+            return
+          }
           _this.setData({
-            iscode: res.data.data
+            iscode: res.data.result.code,
+            disabled: true
           })
           var num = 61;
           var timer = setInterval(function () {
@@ -137,13 +147,17 @@ Page({
 
     }
   },
+
+  setCodeInput: function (e) {
+    this.setData({
+      messagecode: e.detail
+    })
+  },
+
   //获取验证码
   getVerificationCode() {
     this.getCode();
     var _this = this
-    _this.setData({
-      disabled: true
-    })
   },
   //提交表单信息
   register: function () {
@@ -188,7 +202,7 @@ Page({
       })
       return false;
     }
-    if (this.data.code == "") {
+    if (this.data.messagecode == "") {
       wx.showToast({
         title: '验证码不能为空',
         icon: 'none',
@@ -203,13 +217,21 @@ Page({
       })
       return false;
     } else {
-      let com = that.clist[path.section].items[path.row]
+      let com = that.data.clist[path.section].items[path.row]
+      let pwd = util.encryptPasswd(that.data.passwd)
+      console.log(com)
+      console.log({
+        companyId: com.id,
+        account: that.data.account,
+        passwd: pwd,
+        verification: that.data.messagecode
+      })
       wx.request({
-        // url: '',
+        url: 'http://localhost:5000/userRegister',
         data: JSON.stringify({
           companyId: com.id,
           account: that.data.account,
-          passwd: that.data.passwd,
+          passwd: pwd,
           verification: that.data.messagecode
         }),
         method: 'POST',
@@ -246,6 +268,8 @@ Page({
   selectCompany: function(e) {
     // console.log(e)
     let path = e.currentTarget.dataset
+    console.log(typeof(path.section))
+    console.log(typeof(path.row))
     this.setData({
       company: path
     })
