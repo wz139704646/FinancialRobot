@@ -55,11 +55,8 @@ Page({
     })
   },
   addcancel(e) {
-    wx.showToast({
-      title: 'add cancel',
-    })
     wx.redirectTo({
-      url: '/pages/application/home/home',
+      url: '/pages/index/index',
     })
   },
   nameChange(e) {

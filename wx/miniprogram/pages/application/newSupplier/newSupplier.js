@@ -36,8 +36,8 @@ Page({
     })
   },
   addfail(e) {
-    wx.showToast({
-      title: 'add fail',
+    wx.redirectTo({
+      url: '/pages/index/index',
     })
   },
   nameChange(e) {
