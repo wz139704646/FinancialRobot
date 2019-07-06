@@ -14,7 +14,7 @@ Page({
     wx.request({
       url: 'http://127.0.0.1:5000/addSupplier',
       data: JSON.stringify({
-        companyId: "4",
+        companyId: "5",
         name: name,
         phone: phone,
         bankaccount: bankaccount,
