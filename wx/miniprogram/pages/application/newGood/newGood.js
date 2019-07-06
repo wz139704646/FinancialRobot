@@ -5,6 +5,9 @@ Page({
    * 页面的初始数据
    */
   data: {
+    linecode:"",
+    count:"",
+    imageList: [],
     name:'',
     gindex: null,
     uindex: null,
@@ -21,9 +24,6 @@ Page({
     })
   },
   sellpriceChange(e) {
-    //console.log(parseFloat(e.detail.value));
-    //parseFloat(e.detail.value)
-    //console.log(e.detail.value)
     this.setData({
       sellprice: e.detail.value
     })
@@ -40,6 +40,12 @@ Page({
       gindex: e.detail.value
     })
   },
+  linecodeChange(e){
+    console.log(e);
+    this.setData({
+      linecode: e.detail.value
+    })
+  },
   storeChange(e) {
     console.log(e);
     this.setData({
@@ -47,6 +53,7 @@ Page({
     })
   },
   addsuccess(e){
+    var that = this
     wx.request({
       url: 'http://127.0.0.1:5000/addGoods',
       data: JSON.stringify({
@@ -66,12 +73,62 @@ Page({
           title: 'add success',
         })
         console.log(res)
+        that.upload()
+      }
+    })
+
+  },
+  addfail(e){
+    wx.redirectTo({
+      url: '/pages/index/index',
+    })
+  },
+  chooseImage: function (event) {
+    let that = this
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['original', 'compressed'],
+      sourceType: ['album', 'camera'],
+      success: res => {
+        const tempFilePaths = res.tempFilePaths
+        this.setData({
+          imageList: tempFilePaths
+        })
+        console.log(res)
+      },
+      fail: err => {
+        console.error(err)
       }
     })
   },
-  addfail(e){
-    wx.showToast({
-      title: 'add fail',
+  previewImage: function (e) {
+    var current = e.target.dataset.src
+    wx.previewImage({
+      current: current,
+      urls: this.data.imageList
     })
   },
+  upload(){
+    wx.request({
+      url: 'http://127.0.0.1:5000/pic/upload',
+      filename:this.data.imageList[0],
+      success: result => {
+        console.log(result)
+        //let d = JSON.parse(result.data)
+      }
+    })
+  },
+  scanCode: function (event) {
+    wx.scanCode({
+      success: res => {
+        console.log(res)
+        this.setData({
+          linecode:res.result
+        })
+      },
+      fail: err => {
+        console.error(err)
+      }
+    })
+  }
 })
