@@ -104,8 +104,12 @@ Page({
       })
       return false;
     } else {
+      let com = _this.clist[path.section].items[path.row]
       wx.request({
-        data: data.stringify({}),
+        data: data.stringify({
+          account: _this.data.account,
+          type: 1
+        }),
         //'url': 接口地址,
         success(res) {
           console.log(res.data.data)
@@ -143,8 +147,18 @@ Page({
   },
   //提交表单信息
   register: function () {
+    let that = this
+    let path = that.data.company
     var myreg = /^(14[0-9]|13[0-9]|15[0-9]|17[0-9]|18[0-9])\d{8}$/;
-    if (this.data.account == "") {
+    if (!path) {
+      wx.showToast({
+        title: '公司不能为空',
+        icon: 'none',
+        duration: 1000
+      })
+      return false
+    }
+    else if (this.data.account == "") {
       wx.showToast({
         title: '手机号不能为空',
         icon: 'none',
@@ -189,11 +203,43 @@ Page({
       })
       return false;
     } else {
-      // wx.setStorageSync('account', this.data.account);
-      // wx.setStorageSync('passwd', this.data.passwd);
-      // wx.redirectTo({
-      //   url: '../add/add',
-      // })
+      let com = that.clist[path.section].items[path.row]
+      wx.request({
+        // url: '',
+        data: JSON.stringify({
+          companyId: com.id,
+          account: that.data.account,
+          passwd: that.data.passwd,
+          verification: that.data.messagecode
+        }),
+        method: 'POST',
+        header: {
+          "Content-Type": 'application/json'
+        },
+        success: res => {
+          let resp = res.data
+          if(resp.success){
+            app.globalData.companyId = com.id
+            wx.redirectTo({
+              url: '../index/index',
+            })
+          } else {
+            wx.showToast({
+              title: resp.errMsg,
+              icon: 'none',
+              duration: 1000
+            })
+          }
+        },
+        fail: err => {
+          console.error(err)
+          wx.showToast({
+            title: '出现未知错误',
+            icon: 'none',
+            duration: 1000
+          })
+        }
+      })
     }
   },
 
@@ -246,7 +292,7 @@ Page({
       modalName: e.currentTarget.dataset.target
     })
     wx.showToast({
-      title: '',
+      title: '加载中',
       icon: 'loading',
       duration: 5000
     })
