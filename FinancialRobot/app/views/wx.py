@@ -26,7 +26,11 @@ def userRegister():
     account = _json["account"]
     companyId = _json["companyId"]
     password = _json["passwd"]
-    openid = _json["openid"]
+    openid = _json.get("openid")
+    # try:
+    #     openid = _json["openid"]
+    # except KeyError:
+    #     openid = None
     verification = _json["verification"]
     open
 

@@ -248,6 +248,11 @@ Page({
             wx.authorize({
               scope: 'scope.userInfo',
               success: () => {
+                wx.showToast({
+                  title: '登录中',
+                  icon: 'loading',
+                  duration: 3000
+                })
                 wx.getUserInfo({
                   success: rs => {
                     app.globalData.userInfo = rs.userInfo
@@ -265,10 +270,15 @@ Page({
                           header: {
                             "Content-Type": 'application/json'
                           },
+                          data: JSON.stringify({
+                            account: that.data.account,
+                            openid: suc.result.openid
+                          }),
                           success: rs => {
+                            console.log(rs)
                             if (rs.data.success) {
                               wx.showToast({
-                                title: '添加成功',
+                                title: '绑定成功',
                                 icon: 'success'
                               })
                             }
@@ -280,6 +290,7 @@ Page({
                 })
               },
               complete: () => {
+                wx.hideToast()
                 wx.redirectTo({
                   url: '../index/index',
                 })

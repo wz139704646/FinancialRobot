@@ -15,6 +15,11 @@ Page({
   },
 
   onLoad: function (options) {
+    wx.showToast({
+      title: '获取用户信息中',
+      icon: 'loading',
+      duration: 3000
+    })
     wx.getSetting({
       success: res => {
         if(res.authSetting['scope.userInfo']) {
@@ -39,15 +44,22 @@ Page({
                       openid: suc.result.openid
                     }),
                     success: rs => {
+                      console.log(rs)
                       if(rs.data.success){
                         wx.redirectTo({
                           url: '../index/index',
+                          complete: () => {
+                            wx.hideToast()
+                          }
                         })
                       }
                     }
                   })
                 }
               })
+            },
+            fail: err => {
+              wx.hideToast()
             }
           })
         }
@@ -181,7 +193,6 @@ Page({
       pwd = util.encryptPasswd(this.data.passwd)
     }
     // console.log("crypted pwd: " + crypted)
-
     wx.request({
       url: 'http://'+host+':'+port+'/login',
       data: JSON.stringify({
@@ -215,14 +226,19 @@ Page({
             scope: 'scope.userInfo',
             success: () => {
               wx.getUserInfo({
-                success: res => {
-                  app.globalData.userInfo = res.userInfo
+                success: resu => {
+                  app.globalData.userInfo = resu.userInfo
                   wx.cloud.callFunction({
                     name: 'login',
                     data: {
-                      cloudID: wx.cloud.CloudID(res.cloudID)
+                      cloudID: wx.cloud.CloudID(resu.cloudID)
                     }
                   }).then(suc => {
+                    wx.showToast({
+                      title: '登录中',
+                      icon: 'loading',
+                      duration: 1000
+                    })
                     if (!suc.result.errMsg) {
                       app.globalData.openid = suc.result.openid
                       wx.request({
@@ -231,10 +247,15 @@ Page({
                         header: {
                           "Content-Type": 'application/json'
                         },
+                        data: JSON.stringify({
+                          account: account,
+                          openid: suc.result.openid       
+                        }),
                         success: rs => {
                           if (rs.data.success) {
+                            wx.hideToast()
                             wx.showToast({
-                              title: '添加成功',
+                              title: '绑定成功',
                               icon: 'success'
                             })
                           }
