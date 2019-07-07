@@ -30,7 +30,7 @@ class GoodsDao:
         row = connection.executeUpdate(
             "insert into Goods (id, name, sellprice, companyId, type, unitInfo) VALUES (%s,%s,%s,%s,%s,%s)",
             [str(id), name, sellprice, companyId, type, unitInfo])
-        res={"row":row,"id":id}
+        res={"row":row,"id":id.__str__()}
         return res
 
     def update_photo(self, id, photo):
