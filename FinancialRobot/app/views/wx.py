@@ -24,7 +24,9 @@ def userRegister():
     account = _json["account"]
     companyId = _json["companyId"]
     password = _json["passwd"]
+    openid = _json["openid"]
     verification = _json["verification"]
+    open
 
     # 验证码验证
     # TODO
@@ -35,7 +37,7 @@ def userRegister():
     strpass = str(store_in, 'utf-8')
     print(strpass)
     user_dao = UserDao()
-    row = user_dao.add(account, strpass, companyId)
+    row = user_dao.add(account, strpass, companyId,openid)
     if row == 1:
         return json.dumps(return_success(""))
     else:

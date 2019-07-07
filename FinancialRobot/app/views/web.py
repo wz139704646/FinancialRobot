@@ -29,7 +29,7 @@ def CompanyRegister():
         else:
             return False
 #查询公司列表
-@web.route("/query_Company",methods=["POST"])
+@web.route("/query_Company",methods=["GET"])
 def query_Company():
     query = CompanyDao()
     result = query.queryAll()
