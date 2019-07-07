@@ -61,7 +61,7 @@ Page({
         name: this.data.name,
         sellprice: this.data.sellprice,
         type: this.data.type[this.data.gindex],
-        unitInfo: this.data.unitInfo[this.data.uindex],
+        unitInfo: this.data.unitInfo[this.data.uindex]
         // barcode:this.data.linecode
         
       }),

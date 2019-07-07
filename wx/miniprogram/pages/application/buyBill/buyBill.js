@@ -19,5 +19,8 @@ Page({
   },
   addGoods(e){
 
+  },
+  onClick(e){
+    
   }
 })

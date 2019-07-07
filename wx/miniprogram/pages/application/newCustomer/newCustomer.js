@@ -48,6 +48,9 @@ Page({
           title: 'add success',
         })
         console.log(res)
+        wx.redirectTo({
+          url: '/pages/index/index',
+        })
       },
       fail:res => {
         console.log(res)

@@ -4,7 +4,6 @@
 </cu-custom>
 <van-tabs active="{{ active }}" bind:click="onClick">
   <van-tab title="采购订单"></van-tab>
-  <van-tab title="购货单"></van-tab>
   <van-tab title="采购退货"></van-tab>
 </van-tabs>
 <view class="cu-form-group margin-top">
