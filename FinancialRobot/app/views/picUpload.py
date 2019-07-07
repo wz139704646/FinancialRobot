@@ -4,11 +4,13 @@ from werkzeug.utils import secure_filename
 from flask import Blueprint, render_template, request, make_response, send_from_directory, abort
 import os
 import json
+
+from app.dao.GoodsDao import GoodsDao
 from app.utils.pic_str import *
 from app.utils.res_json import *
 
 up = Blueprint("up", __name__)
-UPLOAD_FOLDER = '../upload'
+UPLOAD_FOLDER = '../static/img/upload'
 basedir = os.path.abspath(os.path.dirname(__file__))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF'}
 MAX_CONTENT_LENGTH = 1 * 1024 * 1024  # 1MB
@@ -29,7 +31,8 @@ def api_upload():
     file_dir = os.path.join(basedir, UPLOAD_FOLDER)
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)
-    f = request.files['photo']
+    f, = request.files.values()
+    id = request.json.get("id")
     size = len(f.read())
     print(size)
     f.seek(0)
@@ -41,9 +44,11 @@ def api_upload():
             new_filename = Pic_str().create_uuid() + '.' + ext
             f.save(os.path.join(file_dir, new_filename))
             f.close()
+            goods_dao = GoodsDao()
+            goods_dao.update_photo(id, new_filename)
             return json.dumps(return_success({"new_filename": new_filename}), ensure_ascii=False)
         else:
-            return json.dumps(return_unsuccess("文件大小超出1MB"),ensure_ascii=False)
+            return json.dumps(return_unsuccess("文件大小超出1MB"), ensure_ascii=False)
     else:
         return json.dumps(return_unsuccess("文件格式不正确"), ensure_ascii=False)
 
@@ -69,6 +74,7 @@ def show_photo(filename):
             image_data = open(os.path.join(file_dir, '%s' % filename), "rb").read()
             response = make_response(image_data)
             response.headers['Content-Type'] = 'image/png'
+            print(response)
             return response
     else:
         pass
