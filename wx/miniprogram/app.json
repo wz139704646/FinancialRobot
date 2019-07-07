@@ -17,7 +17,8 @@
     "pages/application/supplierList/supplierList",
     "pages/application/newGood/newGood",
     "pages/application/goodList/goodList",
-    "pages/application/goodInfo/goodInfo"
+    "pages/application/goodInfo/goodInfo",
+    "pages/application/buyBill/buyBill"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",
