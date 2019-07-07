@@ -21,12 +21,10 @@ def hello():
 @wx.route("/userRegister", methods=["POST"])
 def userRegister():
     _json = request.json
-    account = _json["account"]
-    companyId = _json["companyId"]
-    password = _json["passwd"]
-    openid = _json["openid"]
-    verification = _json["verification"]
-    open
+    account = _json.get("account")
+    companyId = _json.get("companyId")
+    password = _json.get("passwd")
+    verification = _json.get("verification")
 
     # 验证码验证
     # TODO
@@ -37,11 +35,11 @@ def userRegister():
     strpass = str(store_in, 'utf-8')
     print(strpass)
     user_dao = UserDao()
-    row = user_dao.add(account, strpass, companyId, openid)
+    row = user_dao.add(account, strpass, companyId)
     if row == 1:
         return json.dumps(return_success(""))
     else:
-        return json.dumps(return_unsuccess(""))
+        return json.dumps(return_unsuccess("注册失败"))
 
 
 @wx.route("/checkAccount")
