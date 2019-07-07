@@ -18,6 +18,7 @@ def hello():
 
 
 @wx.route("/userRegister", methods=["POST"])
+
 def userRegister():
     _json = request.json
     print(_json)

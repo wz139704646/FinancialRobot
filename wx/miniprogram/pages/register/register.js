@@ -2,6 +2,8 @@
 
 const app = getApp()
 const util = require("../../utils/util.js")
+const host = app.globalData.requestHost
+const port = app.globalData.requestPort
 
 Page({
 
@@ -111,7 +113,7 @@ Page({
           type: 1
         }),
         method: 'POST',
-        url: 'http://localhost:5000/getVerification',
+        url: 'http://'+host+':'+port+'/getVerification',
         success(res) {
           console.log(res.data)
           if(!res.data.success){
@@ -227,7 +229,7 @@ Page({
         verification: that.data.messagecode
       })
       wx.request({
-        url: 'http://localhost:5000/userRegister',
+        url: 'http://'+host+':'+port+'/userRegister',
         data: JSON.stringify({
           companyId: com.id,
           account: that.data.account,
@@ -242,8 +244,46 @@ Page({
           let resp = res.data
           if(resp.success){
             app.globalData.companyId = com.id
-            wx.redirectTo({
-              url: '../index/index',
+            app.globalData.account = that.data.account
+            wx.authorize({
+              scope: 'scope.userInfo',
+              success: () => {
+                wx.getUserInfo({
+                  success: rs => {
+                    app.globalData.userInfo = rs.userInfo
+                    wx.cloud.callFunction({
+                      name: 'login',
+                      data: {
+                        cloudID: wx.cloud.CloudID(rs.cloudID)
+                      }
+                    }).then(suc => {
+                      if (!suc.result.errMsg) {
+                        app.globalData.openid = suc.result.openid
+                        wx.request({
+                          url: 'http://'+host+':'+port+'/bindUserWx',
+                          method: 'POST',
+                          header: {
+                            "Content-Type": 'application/json'
+                          },
+                          success: rs => {
+                            if (rs.data.success) {
+                              wx.showToast({
+                                title: '添加成功',
+                                icon: 'success'
+                              })
+                            }
+                          }
+                        })
+                      }
+                    })
+                  }
+                })
+              },
+              complete: () => {
+                wx.redirectTo({
+                  url: '../index/index',
+                })
+              }
             })
           } else {
             wx.showToast({
@@ -279,13 +319,15 @@ Page({
   hideModal: function(e){
     this.setData({
       modalName: null
+    }, res => {
+      wx.hideToast()
     })
   },
 
   showModal(e) {
     let that = this
     wx.request({
-      url: 'http://127.0.0.1:5000/query_Company',
+      url: 'http://'+host+':'+port+'/query_Company',
       method: 'GET',
       success: res => {
         console.log(res)
@@ -305,7 +347,8 @@ Page({
           console.log(result)
           let cl = that.divide2Sections(result.result)
           this.setData({
-            clist: cl
+            clist: cl,
+            sclist: cl
           }, _res => {
             wx.hideToast()
           })
@@ -370,5 +413,31 @@ Page({
       listCur: this.data.listCur,
     })
   },
+
+  search: function(e) {
+    let searchText = e.detail.value
+    let slist = this.data.sclist
+    let clist = []
+    for(let i=0; i<slist.length; i++){
+      let items = []
+      for(let j=0; j<slist[i].items.length; j++){
+        let name = slist[i].items[j].name
+        let pinyin = slist[i].items[j].pinyin
+        if ((name && name.indexOf(searchText) != -1)  || 
+        (pinyin && pinyin.indexOf(searchText) != -1) ) {
+          items.push(slist[i].items[j])
+        }
+      }
+      if(items.length != 0){
+        clist.push({
+          indexName: slist[i].indexName,
+          items: items
+        })
+      }
+    }
+    this.setData({
+      clist: clist
+    })
+  }
 
 })

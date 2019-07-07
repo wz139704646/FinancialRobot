@@ -1,5 +1,7 @@
 var app = getApp()
 const util = require('../../utils/util.js')
+const host = app.globalData.requestHost
+const port = app.globalData.requestPort
 
 Page({
   data: {
@@ -9,11 +11,48 @@ Page({
     passwdError: "",
     messagecode: "",
     state: true,
-    loginText: "验证码登录"
+    loginText: "验证码登录",
   },
 
   onLoad: function (options) {
-    console.log()
+    wx.getSetting({
+      success: res => {
+        if(res.authSetting['scope.userInfo']) {
+          wx.getUserInfo({
+            success: res => {
+              app.globalData.userInfo = res.userInfo
+              wx.cloud.callFunction({
+                name: 'login',
+                data: {
+                  cloudID: wx.cloud.CloudID(res.cloudID)
+                }
+              }).then(suc => {
+                if(!suc.result.errMsg){
+                  app.globalData.openid = suc.result.openid
+                  wx.request({
+                    url: 'http://'+host+':'+port+'/queryUser',
+                    method: 'POST',
+                    header: {
+                      "Content-Type": 'application/json'
+                    },
+                    data: JSON.stringify({
+                      openid: suc.result.openid
+                    }),
+                    success: rs => {
+                      if(rs.data.success){
+                        wx.redirectTo({
+                          url: '../index/index',
+                        })
+                      }
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      }
+    })  
   },
 
   /**
@@ -108,6 +147,7 @@ Page({
 
   },
 
+
   login: function (e) {
     let state = this.data.state
     if (this.data.account == "") {
@@ -143,7 +183,7 @@ Page({
     // console.log("crypted pwd: " + crypted)
 
     wx.request({
-      url: 'http://127.0.0.1:5000/login',
+      url: 'http://'+host+':'+port+'/login',
       data: JSON.stringify({
         account: account,
         passwd: pwd,
@@ -166,11 +206,50 @@ Page({
             passwdError: "",
             codeError: ""
           })
+          return 
         } else{
           app.globalData.companyId = res.data.companyId
           app.globalData.position = res.data.position
-          wx.redirectTo({
-            url: '../index/index',
+          app.globalData.account = account
+          wx.authorize({
+            scope: 'scope.userInfo',
+            success: () => {
+              wx.getUserInfo({
+                success: res => {
+                  app.globalData.userInfo = res.userInfo
+                  wx.cloud.callFunction({
+                    name: 'login',
+                    data: {
+                      cloudID: wx.cloud.CloudID(res.cloudID)
+                    }
+                  }).then(suc => {
+                    if (!suc.result.errMsg) {
+                      app.globalData.openid = suc.result.openid
+                      wx.request({
+                        url: 'http://'+host+':'+port+'/bindUserWx',
+                        method: 'POST',
+                        header: {
+                          "Content-Type": 'application/json'
+                        },
+                        success: rs => {
+                          if (rs.data.success) {
+                            wx.showToast({
+                              title: '添加成功',
+                              icon: 'success'
+                            })
+                          }
+                        }
+                      })
+                    }
+                  })
+                }
+              })
+            },
+            complete: () => {
+              wx.redirectTo({
+                url: '../index/index',
+              })
+            }
           })
         }
         
