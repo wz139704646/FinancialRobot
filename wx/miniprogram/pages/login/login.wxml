@@ -2,7 +2,7 @@
 <cu-custom bgColor="bg-gradual-blue"><view slot="content">登录</view></cu-custom>
 <view class='loginBox'>
   <view class='loginAvatar'>
-    <image src='user-unlogin.png' mode='center'></image>
+    <image src='user-unlogin.jpg' mode='scaleToFill'></image>
   </view>
   <view class='formBox'>
     <van-cell-group custom-class='inputBox'>

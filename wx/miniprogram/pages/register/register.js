@@ -159,7 +159,7 @@ Page({
   //获取验证码
   getVerificationCode() {
     this.getCode();
-    var _this = this
+    // var _this = this
   },
   //提交表单信息
   register: function () {
@@ -241,6 +241,10 @@ Page({
           "Content-Type": 'application/json'
         },
         success: res => {
+          wx.showLoading({
+            title: '加载中',
+            mask: true
+          })
           let resp = res.data
           if(resp.success){
             app.globalData.companyId = com.id
@@ -293,6 +297,9 @@ Page({
                 wx.hideToast()
                 wx.redirectTo({
                   url: '../index/index',
+                  complete: ()=>{
+                    wx.hideLoading()
+                  }
                 })
               }
             })

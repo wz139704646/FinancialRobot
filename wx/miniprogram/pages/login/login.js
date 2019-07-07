@@ -16,8 +16,8 @@ Page({
 
   onLoad: function (options) {
     wx.showToast({
-      title: '获取用户信息中',
-      icon: 'loading',
+      title: '加载中',
+      icon:'loading',
       duration: 3000
     })
     wx.getSetting({
@@ -48,7 +48,7 @@ Page({
                       if(rs.data.success){
                         wx.redirectTo({
                           url: '../index/index',
-                          complete: () => {
+                          complete: ()=>{
                             wx.hideToast()
                           }
                         })
@@ -225,6 +225,10 @@ Page({
           wx.authorize({
             scope: 'scope.userInfo',
             success: () => {
+              wx.showLoading({
+                title: '加载中',
+                mask: true
+              })
               wx.getUserInfo({
                 success: resu => {
                   app.globalData.userInfo = resu.userInfo
@@ -249,14 +253,15 @@ Page({
                         },
                         data: JSON.stringify({
                           account: account,
-                          openid: suc.result.openid       
+                          openid: suc.result.openid
                         }),
                         success: rs => {
                           if (rs.data.success) {
-                            wx.hideToast()
+                            wx.hideLoading()
                             wx.showToast({
-                              title: '绑定成功',
-                              icon: 'success'
+                              title: '添加成功',
+                              icon: 'success',
+                              duration: 1000
                             })
                           }
                         }
@@ -266,9 +271,18 @@ Page({
                 }
               })
             },
+            fail: () => {
+              wx.showLoading({
+                title: '加载中',
+                mask: true
+              })
+            },
             complete: () => {
               wx.redirectTo({
                 url: '../index/index',
+                complete: ()=>{
+                  wx.hideLoading()
+                }
               })
             }
           })
