@@ -9,6 +9,7 @@ from flask import Blueprint, render_template, request
 from app.dao.CompanyDao import CompanyDao
 from app.dao.CustomerDao import CustomerDao
 from app.dao.SupplierDao import SupplierDao
+from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
 from app.utils.res_json import *
 from bosonnlp import BosonNLP
@@ -134,5 +135,10 @@ class Test11(unittest.TestCase):
         print(size)
         print(supresu_json)
         print(json.dumps(return_success(UserDao.to_dict(supresult)), ensure_ascii=False))
+class Test12(unittest.TestCase):
+    def test12(self):
+        addGoods = GoodsDao()
+        row = addGoods.add("西瓜",1.5,"1","食品类","个")
+        print(row)
 
 
