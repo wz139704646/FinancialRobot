@@ -2,15 +2,21 @@
 # -*- coding:utf-8 -*-
 import unittest
 import json
+import requests
 from app.dao.WareHouseDao import WareHouseDao
 from app.utils.DBHelper import MyHelper
 from flask import Blueprint, render_template, request
 from app.dao.CompanyDao import CompanyDao
 from app.dao.CustomerDao import CustomerDao
 from app.dao.SupplierDao import SupplierDao
+from app.dao.GoodsDao import GoodsDao
+from app.dao.UserDao import UserDao
 from app.utils.res_json import *
+from bosonnlp import BosonNLP
 import uuid
 import json
+# -*- encoding: utf-8 -*-
+
 
 class Test1(unittest.TestCase):
     def test1(self):
@@ -29,8 +35,8 @@ class Test2(unittest.TestCase):
 class Test3(unittest.TestCase):
     def test3(self):
         supquery = SupplierDao()
-        supname = '街道口职业技术学院'
-        supcid = "5"
+        supname = '街道口职业技术学院1'
+        supcid = "1"
         supid = str(uuid.uuid3(uuid.NAMESPACE_OID,supname))
         supphone = "12306"
         site = "信村"
@@ -54,12 +60,13 @@ class Test4(unittest.TestCase):
 class Test5(unittest.TestCase):
     def test5(self):
         queryAllsup = SupplierDao()
-        supresult = queryAllsup.query_byCompanyId("2")
+        supresult = queryAllsup.query_byCompanyId("1")
         size=len(supresult)
         print(supresult)
         supresu_json = json.dumps(SupplierDao.to_dict(supresult), ensure_ascii=False)
         print(size)
         print(supresu_json)
+        print(json.dumps(return_success(SupplierDao.to_dict(supresult)), ensure_ascii=False))
 class Test6(unittest.TestCase):
     def test6(self):
         companyId = "4"
@@ -103,3 +110,35 @@ class Test9(unittest.TestCase):
         phone = jsonranklist['xldigitid']
         print(name)
         print(phone)
+class Test10(unittest.TestCase):
+    def test10(self):
+        KEYWORDS_URL = 'http://api.bosonnlp.com/keywords/analysis'
+        text = '病毒式媒体网站：让新闻迅速蔓延'
+        params = {'top_k': 10}
+        data = json.dumps(text)
+        headers = {
+            'X-Token': 'w8HTxklZ.35565.o3kXzfrM77rR',
+            'Content-Type': 'application/json'
+        }
+        resp = requests.post(KEYWORDS_URL, headers=headers, params=params, data=data.encode('utf-8'))
+        for weight, word in resp.json():
+            print(weight, word)
+class Test11(unittest.TestCase):
+    def test11(self):
+        addUser = UserDao()
+        #row = addUser.add("123211","111","1","1")
+
+        supresult = addUser.query_all()
+        size=len(supresult)
+        print(supresult)
+        supresu_json = json.dumps(UserDao.to_dict(supresult), ensure_ascii=False)
+        print(size)
+        print(supresu_json)
+        print(json.dumps(return_success(UserDao.to_dict(supresult)), ensure_ascii=False))
+class Test12(unittest.TestCase):
+    def test12(self):
+        addGoods = GoodsDao()
+        row = addGoods.add("西瓜",1.5,"1","食品类","个")
+        print(row)
+
+

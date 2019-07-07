@@ -7,6 +7,7 @@ from app.dao.UserDao import UserDao
 from app.utils.DBHelper import MyHelper
 from app.utils.decimal_encoder import DecimalEncoder
 from app.utils.res_json import *
+from time import time
 
 wx = Blueprint("wx", __name__)
 wx.secret_key = 'secret_key_1'
@@ -25,7 +26,9 @@ def userRegister():
     account = _json["account"]
     companyId = _json["companyId"]
     password = _json["passwd"]
+    openid = _json["openid"]
     verification = _json["verification"]
+    open
 
     # 验证码验证
     # TODO
@@ -36,7 +39,7 @@ def userRegister():
     strpass = str(store_in, 'utf-8')
     print(strpass)
     user_dao = UserDao()
-    row = user_dao.add(account, strpass, companyId)
+    row = user_dao.add(account, strpass, companyId, openid)
     if row == 1:
         return json.dumps(return_success(""))
     else:
@@ -82,17 +85,42 @@ def login():
         return False
 
 
+@wx.route("/queryUser", methods=["POST"])
+def queryUser():
+    _openid = request.json.get('openid')
+    _account = request.json.get('account')
+    user_dao = UserDao()
+    res = user_dao.query_by_openid_account(_account, _openid)
+    size = len(res)
+    if size > 0:
+        return json.dumps(return_success(UserDao.to_dict(res)))
+    else:
+        return json.dumps(return_unsuccess('Error: No such user'))
+
+
+@wx.route("/bindUserWx", methods=["POST"])
+def bindUserWx():
+    _openid = request.json.get('openid')
+    _account = request.json.get('account')
+    user_dao = UserDao()
+    row = user_dao.bind_wx(_account, _openid)
+    if row == 1:
+        return json.dumps(return_success(""))
+    else:
+        return json.dumps(return_unsuccess("Bind Failed"))
+
+
 @wx.route("/addGoods", methods=['POST'])
 def addGoods():
     _json = request.json
     print(_json)
     goods_dao = GoodsDao()
-    row = goods_dao.add(_json['name'], _json['sellprice'], _json['companyId'],
+    res = goods_dao.add(_json['name'], _json['sellprice'], _json['companyId'],
                         _json['type'], _json['unitInfo'])
-    if row == 1:
-        return json.dumps(return_success(""))
+    if res["row"] == 1:
+        return json.dumps(return_success({"id": res["id"]}))
     else:
-        return json.dumps(return_unsuccess("添加商品失败"),ensure_ascii=False)
+        return json.dumps(return_unsuccess("添加商品失败"), ensure_ascii=False)
 
 
 @wx.route("/queryGoods", methods=['POST'])
@@ -105,7 +133,7 @@ def queryGoods():
     result = goods_dao.query_by_companyId(companyId, name, type)
     size = len(result)
     if size >= 0:
-        return json.dumps(return_success({'goodsList':GoodsDao.to_dict(result)}),
+        return json.dumps(return_success({'goodsList': GoodsDao.to_dict(result)}),
                           cls=DecimalEncoder, ensure_ascii=False)
     else:
-        return json.dumps(return_unsuccess("查询失败"),ensure_ascii=False)
+        return json.dumps(return_unsuccess("查询失败"), ensure_ascii=False)

@@ -8,7 +8,7 @@ class CompanyDao:
             res = {}
             res['id'] = row[0]
             res['name'] = row[1]
-            res['place'] = row[2]
+            res['address'] = row[2]
             result.append(res)
         return result
     def queryAll(self):
