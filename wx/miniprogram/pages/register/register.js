@@ -415,7 +415,8 @@ Page({
   },
 
   search: function(e) {
-    let searchText = e.detail.value
+    let searchText = e.detail.value.toLowerCase()
+    console.log(searchText)
     let slist = this.data.sclist
     let clist = []
     for(let i=0; i<slist.length; i++){
