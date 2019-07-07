@@ -109,6 +109,12 @@ Page({
   },
 
   login: function (e) {
+
+    ///////////////////
+    wx.navigateTo({
+      url: '/pages/',
+    })
+    //////////////////
     let state = this.data.state
     if (this.data.account == "") {
       this.setData({

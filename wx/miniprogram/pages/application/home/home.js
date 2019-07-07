@@ -51,7 +51,7 @@ Page({
       color: 'olive',
       badge: 0,
       name: '采购开单',
-      url:''
+        url: "/pages/application/buyBill/buyBill"
     }],
     fundIconList: [{
       icon: 'sponsor',
