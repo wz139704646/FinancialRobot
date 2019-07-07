@@ -23,11 +23,11 @@ class UserDao:
         result = connection.executeQuery('select * from User')
         return result
 
-    def add(self, account, password, companyid, openid):
+    def add(self, account, password, companyid):
         connection = MyHelper()
         row = connection.executeUpdate('insert into User(account, \
-        password, CompanyId,openid) \
-         values (%s,%s,%s,%s)', [account, password, companyid, openid])
+        password, CompanyId) \
+         values (%s,%s,%s)', [account, password, companyid])
         return row
 
     def query_by_account(self, account):
