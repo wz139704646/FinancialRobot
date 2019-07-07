@@ -15,6 +15,11 @@ Page({
   },
 
   onLoad: function (options) {
+    wx.showToast({
+      title: '加载中',
+      icon:'loading',
+      duration: 3000
+    })
     wx.getSetting({
       success: res => {
         if(res.authSetting['scope.userInfo']) {
@@ -42,12 +47,18 @@ Page({
                       if(rs.data.success){
                         wx.redirectTo({
                           url: '../index/index',
+                          complete: ()=>{
+                            wx.hideToast()
+                          }
                         })
                       }
                     }
                   })
                 }
               })
+            },
+            fail: err => {
+              wx.hideToast()
             }
           })
         }
@@ -214,13 +225,17 @@ Page({
           wx.authorize({
             scope: 'scope.userInfo',
             success: () => {
+              wx.showLoading({
+                title: '加载中',
+                mask: true
+              })
               wx.getUserInfo({
-                success: res => {
-                  app.globalData.userInfo = res.userInfo
+                success: resu => {
+                  app.globalData.userInfo = resu.userInfo
                   wx.cloud.callFunction({
                     name: 'login',
                     data: {
-                      cloudID: wx.cloud.CloudID(res.cloudID)
+                      cloudID: wx.cloud.CloudID(resu.cloudID)
                     }
                   }).then(suc => {
                     if (!suc.result.errMsg) {
@@ -231,11 +246,17 @@ Page({
                         header: {
                           "Content-Type": 'application/json'
                         },
+                        data: JSON.stringify({
+                          account: account,
+                          openid: suc.result.openid
+                        }),
                         success: rs => {
                           if (rs.data.success) {
+                            wx.hideLoading()
                             wx.showToast({
                               title: '添加成功',
-                              icon: 'success'
+                              icon: 'success',
+                              duration: 1000
                             })
                           }
                         }
@@ -245,9 +266,18 @@ Page({
                 }
               })
             },
+            fail: () => {
+              wx.showLoading({
+                title: '加载中',
+                mask: true
+              })
+            },
             complete: () => {
               wx.redirectTo({
                 url: '../index/index',
+                complete: ()=>{
+                  wx.hideLoading()
+                }
               })
             }
           })
