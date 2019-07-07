@@ -37,7 +37,7 @@ def userRegister():
     strpass = str(store_in, 'utf-8')
     print(strpass)
     user_dao = UserDao()
-    row = user_dao.add(account, strpass, companyId,openid)
+    row = user_dao.add(account, strpass, companyId, openid)
     if row == 1:
         return json.dumps(return_success(""))
     else:
@@ -81,6 +81,31 @@ def login():
     else:
         # TODO
         return False
+
+
+@wx.route("/queryUser", methods=["POST"])
+def queryUser():
+    _openid = request.json.get('openid')
+    _account = request.json.get('account')
+    user_dao = UserDao()
+    res = user_dao.query_by_openid_account(_account, _openid)
+    size = len(res)
+    if size > 0:
+        return json.dumps(return_success(UserDao.to_dict(res)))
+    else:
+        return json.dumps(return_unsuccess('Error: No such user'))
+
+
+@wx.route("/bindUserWx", methods=["POST"])
+def bindUserWx():
+    _openid = request.json.get('openid')
+    _account = request.json.get('account')
+    user_dao = UserDao()
+    row = user_dao.bind_wx(_account, _openid)
+    if row == 1:
+        return json.dumps(return_success(""))
+    else:
+        return json.dumps(return_unsuccess("Bind Failed"))
 
 
 @wx.route("/addGoods", methods=['POST'])
