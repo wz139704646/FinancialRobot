@@ -24,8 +24,8 @@ class UserDao:
 
     def add(self, account, password, companyid):
         connection = MyHelper()
-        row=connection.executeUpdate('insert into User(account, \
-        password, CompanyId, ID, phone, position) \
+        row = connection.executeUpdate('insert into User(account, \
+        password, CompanyId) \
          values (%s,%s,%s)', [account, password, companyid])
         return row
 
