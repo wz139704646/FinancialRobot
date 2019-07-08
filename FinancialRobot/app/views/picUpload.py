@@ -32,7 +32,7 @@ def api_upload():
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)
     f, = request.files.values()
-    id = request.json.get("id")
+    id = request.form.get("id")
     size = len(f.read())
     print(size)
     f.seek(0)
