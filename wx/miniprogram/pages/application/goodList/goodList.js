@@ -1,20 +1,21 @@
-// pages/application/goodList/goodList.js
+var app = getApp()
+const host = app.globalData.requestHost
 Page({
-  
-  /**
-   * 页面的初始数据
-   */
   data: {
+
     goodsList: []
       
   },
   onLoad: function (options) {
     var that = this
     that.initGoodList()
+    this.setData({
+      host:host
+    })
   },
   initGoodList(){
     wx.request({
-      url: 'http://127.0.0.1:5000/queryGoods',
+      url: 'http://' + host + '/queryGoods',
       data: JSON.stringify({
         companyId:5
       }),

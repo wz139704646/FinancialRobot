@@ -1,4 +1,5 @@
-// pages/application/newCustomer/newCustomer.js
+var app = getApp()
+const host = app.globalData.requestHost
 var name = ''
 var phone = ''
 var bankaccount = ''
@@ -9,12 +10,9 @@ var tindex = null
 var rindex = null
 Page({
 
-  /**
-   * 页面的初始数据
-   */
   data: {
 
-    type: [1, 2, 3],
+    type: ['普通客户', 2, 3],
     range: [1, 2, 3]
   },
   typeChange(e) {
@@ -31,7 +29,7 @@ Page({
   addsuccess(e) {
 
     wx.request({
-      url: 'http://127.0.0.1:5000/addCustomer',
+      url: 'http://' + host + '/addCustomer',
       data: JSON.stringify({
         companyId: 5,
         name: name,
@@ -46,6 +44,8 @@ Page({
       success: res => {
         wx.showToast({
           title: 'add success',
+          duration:4000,
+          mask:true
         })
         console.log(res)
         wx.redirectTo({

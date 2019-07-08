@@ -1,3 +1,6 @@
+var app = getApp()
+const host = app.globalData.requestHost
+const port = app.globalData.requestPort
 var name = ''
 var phone = ''
 var bankaccount = ''
@@ -7,12 +10,12 @@ var site = ''
 
 Page({
   data: {
-    type:[]
+    type:["批发"]
   },
 
   addsuccess(e) {
     wx.request({
-      url: 'http://127.0.0.1:5000/addSupplier',
+      url: 'http://' + host + ':' + port + '/addSupplier',
       data: JSON.stringify({
         companyId: "5",
         name: name,
@@ -64,5 +67,10 @@ Page({
     console.log(e.detail.value)
     site = e.detail.value
   },
+  typeChange(e) {
+    this.setData({
+      tindex: e.detail.value
+    })
 
+  },
 })

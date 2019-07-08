@@ -1,4 +1,6 @@
-// pages/application/sellList/sellList.js
+var app = getApp()
+const host = app.globalData.requestHost
+const port = app.globalData.requestPort
 Page({
 
   /**

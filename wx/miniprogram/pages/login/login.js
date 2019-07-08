@@ -1,7 +1,6 @@
 var app = getApp()
 const util = require('../../utils/util.js')
 const host = app.globalData.requestHost
-const port = app.globalData.requestPort
 
 Page({
   data: {
@@ -35,7 +34,7 @@ Page({
                 if(!suc.result.errMsg){
                   app.globalData.openid = suc.result.openid
                   wx.request({
-                    url: 'http://'+host+':'+port+'/queryUser',
+                    url: 'http://'+host+'/queryUser',
                     method: 'POST',
                     header: {
                       "Content-Type": 'application/json'
@@ -161,12 +160,6 @@ Page({
 
 
   login: function (e) {
-
-    ///////////////////
-    wx.navigateTo({
-      url: '/pages/',
-    })
-    //////////////////
     let state = this.data.state
     if (this.data.account == "") {
       this.setData({
@@ -200,7 +193,7 @@ Page({
     }
     // console.log("crypted pwd: " + crypted)
     wx.request({
-      url: 'http://'+host+':'+port+'/login',
+      url: 'http://'+host+'/login',
       data: JSON.stringify({
         account: account,
         passwd: pwd,
@@ -252,7 +245,7 @@ Page({
                     if (!suc.result.errMsg) {
                       app.globalData.openid = suc.result.openid
                       wx.request({
-                        url: 'http://'+host+':'+port+'/bindUserWx',
+                        url: 'http://'+host+'/bindUserWx',
                         method: 'POST',
                         header: {
                           "Content-Type": 'application/json'

@@ -3,7 +3,6 @@
 const app = getApp()
 const util = require("../../utils/util.js")
 const host = app.globalData.requestHost
-const port = app.globalData.requestPort
 
 Page({
 
@@ -113,7 +112,7 @@ Page({
           type: 1
         }),
         method: 'POST',
-        url: 'http://'+host+':'+port+'/getVerification',
+        url: 'http://'+host+'/getVerification',
         success(res) {
           console.log(res.data)
           if(!res.data.success){
@@ -229,7 +228,7 @@ Page({
         verification: that.data.messagecode
       })
       wx.request({
-        url: 'http://'+host+':'+port+'/userRegister',
+        url: 'http://'+host+'/userRegister',
         data: JSON.stringify({
           companyId: com.id,
           account: that.data.account,
@@ -269,7 +268,7 @@ Page({
                       if (!suc.result.errMsg) {
                         app.globalData.openid = suc.result.openid
                         wx.request({
-                          url: 'http://'+host+':'+port+'/bindUserWx',
+                          url: 'http://'+host+'/bindUserWx',
                           method: 'POST',
                           header: {
                             "Content-Type": 'application/json'
@@ -345,7 +344,7 @@ Page({
   showModal(e) {
     let that = this
     wx.request({
-      url: 'http://'+host+':'+port+'/query_Company',
+      url: 'http://'+host+'/query_Company',
       method: 'GET',
       success: res => {
         console.log(res)

@@ -1,4 +1,5 @@
-const app = getApp();
+var app = getApp()
+const host = app.globalData.requestHost
 var inputVal = '';
 
 Page({
@@ -19,7 +20,7 @@ Page({
   getCustomerList(){
     var that = this
     wx.request({
-      url: 'http://127.0.0.1:5000/queryAllCustomer',
+      url: 'http://' + host + '/queryAllCustomer',
       data: JSON.stringify({
         companyId:"5"
       }),

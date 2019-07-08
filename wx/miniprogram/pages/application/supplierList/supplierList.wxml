@@ -16,7 +16,7 @@
   <block wx:for="{{pysupplierList}}" wx:key>
     <view class="padding indexItem-{{pysupplierList[index].first}}" id="indexes-{{pysupplierList[index].first}}" data-index="{{pysupplierList[index].first}}">{{pysupplierList[index].first}}</view>
     <view class="cu-list menu-avatar no-padding">
-      <view class="cu-item" wx:for="{{item.sList}}" wx:for-item="sList" wx:key>
+      <view class="cu-item" wx:for="{{item.sList}}" wx:for-item="sList" wx:key bindtap="choose" id="{{sList.name}}">
         <view class="cu-avatar round lg">{{item.first}}</view>
         <view class="content">
           <view class="text-black">

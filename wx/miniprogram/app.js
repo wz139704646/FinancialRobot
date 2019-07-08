@@ -19,7 +19,6 @@ App({
   },
   globalData: {
     requestHost: 'financialrobot.chinanorth.cloudapp.chinacloudapi.cn',
-    requestPort: 80,
     ColorList: [{
       title: '嫣红',
       name: 'red',

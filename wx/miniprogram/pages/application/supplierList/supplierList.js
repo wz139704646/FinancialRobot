@@ -1,25 +1,23 @@
-const app = getApp();
+var app = getApp()
+const host = app.globalData.requestHost
 var inputVal = '';
 
 Page({
   data: {
+    //用于区分不同页面传来的值
+    type:"",
     StatusBar: app.globalData.StatusBar,
     CustomBar: app.globalData.CustomBar,
     hidden: true,
-    supplierList: [
-
-
-    ],
-
+    supplierList: [],
     pysupplierList: [],
-
     pyallsupplierList: [],
   },
 
   getSupplierList() {
     var that = this
     wx.request({
-      url: 'http://127.0.0.1:5000/queryByCompanyId',
+      url: 'http://' + host + '/queryByCompanyId',
       data: JSON.stringify({
         companyId: 5
       }),
@@ -101,7 +99,13 @@ Page({
       listCur: this.data.pysupplierList[0].first
     });
   },
-  onLoad() {
+  onLoad(options) {
+    console.log(options)
+    if (options.type != null) {
+      this.setData({
+        type: options.type
+      })
+    }
     this.getSupplierList()
   },
   onReady() {
@@ -208,4 +212,8 @@ Page({
       });
     }
   },
+
+  choose(e){
+    console.log(e)
+  }
 });
