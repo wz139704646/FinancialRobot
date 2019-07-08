@@ -16,6 +16,7 @@ App({
         this.globalData.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
       }
     })
+    
   },
   globalData: {
     requestHost: 'financialrobot.chinanorth.cloudapp.chinacloudapi.cn',
