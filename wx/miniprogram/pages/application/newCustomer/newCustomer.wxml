@@ -29,11 +29,11 @@
 </view>
 <view class="cu-form-group">
   <view class="title">手机</view>
-  <input placeholder="请输入" style="text-align:right" value="{{phone}}" bindinput='phoneChange'></input>
+  <input type='number' placeholder="请输入" style="text-align:right" value="{{phone}}" bindinput='phoneChange'></input>
 </view>
 <view class="cu-form-group">
   <view class="title">银行账户</view>
-  <input placeholder="请输入" style="text-align:right" value="{{bankaccount}}" bindinput='bankaccountChange'></input>
+  <input type='number' placeholder="请输入" style="text-align:right" value="{{bankaccount}}" bindinput='bankaccountChange'></input>
 </view>
 <view class="cu-form-group">
   <view class="title">银行姓名</view>

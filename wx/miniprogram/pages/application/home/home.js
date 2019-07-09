@@ -33,7 +33,7 @@ Page({
       color: 'red',
       badge: 0,
       name: '采购记录',
-      url:''
+      url:'/pages/application/buyList/buyList'
     }, {
       icon: 'friendaddfill',
       color: 'orange',

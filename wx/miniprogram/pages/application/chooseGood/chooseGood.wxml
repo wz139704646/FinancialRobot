@@ -1,0 +1,62 @@
+<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">选择商品</view>
+</cu-custom>
+<view class="cu-bar bg-white search fixed" style="top:{{CustomBar}}px;">
+  <view class="search-form round">
+    <text class="cuIcon-search"></text>
+    <input type="text" placeholder="输入搜索的关键词" confirm-type="search" bindconfirm='search' value='{{inputVal}}' bindinput='sInputChange'></input>
+  </view>
+</view>
+<block wx:key wx:for='{{goodsList}}' wx:for-index='index'>
+  <van-card num="{{item.buyNum}}" tag="{{item.type}}" price="{{item.sellprice}}" desc="单位:{{item.unitInfo}}" title="{{item.name}}" thumb="{{'http://'+host+'/goodsPic/'+item.photo}}" thumb-mode="aspectFill" bindtap='showModal' id="{{index}}" data-target="addGood" data-id="{{item.id}}" data-buyNum="{{item.buyNum}}" data-name="{{item.name}}" data-price="{{item.sellprice}}"> 
+  </van-card>
+  <view class="divLine"></view>
+</block>
+<view class="cu-bar bg-white tabbar border shop foot" style="bottom:0px">
+  <view class="action" data-target='showBuyList' bindtap='showBuyList'>
+    <view class="cuIcon-cart">
+      <view class="cu-tag badge" bindtap='showBuyList'>{{badge}}</view>
+    </view>
+    购物车
+  </view>
+  <text class="text-price text-red">总价:{{total}}</text>
+  <button class="cu-btn bg-red round shadow-blur" style='margin-right:20px' bindtap='finishChoosing'>立即订购</button>
+</view>
+
+<!-- 点击modal -->
+<view class="cu-modal bottom-modal {{modalName=='addGood'?'show':''}}">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white">
+      <view class="action text-green" bindtap='changeBuyNum'>确定</view>
+      <view class="action text-blue" bindtap="hideModal">取消</view>
+    </view>
+    <view class="padding-xl">
+      <input type='number' placeholder='请输入进货商品数量' value='{{tempNum}}' bindinput='inputChange'></input>
+    </view>
+  </view>
+</view>
+
+<!-- 点击modal -->
+<view class="cu-modal bottom-modal {{modalName=='showBuyList'?'show':''}}">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white">
+      <view class="action text-grey">已选商品</view>
+      <view class="action text-blue" bindtap="hideModal">确认</view>
+    </view>
+    <block wx:key wx:for='{{buyList}}' wx:for-index='index' >
+      <view class="cu-bar bg-gray">
+        <view class="action text-black">商品:{{item.name}}</view>
+        <view class="action text-black">单价:{{item.price}}</view>
+        <view class='action text-black'>数量:{{item.buyNum}}</view>
+        <view class='action text-black' id="{{index}}" bindtap='cancelGood'>x</view>
+      </view>
+
+      <view class="divLine"></view>
+    </block>
+    <view class="cu-bar bg-white">
+      <view class="action text-grey">总价</view>
+      <view class="action text-price text-red" bindtap="hideModal">{{total}}</view>
+    </view>
+  </view>
+</view>

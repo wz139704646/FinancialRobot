@@ -5,7 +5,7 @@ var inputVal = '';
 Page({
   data: {
     //用于区分不同页面传来的值
-    type:"",
+    type:"0",
     StatusBar: app.globalData.StatusBar,
     CustomBar: app.globalData.CustomBar,
     hidden: true,
@@ -123,8 +123,6 @@ Page({
   },
   //获取文字信息
   getCur(e) {
-    console.log(e)
-    console.log(this.data.pysupplierList[e.target.id].first)
     this.setData({
       hidden: false,
       listCur: this.data.pysupplierList[e.target.id].first,
@@ -147,7 +145,7 @@ Page({
     if (y > offsettop) {
       let num = parseInt((y - offsettop) / 20);
       this.setData({
-        listCur: that.data.pycustomerList[num].first
+        listCur: that.data.pysupplierList[num].first
       })
     };
   },
@@ -214,6 +212,28 @@ Page({
   },
 
   choose(e){
-    console.log(e)
+    //采购订单
+    if (this.data.type == "1" || this.data.type == "2"){
+      var pages = getCurrentPages();
+      var currPage = pages[pages.length - 1];   //当前页面
+      var prevPage = pages[pages.length - 2];  //上一个页面
+      console.log(e)
+      var id = e.currentTarget.dataset.id
+      var name = e.currentTarget.dataset.name
+      this.setData({
+        id:id,
+        name:name
+      })
+      //直接调用上一个页面对象的setData()方法，把数据存到上一个页面中去
+      prevPage.setData({
+        supplier: this.data.name,
+        id:this.data.id
+      });
+
+      wx.navigateBack({
+        delta: 1
+      })
+    } 
   }
+
 });

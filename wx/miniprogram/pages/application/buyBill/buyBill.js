@@ -6,7 +6,9 @@ Page({
    */
   data: {
     date: '2018-12-25',
-    type: 0
+    type: "1",
+    buyList:[],
+
   },
   DateChange(e) {
     this.setData({
@@ -19,19 +21,24 @@ Page({
     })
   },
   addGoods(e){
-
+    wx.navigateTo({
+      url: '../chooseGood/chooseGood',
+    })
   },
   onClick(e){
-    if(type==0){
+    if(this.data.type=="1"){
       this.setData({
-        type:1
+        type:"2"
       })
     }else{
       this.setData({
-        type:0
+        type:"1"
       })
       
     }
   },
-
+  //生成采购单
+  buyBill(){
+    console.log("生成采购单")
+  }
 })

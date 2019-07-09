@@ -1,6 +1,5 @@
 var app = getApp()
 const host = app.globalData.requestHost
-const port = app.globalData.requestPort
 var name = ''
 var phone = ''
 var bankaccount = ''
@@ -15,7 +14,7 @@ Page({
 
   addsuccess(e) {
     wx.request({
-      url: 'http://' + host + ':' + port + '/addSupplier',
+      url: 'http://' + host + '/addSupplier',
       data: JSON.stringify({
         companyId: "5",
         name: name,
