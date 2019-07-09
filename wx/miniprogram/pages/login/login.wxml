@@ -1,0 +1,29 @@
+<!--Login page-->
+<cu-custom bgColor="bg-gradual-blue"><view slot="content">登录</view></cu-custom>
+<view class='loginBox'>
+  <view class='loginAvatar'>
+    <image src='user-unlogin.jpg' mode='scaleToFill'></image>
+  </view>
+  <view class='formBox'>
+    <van-cell-group custom-class='inputBox'>
+      <view>
+        <van-field label="账号" value="{{ account }}" placeholder="请输入账号" left-icon='friends-o' border="{{ true }}" clearable bind:change="onAccoutChange" icon="question-o" bind:click-icon="accountTip" error-message="{{accountError}}" />
+      </view>
+      <view hidden='{{!state}}'>
+        <van-field type='password' label="密码" value="{{ passwd }}" placeholder="请输入密码" left-icon='eye-o' border="{{ true }}" clearable bind:change="onPwdChange" error-message="{{passwdError}}" />
+      </view>
+      <view hidden='{{state}}'>
+        <van-field value="{{ messagecode }}" center clearable label="短信验证码" placeholder="请输入验证码" left-icon='comment-o' border="{{ false }}" use-button-slot bindinput="setCode">
+          <van-button slot="button" size="small" type="primary" bindtap="sendCode" disabled='{{disabled}}'>发送验证码</van-button>
+        </van-field>
+      </view>
+    </van-cell-group>
+    <view class='otherButtonBox'>
+      <text bindtap='changeState' class='left-text'>{{loginText}}</text>
+      <text bindtap='register' class='right-text'>注册账号</text>
+    </view>
+    <view class='loginButtonBox'>
+      <button class='button-login' open-type="getUserInfo" bind:getuserinfo="login">登录</button>
+    </view>
+  </view>
+</view>

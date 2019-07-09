@@ -1,3 +1,4 @@
+redis
 pymysql
 requests
 Click==7.0

@@ -33,6 +33,7 @@ def api_upload():
         os.makedirs(file_dir)
     f, = request.files.values()
     id = request.form.get("id")
+
     size = len(f.read())
     print(size)
     f.seek(0)

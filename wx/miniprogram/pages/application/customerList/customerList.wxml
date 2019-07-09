@@ -1,0 +1,40 @@
+<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">客户列表</view>
+</cu-custom>
+<view class="cu-bar bg-white search fixed" style="top:{{CustomBar}}px;">
+  <view class="search-form round">
+    <text class="cuIcon-search"></text>
+    <input type="text" placeholder="输入搜索的关键词" confirm-type="search" bindconfirm='search' value='{{inputVal}}' bindinput='inputChange'></input>
+  </view>
+  <view class="action">
+    <button class="cu-btn bg-gradual-green shadow-blur round" bindtap='search'>搜索</button>
+  </view>
+</view>
+<scroll-view scroll-y class="indexes" scroll-into-view="indexes-{{listCurID}}" style="height:calc(100vh - {{CustomBar}}px - 50px)"  scroll-with-animation="true" enable-back-to-top="true">
+  <block wx:for="{{pycustomerList}}" wx:key>
+    <view class="padding indexItem-{{pycustomerList[index].first}}" id="indexes-{{pycustomerList[index].first}}" data-index="{{pycustomerList[index].first}}">{{pycustomerList[index].first}}</view>
+    <view class="cu-list menu-avatar no-padding">
+      <view class="cu-item" wx:for="{{item.cList}}" wx:for-item="cList" wx:key>
+        <view class="cu-avatar round lg">{{item.first}}</view>
+        <view class="content">
+          <view class="text-black">
+            {{cList.name}}
+          </view>
+          <view class="text-gray text-sm">
+            {{cList.phone}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</scroll-view>
+<view class="indexBar" style="height:calc(100vh - {{CustomBar}}px - 50px)">
+  <view class="indexBar-box" bindtouchstart="tStart" bindtouchend="tEnd" catchtouchmove="tMove">
+    <view class="indexBar-item" wx:for="{{pycustomerList}}" wx:key id="{{index}}" bindtouchstart="getCur" bindtouchend="setCur">{{item.first}}</view>
+  </view>
+</view>
+<!--选择显示-->
+<view hidden="{{hidden}}" class="indexToast">
+  {{listCur}}
+</view>
