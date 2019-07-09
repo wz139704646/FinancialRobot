@@ -48,11 +48,11 @@
 <!-- 这个后台接口里没有，待定 -->
 <view class="cu-form-group margin-top">
   <view class="title">商品品牌</view>
-  <input placeholder="请输入商品品牌" style="text-align:right"></input>
+  <input placeholder="请输入商品品牌" style="text-align:right" value='{{brand}}' bindinput='brandChange'></input>
 </view>
 <view class="cu-form-group">
   <view class="title">规格型号</view>
-  <input placeholder="请输入规格型号" style="text-align:right"></input>
+  <input placeholder="请输入规格型号" style="text-align:right" value='{{standard}}' bindinput='standardChange'></input>
 </view>
 <view class="cu-form-group">
   <view class="title">条形码</view>

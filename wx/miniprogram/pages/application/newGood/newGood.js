@@ -17,7 +17,9 @@ Page({
     unitInfo: ['个', 'kg', '袋', '瓶', '箱'],
     type: ['食品类','服装类','鞋帽类','日用品类','家具类','家用电器类','纺织品类','五金电料类','厨具类'],
     store: ['仓库1','仓库2','仓库3'],
-    sellprice: ''
+    sellprice: '',
+    standard: '',
+    brand: ''
   },
   nameChange(e) {
     console.log(e);
@@ -129,15 +131,42 @@ Page({
     })
   },
   scanCode: function (event) {
+    let that = this
     wx.scanCode({
       success: res => {
-        console.log(res)
-        this.setData({
-          barcode:res.result
+        // console.log(typeof(res.result))
+        // 查询商品信息
+        wx.request({
+          url: 'http://www.mxnzp.com/api/barcode/goods/details?barcode='+res.result,
+          method: 'GET',
+          success: resu => {
+            let info = resu.data
+            console.log(info)
+            // 成功返回信息
+            if(info.code == 1){
+              that.setData({
+                name: info.data.goodsName,
+                barcode: info.data.barcode,
+                sellprice: info.data.price,
+                standard: info.data.standard,
+                brand: info.data.brand
+              })
+            } else if(info.code == 0){
+              that.setData({
+                barcode: res.result
+              })
+            }
+          },
+          fail: err => {
+            console.error(err)
+            that.setData({
+              barcode: res.result
+            })
+          }
         })
       },
-      fail: err => {
-        console.error(err)
+      fail: err1 => {
+        console.error(err1)
       }
     })
   }
