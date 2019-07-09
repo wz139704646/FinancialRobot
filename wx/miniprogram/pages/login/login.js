@@ -11,6 +11,7 @@ Page({
     messagecode: "",
     state: true,
     loginText: "验证码登录",
+    disabled: false,
   },
 
   onLoad: function (options) {
@@ -158,9 +159,79 @@ Page({
 
   },
 
+  // 输入验证码时
+  setCode: function(e){
+    this.setData({
+      messagecode: e.detail
+    })
+  },
+
+  // 发送验证码
+  sendCode: function(e){
+    var _this = this;
+    var myreg = /^(14[0-9]|13[0-9]|15[0-9]|17[0-9]|18[0-9])\d{8}$$/;
+    if (this.data.account == "") {
+      wx.showToast({
+        title: '手机号不能为空',
+        icon: 'none',
+        duration: 1000
+      })
+      return false;
+    } else if (!myreg.test(this.data.account)) {
+      wx.showToast({
+        title: '请输入正确的手机号',
+        icon: 'none',
+        duration: 1000
+      })
+      return false;
+    } else {
+      wx.request({
+        data: JSON.stringify({
+          account: _this.data.account,
+          type: 0
+        }),
+        method: 'POST',
+        url: 'http://' + host + '/getVerification',
+        success(res) {
+          console.log(res.data)
+          if (!res.data.success) {
+            wx.showToast({
+              title: res.data.errMsg,
+              icon: 'none',
+              duration: 1000
+            })
+            return
+          }
+          _this.setData({
+            iscode: res.data.result.code,
+            disabled: true
+          })
+          var num = 61;
+          var timer = setInterval(function () {
+            num--;
+            if (num <= 0) {
+              clearInterval(timer);
+              _this.setData({
+                codename: '重新发送',
+                disabled: false
+              })
+
+            } else {
+              _this.setData({
+                codename: num + "s"
+              })
+            }
+          }, 1000)
+        }
+      })
+
+    }
+  },
+
 
   login: function (e) {
     let state = this.data.state
+    var myreg = /^(14[0-9]|13[0-9]|15[0-9]|17[0-9]|18[0-9])\d{8}$/;
     if (this.data.account == "") {
       this.setData({
         accountError: "未输入账号",
@@ -172,16 +243,24 @@ Page({
       if (state) {
         this.setData({
           accountError: "",
-          passwdError: "未输入密码"
+          passwdError: "未输入密码",
+          codeError: ''
         })
         return
       } else {
         this.setData({
           accountError: "",
-          codeError: "未输入短信验证码"
+          codeError: "未输入短信验证码",
+          passwdError: ''
         })
         return
       }
+    } else if (!myreg.test(this.data.account)){
+      this.setData({
+        accountError: '手机号错误',
+        passwdError: '',
+        codeError: ''
+      })
     }
 
     let account = this.data.account

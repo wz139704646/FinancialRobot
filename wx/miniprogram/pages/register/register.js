@@ -409,6 +409,8 @@ Page({
     //判断选择区域,只有在选择区才会生效
     if (y > offsettop) {
       let num = parseInt((y - offsettop) / 20);
+      if(num >= that.data.clist.length)
+        return
       console.log("num:"+num)
       this.setData({
         listCur: that.data.clist[num].indexName,
