@@ -18,7 +18,8 @@
     "pages/application/newGood/newGood",
     "pages/application/goodList/goodList",
     "pages/application/goodInfo/goodInfo",
-    "pages/application/buyBill/buyBill"
+    "pages/application/buyBill/buyBill",
+    "pages/application/chooseGood/chooseGood"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",

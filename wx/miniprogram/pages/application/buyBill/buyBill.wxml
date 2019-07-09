@@ -2,7 +2,7 @@
   <view slot="backText">返回</view>
   <view slot="content">采购开单</view>
 </cu-custom>
-<van-tabs active="{{ active }}" bind:click="onClick">
+<van-tabs active="{{ active }}" bindtap="onClick">
   <van-tab title="采购订单"></van-tab>
   <van-tab title="采购退货"></van-tab>
 </van-tabs>
@@ -16,7 +16,7 @@
 </view>
 <view class="cu-form-group" bindtap='addProvider'>
   <view class="title">供应商</view>
-  <input disabled placeholder='请选择' style="text-align:right"></input>
+  <input disabled placeholder='请选择' value='{{supplier}}' style="text-align:right"></input>
   <text class="cuIcon-friendadd text-orange"></text>
 </view>
 <view class="cu-form-group" bindtap='addGoods'>
