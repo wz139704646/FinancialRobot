@@ -24,3 +24,15 @@
   <input disabled placeholder='请选择' style="text-align:right"></input>
   <text class="cuIcon-goods text-orange"></text>
 </view>
+<block wx:key wx:for='{{buyList}}' wx:for-index='index'>
+  <view class="cu-bar bg-gray">
+    <view class="action text-black">商品:{{item.name}}</view>
+    <view class="action text-black">单价:{{item.price}}</view>
+    <view class='action text-black'>数量:{{item.buyNum}}</view>
+  </view>
+  <view class="divLine"></view>
+</block>
+<view wx:if="{{total>0}}" class="cu-bar bg-white">
+  <view class="action text-red text-price">总价:{{total}}</view>
+  <view class="action text-blue" bindtap="buyBill">确认</view>
+</view>

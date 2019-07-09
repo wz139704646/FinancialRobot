@@ -37,5 +37,8 @@ Page({
       
     }
   },
-
+  //生成采购单
+  buyBill(){
+    console.log("生成采购单")
+  }
 })

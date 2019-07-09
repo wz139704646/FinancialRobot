@@ -1,4 +1,4 @@
-var app = getApp()
+const app = getApp()
 const host = app.globalData.requestHost
 Page({
   data: {

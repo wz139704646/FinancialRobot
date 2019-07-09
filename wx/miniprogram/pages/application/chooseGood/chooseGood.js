@@ -1,67 +1,253 @@
-const app=getApp() 
+const app = getApp()
+const host = app.globalData.requestHost
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
     StatusBar: app.globalData.StatusBar,
     CustomBar: app.globalData.CustomBar,
+    goodsList:[],
+    buyList:[],
+    isInlist:false,
+    badge:0,
+    total:0,
+    curPrice:0,
+    curIndex:null,
+    tempNum:null,
+    curId:null,
+    curName:null,
+
+    inputVal:"",
+    searchList:[]
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
+
   onLoad: function (options) {
+    console.log("load")
+    var that = this
+    var goodsList = this.data.goodsList
+    this.setData({
+      host: host
+    })
 
+    that.initGoodList()
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
+  initGoodList() {
+    var that = this
+    wx.request({
+      url: 'http://' + host + '/queryGoods',
+      data: JSON.stringify({
+        companyId: 5
+      }),
+      method: "POST",
+      header: {
+        "Content-Type": 'application/json'
+      },
+      success: res => {
+        var goodsList = res.data.result.goodsList
+        this.setData({
+          goodsList:goodsList
+        })
+        that.initNum(goodsList)
+      }
+    })
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
+  initNum(goodsList){
+    console.log(goodsList)
+    
+    for (var index in goodsList) {
+      var buyParam = "goodsList[" + index + "].buyNum"
+      this.setData({
+        [buyParam]: 0,
+      })
+    }
+    console.log(this.data.goodsList)
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
+  addGood(e){
+    console.log(e)
   },
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
+  changeBuyNum(){
+    var that = this
+    var goodsList = this.data.goodsList
+    var curIndex = this.data.curIndex
+    //var total = this.data.total
+    var curPrice = this.data.curPrice
+    var tempNum = this.data.tempNum
+    var badge = this.data.badge
+    var isInlist = this.data.isInlist
+    var buyList = this.data.buyList
+    //total = total + curPrice * tempNum
+    console.log(curIndex)
+    goodsList[curIndex].buyNum = tempNum
+    if(isInlist){
+      if(tempNum == 0){
+        //从数组取出
+        badge = badge - 1
+       
+        var bindex = 0
+        for (var index in buyList) {
+          console.log(buyList[index]);
+          console.log(index);
+          if(buyList[index].id == this.data.curId){
+            bindex = index
+          }
+        }
+        console.log(bindex)
+        buyList.splice(bindex, 1)
+        //console.log("buylist"+buyList)
+        //console.log(buyList)
+      }
+    }else{
+      if(tempNum > 0){
+        //添加到数组
+        buyList.push({
+          id:this.data.curId,
+          name:this.data.curName,
+          buyNum:this.data.tempNum,
+          price:this.data.curPrice
+        })
+        badge = badge + 1
+      }
+    }
+    this.setData({
+      goodsList:goodsList,
+      //total:total,
+      badge:badge,
+      buyList:buyList
+    })
+    that.calTotal()
+    that.hideModal()
+  },
+  inputChange(e){
+    this.setData({
+      tempNum:e.detail.value
+    })
+    console.log(e.detail.value)
+  },
+  showModal(e) {
+    var modelName = this.data.modalName
+    console.log(e)
+    this.setData({
+      modalName: e.currentTarget.dataset.target,
+      curIndex: e.currentTarget.id,
+      tempNum:e.currentTarget.dataset.buynum,
+      curPrice:e.currentTarget.dataset.price,
+      curId:e.currentTarget.dataset.id,
+      curName:e.currentTarget.dataset.name
+    })
+    if(e.currentTarget.dataset.buynum!=0){
+      this.setData({
+        isInlist:true
+      })
+    }else{
+      this.setData({
+        isInlist:false
+      })
+    }
+  },
+  hideModal(e) {
+    this.setData({
+      modalName: null
+    })
+  },
+  //模态框显示买的东西的列表
+  showBuyList(e){
+    console.log(e)
+    this.setData({
+      modalName:e.currentTarget.dataset.target
+    })
+  },
+  cancelGood(e){
+    console.log(e)
+    var that = this
+    var index = e.currentTarget.id
+    var buyList = this.data.buyList
+    var goodid = buyList[index].id
+    //var total = this.data.total
+    console.log(goodid)
+    var goodsList = this.data.goodsList
+    var badge = this.data.badge
+    badge = badge - 1
+    //total = total - buyList[index].price * buyList[index].buyNum
+    buyList.splice(index,1)
+  
+    var bindex = 0
+    for (var index in goodsList) {
+      if (goodsList[index].id == goodid) {
+        bindex = index
+      }
+    }
+    console.log(bindex)
+    goodsList[bindex].buyNum = 0
+    this.setData({
+      goodsList:goodsList,
+      badge:badge,
+      buyList:buyList
+    })    
+    console.log(goodsList)
+    that.calTotal()
+  },
+  calTotal(){
+    var buyList = this.data.buyList
+    var total = 0
+    for (var index in buyList) {
+       total = total + buyList[index].buyNum * buyList[index].price
+    }
+    this.setData({
+      total:total
+    })
+  },
+  //选择完毕
+  finishChoosing(e){
+    var pages = getCurrentPages();
+    var currPage = pages[pages.length - 1];   //当前页面
+    var prevPage = pages[pages.length - 2];  //上一个页面
+    
+    //直接调用上一个页面对象的setData()方法，把数据存到上一个页面中去
+    prevPage.setData({
+      buyList:currPage.data.buyList,
+      total:currPage.data.total
+    });
+    wx.navigateBack({
+      delta: 1
+    })
   },
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
+  sInputChange(e){
+    this.setData({
+      inputVal:e.detail.value
+    })
   },
 
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
+  search(e){
+    // var that = this
+    // console.log("正在搜索")
+    // if (inputVal == "") {
+    //   this.setData({
+    //     goodsList: this.data.goodsList
+    //   })
+    // } else {
+    //   this.data.searchList = []
+    //   var j = 0
+    //   for (var i = 0, len = this.data.goodsList.length; i < len; i++) {
+    //     var name = this.data.goodsList[i].name
+    //     if (name.indexOf(inputVal) != -1 ) {
+    //       this.data.searchList.push({
+    //         index:i,
+    //         good:this.data.goodsList[i]
+    //       })
+    //     }
+    //   }
+    //   that.delElement()
+    //   console.log(this.data.pycustomerList)
 
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
+    //   this.setData({
+    //     pycustomerList: this.data.pycustomerList,
+    //     listCur: this.data.pycustomerList[0].first
+    //   });
+    // }
   }
+
 })

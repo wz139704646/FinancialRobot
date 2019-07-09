@@ -24,12 +24,12 @@
 </view>
 <view class="cu-form-group">
   <view class="title">银行账户</view>
-  <input placeholder="请输入" style="text-align:right" value='{{bankaccount}}' bindinput='bankaccountChange'></input>
+  <input type='number' placeholder="请输入" style="text-align:right" value='{{bankaccount}}' bindinput='bankaccountChange'></input>
 </view>
 
 <view class="cu-form-group margin-top">
   <view class="title">联系方式</view>
-  <input placeholder="请输入" style="text-align:right" value='{{phone}}' bindinput='phoneChange'></input>
+  <input type='number' placeholder="请输入" style="text-align:right" value='{{phone}}' bindinput='phoneChange'></input>
 </view>
 <view class="cu-form-group">
   <view class="title">详细地址</view>

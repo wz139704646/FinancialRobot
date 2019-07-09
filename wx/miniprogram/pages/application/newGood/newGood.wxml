@@ -56,13 +56,13 @@
 </view>
 <view class="cu-form-group">
   <view class="title">条形码</view>
-  <input placeholder="请输入条形码" style="text-align:right" bindinput='barcodeChange' value='{{barcode}}'></input>
+  <input type='number' placeholder="请输入条形码" style="text-align:right" bindinput='barcodeChange' value='{{barcode}}'></input>
 	<image src='/imgs/saoma.png' class='saoma_size' bindtap='scanCode'></image>
 </view>
 <!-- =========== -->
 <view class="cu-form-group">
   <view class="title">售价</view>
-  <input placeholder="请输入商品售价" style="text-align:right" value='{{sellprice}}' bindinput='sellpriceChange'></input>
+  <input type='number' placeholder="请输入商品售价" style="text-align:right" value='{{sellprice}}' bindinput='sellpriceChange'></input>
 </view>
 <view class="cu-form-group">
   <view class="title">默认仓库</view>
