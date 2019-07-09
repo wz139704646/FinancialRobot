@@ -1,4 +1,6 @@
 redis
+bigchaindb_driver
+qcloudsms_py
 pymysql
 requests
 Click==7.0
