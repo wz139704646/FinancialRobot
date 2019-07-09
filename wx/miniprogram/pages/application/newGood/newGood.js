@@ -78,10 +78,6 @@ Page({
           title: 'add success',
         })
         console.log(res.data)
-        that.upload(res)
-        wx.redirectTo({
-          url: '/pages/index/index',
-        })
       }
     })
 

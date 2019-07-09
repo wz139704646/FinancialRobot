@@ -15,56 +15,56 @@ Page({
   },
 
   onLoad: function (options) {
-    wx.showToast({
-      title: '加载中',
-      icon:'loading',
-      duration: 3000
-    })
-    wx.getSetting({
-      success: res => {
-        if(res.authSetting['scope.userInfo']) {
-          wx.getUserInfo({
-            success: res => {
-              app.globalData.userInfo = res.userInfo
-              wx.cloud.callFunction({
-                name: 'login',
-                data: {
-                  cloudID: wx.cloud.CloudID(res.cloudID)
-                }
-              }).then(suc => {
-                if(!suc.result.errMsg){
-                  app.globalData.openid = suc.result.openid
-                  wx.request({
-                    url: 'http://'+host+'/queryUser',
-                    method: 'POST',
-                    header: {
-                      "Content-Type": 'application/json'
-                    },
-                    data: JSON.stringify({
-                      openid: suc.result.openid
-                    }),
-                    success: rs => {
-                      console.log(rs)
-                      if(rs.data.success){
-                        wx.redirectTo({
-                          url: '../index/index',
-                          complete: ()=>{
-                            wx.hideToast()
-                          }
-                        })
-                      }
-                    }
-                  })
-                }
-              })
-            },
-            fail: err => {
-              wx.hideToast()
-            }
-          })
-        }
-      }
-    })  
+    // wx.showToast({
+    //   title: '加载中',
+    //   icon:'loading',
+    //   duration: 3000
+    // })
+    // wx.getSetting({
+    //   success: res => {
+    //     if(res.authSetting['scope.userInfo']) {
+    //       wx.getUserInfo({
+    //         success: res => {
+    //           app.globalData.userInfo = res.userInfo
+    //           wx.cloud.callFunction({
+    //             name: 'login',
+    //             data: {
+    //               cloudID: wx.cloud.CloudID(res.cloudID)
+    //             }
+    //           }).then(suc => {
+    //             if(!suc.result.errMsg){
+    //               app.globalData.openid = suc.result.openid
+    //               wx.request({
+    //                 url: 'http://'+host+'/queryUser',
+    //                 method: 'POST',
+    //                 header: {
+    //                   "Content-Type": 'application/json'
+    //                 },
+    //                 data: JSON.stringify({
+    //                   openid: suc.result.openid
+    //                 }),
+    //                 success: rs => {
+    //                   console.log(rs)
+    //                   if(rs.data.success){
+    //                     wx.redirectTo({
+    //                       url: '../index/index',
+    //                       complete: ()=>{
+    //                         wx.hideToast()
+    //                       }
+    //                     })
+    //                   }
+    //                 }
+    //               })
+    //             }
+    //           })
+    //         },
+    //         fail: err => {
+    //           wx.hideToast()
+    //         }
+    //       })
+    //     }
+    //   }
+    // })  
   },
 
   /**

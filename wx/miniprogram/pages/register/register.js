@@ -124,7 +124,6 @@ Page({
             return
           }
           _this.setData({
-            iscode: res.data.result.code,
             disabled: true
           })
           var num = 61;
@@ -206,13 +205,6 @@ Page({
     if (this.data.messagecode == "") {
       wx.showToast({
         title: '验证码不能为空',
-        icon: 'none',
-        duration: 1000
-      })
-      return false;
-    } else if (this.data.code != this.data.iscode) {
-      wx.showToast({
-        title: '验证码错误',
         icon: 'none',
         duration: 1000
       })
