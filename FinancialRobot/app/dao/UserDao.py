@@ -14,6 +14,7 @@ class UserDao:
             res['companyId'] = row[2]
             res['ID'] = row[3]
             res['position'] = row[4]
+            res['openid'] = row[5]
             result.append(res)
         return result
 
@@ -24,8 +25,8 @@ class UserDao:
 
     def add(self, account, password, companyid):
         connection = MyHelper()
-        row=connection.executeUpdate('insert into User(account, \
-        password, CompanyId, ID, phone, position) \
+        row = connection.executeUpdate('insert into User(account, \
+        password, CompanyId) \
          values (%s,%s,%s)', [account, password, companyid])
         return row
 
@@ -37,3 +38,20 @@ class UserDao:
         helper = MyHelper()
         return helper.executeQuery("select * from User where account=%s and password=%s ",
                                    [account, password])
+
+    def query_by_openid_account(self, account, openid):
+        _param = []
+        _sql = "select * from User where 1=1"
+        if account:
+            _sql += " and account = %s"
+            _param.append(account)
+        if openid:
+            _sql += " and openid = %s"
+            _param.append(openid)
+        helper = MyHelper()
+        return helper.executeQuery(_sql, _param)
+
+    def bind_wx(self, account, openid):
+        helper = MyHelper()
+        return helper.executeUpdate("update User set openid = %s where account = %s",
+                                    [openid, account])

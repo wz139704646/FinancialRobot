@@ -40,13 +40,11 @@ class MylTest(unittest.TestCase):
 
     def test4(self):
         goods_dao = GoodsDao()
-        # goods_dao.add("苹果", 20, "2", "食品", "kg")
+        add = goods_dao.add("手机", 20, "1", "电子", "kg")
         # res = goods_dao.query_all()
-        res = goods_dao.query_by_companyId('1', '苹', None)
-        j = json.dumps(return_success({'goodsList': GoodsDao.to_dict(res)}), cls=DecimalEncoder, ensure_ascii=False)
-        print(j)
-        b = json.loads(j)
-        print(b)
+        # res = goods_dao.query_by_companyId('1', '苹', None)
+        # j = json.dumps(return_success({'goodsList': GoodsDao.to_dict(res)}), cls=DecimalEncoder, ensure_ascii=False)
+        print(add)
 
     def test5(self):
         print(json.dumps(return_unsuccess("失败")))

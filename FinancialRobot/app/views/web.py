@@ -29,7 +29,7 @@ def CompanyRegister():
         else:
             return False
 #查询公司列表
-@web.route("/query_Company",methods=["POST"])
+@web.route("/query_Company",methods=["GET"])
 def query_Company():
     query = CompanyDao()
     result = query.queryAll()
@@ -146,8 +146,12 @@ def RegisterPurchase():
         provideNo = puchase['providerNo']
         purchasePrice = puchase['costEach']
         date = puchase['date']
-    row = query.add(goodsNo, provideNo, companyId, number, purchasePrice, date)
-    if row == 1:
-        return json.dumps(return_success("Yes!"))
-    else:
-        return json.dumps(return_unsuccess('Error: Add failed'))
+        row = query.add(goodsNo, provideNo, companyId, number, purchasePrice, date)
+        if row == 1:
+           return json.dumps(return_success("Yes!"))
+        else:
+           return json.dumps(return_unsuccess('Error: Add failed'))
+#查询进货记录
+# @web.route("/queryPurchase",methods=["POST"])
+# def queryPurchase():
+
