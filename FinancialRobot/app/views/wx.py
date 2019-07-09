@@ -111,8 +111,8 @@ def addGoods():
     _json = request.json
     print(_json)
     goods_dao = GoodsDao()
-    res = goods_dao.add(_json['name'], _json['sellprice'], _json['companyId'],
-                        _json['type'], _json['unitInfo'])
+    res = goods_dao.add(_json.get('name'), _json.get('sellprice'), _json.get('companyId'),
+                        _json.get('type'), _json.get('unitInfo'))
     if res["row"] == 1:
         return json.dumps(return_success({"id": res["id"]}))
     else:

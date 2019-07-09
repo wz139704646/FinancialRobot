@@ -78,3 +78,15 @@ def show_photo(filename):
             return response
     else:
         pass
+
+
+@up.route('delete/<string:filename>', methods=['POST'])
+def delete_file(filename):
+    file_dir = os.path.join(basedir, UPLOAD_FOLDER)
+    try:
+        os.remove(os.path.join(file_dir, '%s' % filename))
+    except Exception as e:
+        print(e)
+        return json.dumps(return_unsuccess(e))
+    return json.dumps(return_success("删除成功"))
+
