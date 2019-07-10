@@ -22,6 +22,7 @@ Page({
         if (res.authSetting['scope.userInfo']) {
           wx.getUserInfo({
             success: res2 => {
+              console.log('get userinfo suc')
               app.globalData.userInfo = res2.userInfo
               wx.cloud.callFunction({
                 name: 'login',
@@ -31,6 +32,7 @@ Page({
               }).then(suc => {
                 if (!suc.result.errMsg) {
                   app.globalData.openid = suc.result.openid
+                  console.log('get openid suc')
                   wx.request({
                     url: 'http://' + host + '/queryUser',
                     method: 'POST',
@@ -41,6 +43,7 @@ Page({
                       openid: suc.result.openid
                     }),
                     success: rs => {
+                      console.log('query user suc')
                       console.log(rs)
                       if (!rs.data.success) {
                         if (account == undefined) {
@@ -66,6 +69,7 @@ Page({
                   })
                 }
               }).catch(err2 => {
+                console.error(err2)
                 if (account == undefined) {
                   wx.redirectTo({
                     url: '../login/login',
