@@ -1,22 +1,20 @@
 #!/usr/bin/env python 
 # -*- coding:utf-8 -*-
 import unittest
-import json
 import requests
+import uuid
+import json
+import jieba
 from app.dao.WareHouseDao import WareHouseDao
 from app.utils.DBHelper import MyHelper
-from flask import Blueprint, render_template, request
 from app.dao.CompanyDao import CompanyDao
 from app.dao.CustomerDao import CustomerDao
 from app.dao.SupplierDao import SupplierDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
 from app.utils.res_json import *
-from bosonnlp import BosonNLP
-import uuid
-import json
-# -*- encoding: utf-8 -*-
 
+# -*- encoding: utf-8 -*-
 
 class Test1(unittest.TestCase):
     def test1(self):
@@ -48,15 +46,7 @@ class Test4(unittest.TestCase):
     def test4(self):
         queryAllsup = CustomerDao()
         supresult = queryAllsup.queryAll()
-
-
-       # print(json.dumps(return_success({'customerList': CustomerDao.to_dict(supresult)}),
-                        #    ensure_ascii=False))
         print(json.dumps(return_success(CustomerDao.to_dict(supresult)),ensure_ascii = False))
-       # supresu_json = json.dumps(CustomerDao.to_dict(supresult), ensure_ascii=False)
-        #print(supresu_json)
-
-     #   print(json.dumps(return_success(supresu_json)))
 class Test5(unittest.TestCase):
     def test5(self):
         queryAllsup = SupplierDao()
@@ -127,7 +117,6 @@ class Test11(unittest.TestCase):
     def test11(self):
         addUser = UserDao()
         #row = addUser.add("123211","111","1","1")
-
         supresult = addUser.query_all()
         size=len(supresult)
         print(supresult)
@@ -135,10 +124,119 @@ class Test11(unittest.TestCase):
         print(size)
         print(supresu_json)
         print(json.dumps(return_success(UserDao.to_dict(supresult)), ensure_ascii=False))
-class Test12(unittest.TestCase):
     def test12(self):
-        addGoods = GoodsDao()
-        row = addGoods.add("西瓜",1.5,"1","食品类","个")
-        print(row)
+        jieba.load_userdict("../app/utils/dict.txt")
+        #去除停用词
+        stopwords = {}.fromkeys(['的', '包括', '等', '是','多少'])
+        time1 = ['今天', '这一天']
+        time2 = ['昨天','上一天']
+        time3 = ['这周','这一周']
+        time4 = ['上周','上一周']
+        time5 = ['这个月']
+
+        action1 = ['赚', '挣', '卖', '收入', '盈利', '进账']
+        action2 = ['进','买']
+        action3 = ['查','看','查看']
+        action4 = ['花', '消费', '支出']
+
+        nouns1 = ['东西', '商品', '货']
+        nouns2 = ['钱']
+        nouns3 = ['库存']
+
+        text1 = "上周进了多少货"
+        text2 = "今天卖了多少东西"
+        text3 = "看一下库存"
+        text4 = "今天花了多少钱"
+        # 精确模式
+        segs = jieba.cut(text1, cut_all=False)
+        final = []
+        for seg in segs:
+            if seg not in stopwords:
+                final.append(seg)
+        print(final)
+        time = 1
+        for item in final:
+            if time == 1:
+                if item in time2:
+                    time = 2
+                if item in time3:
+                    time = 3
+                if item in time4:
+                    time = 4
+                if item in time5:
+                    time = 5
+            if item in action1:
+                action = 1
+            if item in action2:
+                action = 2
+            if item in action3:
+                action = 3
+            if item in action4:
+                action = 4
+            if item in nouns1:
+                nouns = 1
+            if item in nouns2:
+                nouns = 2
+            if item in nouns3:
+                nouns = 3
+        print(time)
+        print(action)
+        print(nouns)
+        if action==1 and nouns==1:
+            if time == 1:
+                print("今天的销售量")
+            if time ==2:
+                print("昨天的销售量")
+            if time ==3:
+                print("这周的销售量")
+            if time ==4:
+                print("上周的销售量")
+            if time ==5:
+                print("这个月的销售量")
+        if action ==1 and nouns ==2:
+            if time == 1:
+                print("今天的销售额")
+            if time == 2:
+                print("昨天的销售额")
+            if time == 3:
+                print("这周的销售额")
+            if time == 4:
+                print("上周的销售额")
+            if time == 5:
+                print("这个月的销售额")
+        if action ==2 and nouns ==1:
+            if time == 1:
+                print("今天进的货")
+            if time == 2:
+                print("昨天的进的货")
+            if time == 3:
+                print("这周进的货")
+            if time == 4:
+                print("上周进的货")
+            if time == 5:
+                print("这个月进的货")
+        if action == 3 and (nouns == 1 or nouns ==3):
+            if time == 1:
+                print("今天的库存")
+            if time == 2:
+                print("今天的库存")
+            if time == 3:
+                print("今天的库存")
+            if time == 4:
+                print("今天的库存")
+            if time == 5:
+                print("今天的库存")
+        if action == 4 and nouns == 2 :
+            if time == 1:
+                print("今天花了多少钱")
+            if time == 2:
+                print("昨天花了多少钱")
+            if time == 3:
+                print("这周花了多少钱")
+            if time == 4:
+                print("上周花了多少钱")
+            if time == 5:
+                print("这个月花了多少钱")
+
 
 
