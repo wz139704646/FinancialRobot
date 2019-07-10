@@ -5,7 +5,7 @@ from app.utils.DBHelper import MyHelper
 from app.dao.CompanyDao import CompanyDao
 from app.dao.SupplierDao import SupplierDao
 from app.dao.CustomerDao import CustomerDao
-from app.dao.PurchaseDao import PurchaseDao
+from app.dao.PurchaseDao import PurchaseDao,DecimalEncoder
 from app.utils.res_json import *
 import uuid
 import json
@@ -134,7 +134,7 @@ def queryCustomer():
             return json.dumps(return_success(CustomerDao.to_dict(Cusresult)), ensure_ascii=False)
 
 #登记进货
-@web.route("/RegisterPurchase",methods=["POST"])
+@web.route("/addPurchase",methods=["POST"])
 def RegisterPurchase():
     query = PurchaseDao()
     _json = request.json
@@ -146,12 +146,22 @@ def RegisterPurchase():
         provideNo = puchase['providerNo']
         purchasePrice = puchase['costEach']
         date = puchase['date']
-        row = query.add(goodsNo, provideNo, companyId, number, purchasePrice, date)
+        row = query.add(goodsNo, provideNo, companyId, number, purchasePrice, date,"未入库")
         if row == 1:
            return json.dumps(return_success("Yes!"))
         else:
            return json.dumps(return_unsuccess('Error: Add failed'))
 #查询进货记录
-# @web.route("/queryPurchase",methods=["POST"])
-# def queryPurchase():
+@web.route("/queryPurchase",methods=["POST"])
+def queryPurchase():
+    query = PurchaseDao()
+    _json = request.json
+    companyId = _json.get('companyId')
+    result = query.query_byCid(companyId)
+    size = len(result)
+    if size == 0:
+        return json.dumps(return_unsuccess('Error: No data'))
+    else:
+        return json.dumps(return_success(PurchaseDao.to_dict(result), ensure_ascii=False,cls=DecimalEncoder), ensure_ascii=False)
+
 

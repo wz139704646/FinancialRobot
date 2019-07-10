@@ -5,7 +5,9 @@ import requests
 import uuid
 import json
 import jieba
+from flask import Blueprint, render_template, request
 from app.dao.WareHouseDao import WareHouseDao
+from app.dao.PurchaseDao import PurchaseDao,DecimalEncoder
 from app.utils.DBHelper import MyHelper
 from app.dao.CompanyDao import CompanyDao
 from app.dao.CustomerDao import CustomerDao
@@ -114,6 +116,25 @@ class Test10(unittest.TestCase):
         for weight, word in resp.json():
             print(weight, word)
 class Test11(unittest.TestCase):
+    def test13(self):
+        query = PurchaseDao()
+        result = query.query_byCid("5")
+        size = len(result)
+        print(result)
+        purjson=json.dumps(PurchaseDao.to_dict(result), ensure_ascii=False,cls=DecimalEncoder)
+        # print(json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False))
+        # print(purjson)
+        # companyId = "5"
+        # goodsNo ="5dfac447-d039-3eae-bde9-33f832f17437"
+        # number = 1
+        # provideNo = "1"
+        # purchasePrice = 10.5
+        date = "2019-7-11"
+        # row = query.add(goodsNo, provideNo, companyId, number, purchasePrice, date, "未入库")
+        # if row == 1:
+        #     return json.dumps(return_success("Yes!"))
+        # else:
+        #     return json.dumps(return_unsuccess('Error: Add failed'))
     def test11(self):
         addUser = UserDao()
         #row = addUser.add("123211","111","1","1")
