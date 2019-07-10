@@ -6,8 +6,9 @@ Page({
   },
 
   // 页面加载函数
-  onLoad: function(options){
+  onLoad: function(options) {
     // 获取用户信息，如果没有登录则转入登录页面
+    let account = app.globalData.account
     console.log("onload")
     wx.showToast({
       title: '加载中',
@@ -41,6 +42,18 @@ Page({
                     success: rs => {
                       console.log(rs)
                       if (!rs.data.success) {
+                        if (account == undefined) {
+                          wx.redirectTo({
+                            url: '../login/login',
+                            complete: () => {
+                              wx.hideToast()
+                            }
+                          })
+                        }
+                      }
+                    },
+                    fail: err1 => {
+                      if (account == undefined) {
                         wx.redirectTo({
                           url: '../login/login',
                           complete: () => {
@@ -48,36 +61,44 @@ Page({
                           }
                         })
                       }
-                    },
-                    fail: err1 => {
-                      wx.redirectTo({
-                        url: '../login/login',
-                        complete: () => {
-                          wx.hideToast()
-                        }
-                      })
                     }
                   })
                 }
-              }).catch( err2 => {
+              }).catch(err2 => {
+                if (account == undefined) {
+                  wx.redirectTo({
+                    url: '../login/login',
+                    complete: () => {
+                      wx.hideToast()
+                    }
+                  })
+                }
+              })
+            },
+            fail: err => {
+              if (account == undefined) {
                 wx.redirectTo({
                   url: '../login/login',
                   complete: () => {
                     wx.hideToast()
                   }
                 })
-              })
-            },
-            fail: err => {
-              wx.redirectTo({
-                url: '../login/login',
-                complete: () => {
-                  wx.hideToast()
-                }
-              })
+              }
             }
           })
         } else {
+          if (account == undefined) {
+            wx.redirectTo({
+              url: '../login/login',
+              complete: () => {
+                wx.hideToast()
+              }
+            })
+          }
+        }
+      },
+      fail: err3 => {
+        if (account == undefined) {
           wx.redirectTo({
             url: '../login/login',
             complete: () => {
@@ -85,14 +106,6 @@ Page({
             }
           })
         }
-      },
-      fail: err3 => {
-        wx.redirectTo({
-          url: '../login/login',
-          complete: () => {
-            wx.hideToast()
-          }
-        })
       }
     })
   },
@@ -111,7 +124,7 @@ Page({
       path: '/pages/login/login'
     }
   },
-  NavToTalk(){
+  NavToTalk() {
     wx.navigateTo({
       url: '/pages/talk/talk',
     })

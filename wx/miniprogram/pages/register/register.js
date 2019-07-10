@@ -243,11 +243,6 @@ Page({
             wx.authorize({
               scope: 'scope.userInfo',
               success: () => {
-                wx.showToast({
-                  title: '登录中',
-                  icon: 'loading',
-                  duration: 3000
-                })
                 wx.getUserInfo({
                   success: rs => {
                     app.globalData.userInfo = rs.userInfo
@@ -274,7 +269,8 @@ Page({
                             if (rs.data.success) {
                               wx.showToast({
                                 title: '绑定成功',
-                                icon: 'success'
+                                icon: 'success',
+                                duration: 2000
                               })
                             }
                           }

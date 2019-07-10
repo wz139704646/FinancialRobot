@@ -30,9 +30,9 @@ def hello():
 def userRegister():
     _json = request.json
     print(_json)
-    account = _json["account"]
-    companyId = _json["companyId"]
-    password = _json["passwd"]
+    # account = _json["account"]
+    # companyId = _json["companyId"]
+    # password = _json["passwd"]
     openid = _json.get("openid")
     # try:
     #     openid = _json["openid"]
