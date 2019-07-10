@@ -240,6 +240,7 @@ Page({
           if(resp.success){
             app.globalData.companyId = com.id
             app.globalData.account = that.data.account
+            wx.setStorageSync('jwt_token', resp.token)
             wx.authorize({
               scope: 'scope.userInfo',
               success: () => {

@@ -7,6 +7,8 @@ from app.dao.UserDao import UserDao
 from app.utils.DBHelper import MyHelper
 from app.utils.decimal_encoder import DecimalEncoder
 from app.utils.res_json import *
+from app.utils.permissions import check_token
+from app.utils import util
 from time import time
 from qcloudsms_py import SmsSingleSender
 from qcloudsms_py.httpclient import HTTPError
@@ -55,6 +57,10 @@ def userRegister():
     # 验证码正确，删除对应键值
     redis_store.delete('veri'+account)
 
+    # 生成token
+    login_time = int(time())
+    token = util.create_jwt({'account': account, 'login_time': login_time})
+
     # 密码处理
     store = base64.b64decode(password)
     store_in = binascii.hexlify(store)
@@ -63,7 +69,9 @@ def userRegister():
     user_dao = UserDao()
     row = user_dao.add(account, strpass, companyId)
     if row == 1:
-        return json.dumps(return_success(""))
+        resp = return_success("")
+        resp['token'] = token
+        return jsonify(resp)
     else:
         return json.dumps(return_unsuccess("注册失败"))
 
@@ -88,6 +96,8 @@ def login():
     # 账号密码登陆
     account = _json['account']
     password = _json['passwd']
+    login_time = int(time())
+    token = util.create_jwt({'account': account, 'login_time': login_time})
     if login_type == 0:
         store = base64.b64decode(password)
         store_in = binascii.hexlify(store)
@@ -98,9 +108,11 @@ def login():
         res = user_dao.query_check_login(account, strpass)
         size = len(res)
         if size == 1:
-            return json.dumps(return_success(UserDao.to_dict(res)))
+            resp = return_success(UserDao.to_dict(res))
+            resp['token'] = token
+            return jsonify(resp)
         else:
-            return json.dumps(return_unsuccess('Error: No such user'))
+            return jsonify(return_unsuccess('Error: No such user'))
     # 验证码登陆
     else:
         true_veri = redis_store.get('veri'+account)
@@ -112,9 +124,11 @@ def login():
         suc = res.get("success")
         if not suc:
             redis_store.delete('veri'+account)
-            return json.dumps(return_success(UserDao.to_dict(res)))
+            resp = return_success(UserDao.to_dict(res))
+            resp['token'] = token
         else:
-            return json.dumps(return_unsuccess('Error: No such user'))
+            resp = return_unsuccess('Error: No such user')
+        return jsonify(resp)
 
 
 @wx.route("/queryUser", methods=["POST"])

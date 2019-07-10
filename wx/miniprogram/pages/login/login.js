@@ -285,6 +285,7 @@ Page({
       success: res => {
         console.log(res)
         let succ = res.data.success
+        let token = res.data.token
         if(!succ){
           wx.showToast({
             title: res.data.errMsg,
@@ -297,6 +298,7 @@ Page({
           })
           return 
         } else{
+          wx.setStorageSync('jwt_token', token)
           app.globalData.companyId = res.data.companyId
           app.globalData.position = res.data.position
           app.globalData.account = account
