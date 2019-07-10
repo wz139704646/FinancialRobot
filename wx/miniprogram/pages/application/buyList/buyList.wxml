@@ -11,7 +11,7 @@
 <scroll-view scroll-y class="indexes" style="height:calc(100vh - {{CustomBar}}px - 50px)" scroll-with-animation="true" enable-back-to-top="true">
   <block wx:for="{{brList}}" wx:key wx:for-index='index'>
     <view class="cu-list menu-avatar no-padding">
-      <view class="cu-item" data-id='{{item.id}}' bindtap='toDetail'>
+      <view class="cu-item" data-index='{{item.index}}' bindtap='toDetail'>
         <view wx:if="{{item.status=='运'}}" class="cu-avatar round lg bg-blue">{{item.status}}</view>
         <view wx:if="{{item.status=='到'}}" class="cu-avatar round lg bg-orange">{{item.status}}</view>
         <view class="content">

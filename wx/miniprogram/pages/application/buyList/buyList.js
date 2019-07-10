@@ -14,7 +14,8 @@ Page({
         purchasePrice:1,
         date:'2019-07-01',
         total:111,
-        status:"运"
+        status:"运",
+        index:0
       }, {
         id: 111111,
         goodid: 1,
@@ -25,7 +26,8 @@ Page({
         date: '2019-07-01',
         surname: "zjj",
         total: 111,
-        status: "到"
+        status: "到",
+        index:1
       }
     ],
     allbrList:[],
@@ -118,9 +120,9 @@ Page({
   },
   toDetail(e){
     console.log(e)
-    var id = e.currentTarget.dataset.id
+    var index = e.currentTarget.dataset.index
     wx.navigateTo({
-      url: '../buyBill/buyBill?type=2&&id=id',
+      url: '../recordInfo/recordInfo?id='+this.data.allbrList[index].id
     })
   }
 })

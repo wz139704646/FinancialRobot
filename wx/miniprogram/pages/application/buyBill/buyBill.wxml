@@ -3,11 +3,6 @@
   <view slot="content">采购开单</view>
 </cu-custom>
 
-<van-tabs active="{{ active }}" bind:click="onClick">
-  <van-tab title="采购订单"></van-tab>
-  <van-tab title="采购退货"></van-tab>
-</van-tabs>
-
 <view wx:if="{{type==1}}">
   <view class="cu-form-group margin-top">
     <view class="title">日期选择</view>
@@ -29,7 +24,7 @@
   </view>
   <block wx:key wx:for='{{buyList}}' wx:for-index='index'>
     <view class="cu-bar bg-gray">
-      <view class="action text-black">商品:{{item.name}}</view>
+      <view class="action text-black">{{item.name}}</view>
       <view class="action text-black">单价:{{item.price}}</view>
       <view class='action text-black'>数量:{{item.buyNum}}</view>
     </view>
@@ -42,32 +37,3 @@
   </view>
 </view>
 
-<view wx:if="{{type==2}}">
-  <view class="cu-form-group margin-top">
-    <view class="title">订单号</view>
-    <input placeholder="请输入" style="text-align:right" value="{{id}}" bindinput='inputChange' confirm-type="search" bindconfirm='search'></input>
-  </view>
-  <view class="cu-form-group margin-top">
-    <view class="title">日期选择</view>
-    <picker mode="date" value="{{listdate}}" start="2015-09-01" end="2020-09-01" bindchange="listDateChange">
-      <view class="picker">
-        {{listdate}}
-      </view>
-    </picker>
-  </view>
-  <radio-group class="block">
-    <view class="cu-list menu text-left">
-      <view class="cu-item" wx:for="{{brList}}" wx:key>
-        <label class="flex justify-between align-center flex-sub">
-          <view class="flex-sub">{{brList.id}}</view>
-          <radio class="round"></radio>
-        </label>
-
-      </view>
-    </view>
-  </radio-group>
-  <view class="cu-bar bg-white">
-    <view class="action text-red" bindtap='changeBuyNum'>确定退货</view>
-    <view class="action text-blue" bindtap="hideModal">取消退货</view>
-  </view>
-</view>
