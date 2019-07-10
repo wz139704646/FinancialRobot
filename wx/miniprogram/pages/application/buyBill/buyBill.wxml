@@ -2,37 +2,38 @@
   <view slot="backText">返回</view>
   <view slot="content">采购开单</view>
 </cu-custom>
-<van-tabs active="{{ active }}" bindtap="onClick">
-  <van-tab title="采购订单"></van-tab>
-  <van-tab title="采购退货"></van-tab>
-</van-tabs>
-<view class="cu-form-group margin-top">
-  <view class="title">日期选择</view>
-  <picker mode="date" value="{{date}}" start="2015-09-01" end="2020-09-01" bindchange="DateChange">
-    <view class="picker">
-      {{date}}
-    </view>
-  </picker>
-</view>
-<view class="cu-form-group" bindtap='addProvider'>
-  <view class="title">供应商</view>
-  <input disabled placeholder='请选择' value='{{supplier}}' style="text-align:right"></input>
-  <text class="cuIcon-friendadd text-orange"></text>
-</view>
-<view class="cu-form-group" bindtap='addGoods'>
-  <view class="title">商品</view>
-  <input disabled placeholder='请选择' style="text-align:right"></input>
-  <text class="cuIcon-goods text-orange"></text>
-</view>
-<block wx:key wx:for='{{buyList}}' wx:for-index='index'>
-  <view class="cu-bar bg-gray">
-    <view class="action text-black">商品:{{item.name}}</view>
-    <view class="action text-black">单价:{{item.price}}</view>
-    <view class='action text-black'>数量:{{item.buyNum}}</view>
+
+<view wx:if="{{type==1}}">
+  <view class="cu-form-group margin-top">
+    <view class="title">日期选择</view>
+    <picker mode="date" value="{{date}}" start="2015-09-01" end="2020-09-01" bindchange="DateChange">
+      <view class="picker">
+        {{date}}
+      </view>
+    </picker>
   </view>
-  <view class="divLine"></view>
-</block>
-<view wx:if="{{total>0}}" class="cu-bar bg-white">
-  <view class="action text-red text-price">总价:{{total}}</view>
-  <view class="action text-blue" bindtap="buyBill">确认</view>
+  <view class="cu-form-group" bindtap='addProvider'>
+    <view class="title">供应商</view>
+    <input disabled placeholder='请选择' value='{{supplier}}' style="text-align:right"></input>
+    <text class="cuIcon-friendadd text-orange"></text>
+  </view>
+  <view class="cu-form-group" bindtap='addGoods'>
+    <view class="title">商品</view>
+    <input disabled placeholder='请选择' style="text-align:right"></input>
+    <text class="cuIcon-goods text-orange"></text>
+  </view>
+  <block wx:key wx:for='{{buyList}}' wx:for-index='index'>
+    <view class="cu-bar bg-gray">
+      <view class="action text-black">{{item.name}}</view>
+      <view class="action text-black">单价:{{item.price}}</view>
+      <view class='action text-black'>数量:{{item.buyNum}}</view>
+    </view>
+    <view class="divLine"></view>
+  </block>
+  <view wx:if="{{total>0}}" class="cu-bar bg-white">
+    <view class="action text-red text-price">总价:{{total}}</view>
+    <view wx:if="{{supplierId!=0}}" class="action text-blue" bindtap="buyBill">确认订单</view>
+    <view wx:if="{{supplierId!=0}}" class="action text-blue" bindtap="cancelBill">取消订单</view>
+  </view>
 </view>
+

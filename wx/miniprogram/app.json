@@ -19,7 +19,9 @@
     "pages/application/goodList/goodList",
     "pages/application/goodInfo/goodInfo",
     "pages/application/buyBill/buyBill",
-    "pages/application/chooseGood/chooseGood"
+    "pages/application/chooseGood/chooseGood",
+    "pages/application/recordInfo/recordInfo",
+    "pages/application/sellBill/sellBill"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",

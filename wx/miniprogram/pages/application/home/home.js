@@ -21,9 +21,15 @@ Page({
       badge: 0,
       name: '客户列表',
       url: "/pages/application/customerList/customerList"
-    }, {
+      }, {
+        icon: 'cart',
+        color: 'olive',
+        badge: 0,
+        name: '销售开单',
+        url: "/pages/application/sellBill/sellBill"
+      }, {
       icon: 'search',
-      color: 'olive',
+      color: 'red',
       badge: 0,
       name: '查看近期',
       url: "/pages/application/searchRecent/searchRecent"
