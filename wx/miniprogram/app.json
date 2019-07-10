@@ -21,7 +21,8 @@
     "pages/application/buyBill/buyBill",
     "pages/application/chooseGood/chooseGood",
     "pages/application/recordInfo/recordInfo",
-    "pages/application/sellBill/sellBill"
+    "pages/application/sellBill/sellBill",
+    "pages/application/inStore/inStore"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",

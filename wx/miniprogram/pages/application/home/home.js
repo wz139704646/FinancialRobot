@@ -21,13 +21,13 @@ Page({
       badge: 0,
       name: '客户列表',
       url: "/pages/application/customerList/customerList"
-      }, {
-        icon: 'cart',
-        color: 'olive',
-        badge: 0,
-        name: '销售开单',
-        url: "/pages/application/sellBill/sellBill"
-      }, {
+    }, {
+      icon: 'cart',
+      color: 'olive',
+      badge: 0,
+      name: '销售开单',
+      url: "/pages/application/sellBill/sellBill"
+    }, {
       icon: 'search',
       color: 'red',
       badge: 0,
@@ -39,32 +39,32 @@ Page({
       color: 'red',
       badge: 0,
       name: '采购记录',
-      url:'/pages/application/buyList/buyList'
+      url: '/pages/application/buyList/buyList'
     }, {
       icon: 'friendaddfill',
       color: 'orange',
       badge: 0,
       name: '新增供应商',
-      url:'/pages/application/newSupplier/newSupplier'
+      url: '/pages/application/newSupplier/newSupplier'
     }, {
       icon: 'expressman',
       color: 'yellow',
       badge: 0,
       name: '供应商列表',
-        url:'/pages/application/supplierList/supplierList'
+      url: '/pages/application/supplierList/supplierList'
     }, {
       icon: 'file',
       color: 'olive',
       badge: 0,
       name: '采购开单',
-        url: "/pages/application/buyBill/buyBill"
+      url: "/pages/application/buyBill/buyBill"
     }],
     fundIconList: [{
       icon: 'sponsor',
       color: 'red',
       badge: 0,
       name: '收款记录',
-      url:''
+      url: ''
     }, {
       icon: 'sponsor',
       color: 'orange',
@@ -126,6 +126,18 @@ Page({
       badge: 0,
       name: '查看近期',
       url: ''
+    }, {
+      icon: 'edit',
+      color: 'red',
+      badge: 0,
+      name: '其他入库',
+      url: '/pages/application/inStore/inStore'
+    }, {
+      icon: 'edit',
+      color: 'orange',
+      badge: 0,
+      name: '其他出库',
+      url: ''
     }],
     financialIconList: [{
       icon: 'ticket',
@@ -144,12 +156,6 @@ Page({
       color: 'yellow',
       badge: 0,
       name: '科目余额',
-      url: ''  
-    }, {
-      icon: 'edit',
-      color: 'olive',
-      badge: 0,
-      name: '日记账',
       url: ''
     }],
     gridCol: 4,
