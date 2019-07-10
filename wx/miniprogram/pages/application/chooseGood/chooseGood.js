@@ -1,5 +1,6 @@
 const app = getApp()
 const host = app.globalData.requestHost
+var inputVal = ""
 Page({
   data: {
     StatusBar: app.globalData.StatusBar,
@@ -15,7 +16,7 @@ Page({
     curId:null,
     curName:null,
 
-    inputVal:"",
+    
     searchList:[]
   },
 
@@ -27,7 +28,6 @@ Page({
     this.setData({
       host: host
     })
-
     that.initGoodList()
   },
 
@@ -45,7 +45,8 @@ Page({
       success: res => {
         var goodsList = res.data.result.goodsList
         this.setData({
-          goodsList:goodsList
+          goodsList:goodsList,
+          allgoodsList:goodsList
         })
         that.initNum(goodsList)
       }
@@ -57,15 +58,13 @@ Page({
     
     for (var index in goodsList) {
       var buyParam = "goodsList[" + index + "].buyNum"
+      var indexParam = "goodsList[" + index + "].index"
       this.setData({
         [buyParam]: 0,
+        [indexParam]:index
       })
     }
     console.log(this.data.goodsList)
-  },
-
-  addGood(e){
-    console.log(e)
   },
 
   changeBuyNum(){
@@ -165,26 +164,30 @@ Page({
     var index = e.currentTarget.id
     var buyList = this.data.buyList
     var goodid = buyList[index].id
-    //var total = this.data.total
     console.log(goodid)
     var goodsList = this.data.goodsList
+    var allgoodsList = this.data.allgoodsList
     var badge = this.data.badge
     badge = badge - 1
-    //total = total - buyList[index].price * buyList[index].buyNum
     buyList.splice(index,1)
   
     var bindex = 0
+    var cindex = 0
     for (var index in goodsList) {
       if (goodsList[index].id == goodid) {
-        bindex = index
+        bindex = goodsList[index].index
+        cindex = index
       }
     }
     console.log(bindex)
-    goodsList[bindex].buyNum = 0
+    console.log(cindex)
+    goodsList[cindex].buyNum = 0
+    allgoodsList[bindex].buyNum = 0
     this.setData({
       goodsList:goodsList,
       badge:badge,
-      buyList:buyList
+      buyList:buyList,
+      allgoodsList:allgoodsList
     })    
     console.log(goodsList)
     that.calTotal()
@@ -216,38 +219,36 @@ Page({
   },
 
   sInputChange(e){
-    this.setData({
-      inputVal:e.detail.value
-    })
+    inputVal = e.detail.value
+    console.log(inputVal)
+    var that = this
+    that.search()
   },
 
   search(e){
-    // var that = this
-    // console.log("正在搜索")
-    // if (inputVal == "") {
-    //   this.setData({
-    //     goodsList: this.data.goodsList
-    //   })
-    // } else {
-    //   this.data.searchList = []
-    //   var j = 0
-    //   for (var i = 0, len = this.data.goodsList.length; i < len; i++) {
-    //     var name = this.data.goodsList[i].name
-    //     if (name.indexOf(inputVal) != -1 ) {
-    //       this.data.searchList.push({
-    //         index:i,
-    //         good:this.data.goodsList[i]
-    //       })
-    //     }
-    //   }
-    //   that.delElement()
-    //   console.log(this.data.pycustomerList)
-
-    //   this.setData({
-    //     pycustomerList: this.data.pycustomerList,
-    //     listCur: this.data.pycustomerList[0].first
-    //   });
-    // }
+    var that = this
+    console.log("正在搜索")
+    this.setData({
+      goodsList: this.data.allgoodsList
+    })
+    if (inputVal == "") {
+      console.log("无操作")
+    } else {
+      console.log("有参数")
+      this.data.searchList = []
+      var j = 0
+      for (var i = 0, len = this.data.goodsList.length; i < len; i++) {
+        var name = this.data.goodsList[i].name
+        if (name.indexOf(inputVal) != -1 ) {
+          this.data.searchList.push(this.data.goodsList[i])
+          console.log("is in")
+        }
+      }
+      console.log("setdata")
+      this.setData({
+        goodsList: this.data.searchList
+      });
+    }
   }
 
 })

@@ -9,7 +9,7 @@
   </view>
 </view>
 <block wx:key wx:for='{{goodsList}}' wx:for-index='index'>
-  <van-card num="{{item.buyNum}}" tag="{{item.type}}" price="{{item.sellprice}}" desc="单位:{{item.unitInfo}}" title="{{item.name}}" thumb="{{'http://'+host+'/goodsPic/'+item.photo}}" thumb-mode="aspectFill" bindtap='showModal' id="{{index}}" data-target="addGood" data-id="{{item.id}}" data-buyNum="{{item.buyNum}}" data-name="{{item.name}}" data-price="{{item.sellprice}}"> 
+  <van-card num="{{item.buyNum}}" tag="{{item.type}}" price="{{item.sellprice}}" desc="单位:{{item.unitInfo}}" title="{{item.name}}" thumb="{{'http://'+host+'/goodsPic/'+item.photo}}" thumb-mode="aspectFill" bindtap='showModal' id="{{item.index}}" data-target="addGood" data-id="{{item.id}}" data-buyNum="{{item.buyNum}}" data-name="{{item.name}}" data-price="{{item.sellprice}}"> 
   </van-card>
   <view class="divLine"></view>
 </block>
