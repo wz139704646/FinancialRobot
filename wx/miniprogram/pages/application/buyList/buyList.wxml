@@ -1,2 +1,37 @@
-<!--pages/application/buyList/buyList.wxml-->
-<text>pages/application/buyList/buyList.wxml</text>
+<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">采购记录</view>
+</cu-custom>
+<view class="cu-bar bg-white search fixed" style="top:{{CustomBar}}px;">
+  <view class="search-form round">
+    <text class="cuIcon-search"></text>
+    <input type="text" placeholder="输入搜索的关键词" confirm-type="search" bindconfirm='search' value='{{inputVal}}' bindinput='inputChange'></input>
+  </view>
+</view>
+<scroll-view scroll-y class="indexes" style="height:calc(100vh - {{CustomBar}}px - 50px)" scroll-with-animation="true" enable-back-to-top="true">
+  <block wx:for="{{brList}}" wx:key wx:for-index='index'>
+    <view class="cu-list menu-avatar no-padding">
+      <view class="cu-item" data-id='{{item.id}}' bindtap='toDetail'>
+        <view wx:if="{{item.status=='运'}}" class="cu-avatar round lg bg-blue">{{item.status}}</view>
+        <view wx:if="{{item.status=='到'}}" class="cu-avatar round lg bg-orange">{{item.status}}</view>
+        <view class="content">
+          <view class="text-black">
+            商品:{{item.goodName}} 数量:{{item.number}}
+          </view>
+          <view class="text-gray text-sm">
+            订单号:{{item.id}}
+          </view>
+        </view>
+       <view class="content1">
+          <view class="text-black">
+            {{item.date}}
+          </view>
+          <view class="text-gray text-sm">
+            金额:{{item.total}}
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="divLine"></view>  
+  </block>
+</scroll-view>

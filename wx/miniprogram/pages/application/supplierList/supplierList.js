@@ -227,7 +227,7 @@ Page({
       //直接调用上一个页面对象的setData()方法，把数据存到上一个页面中去
       prevPage.setData({
         supplier: this.data.name,
-        id:this.data.id
+        supplierId:this.data.id
       });
 
       wx.navigateBack({
