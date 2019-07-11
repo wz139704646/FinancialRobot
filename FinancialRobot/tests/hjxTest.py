@@ -5,11 +5,13 @@ import requests
 import uuid
 import json
 import jieba
+import time,datetime
 from flask import Blueprint, render_template, request
 from app.dao.WareHouseDao import WareHouseDao
 from app.dao.PurchaseDao import PurchaseDao,DecimalEncoder
 from app.utils.DBHelper import MyHelper
 from app.dao.CompanyDao import CompanyDao
+from app.dao.SellDao import SellDao
 from app.dao.CustomerDao import CustomerDao
 from app.dao.SupplierDao import SupplierDao
 from app.dao.GoodsDao import GoodsDao
@@ -117,19 +119,31 @@ class Test10(unittest.TestCase):
             print(weight, word)
 class Test11(unittest.TestCase):
     def test13(self):
+
         query = PurchaseDao()
-        result = query.query_byCid("5")
-        size = len(result)
-        print(result)
-        purjson=json.dumps(PurchaseDao.to_dict(result), ensure_ascii=False,cls=DecimalEncoder)
-        # print(json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False))
+
+        # size = len(result)
+        # print(result)
+        # purjson=json.dumps(PurchaseDao.to_dict(result), ensure_ascii=False,cls=DecimalEncoder)
+        # print(purjson)
         # print(purjson)
         # companyId = "5"
         # goodsNo ="5dfac447-d039-3eae-bde9-33f832f17437"
         # number = 1
         # provideNo = "1"
         # purchasePrice = 10.5
-        date = "2019-7-11"
+        date = "2019-7-10"
+        start = datetime.datetime.strptime(date, '%Y-%m-%d')
+        delta = datetime.timedelta(days=1)
+        n_days = start + delta
+        end=n_days.strftime('%Y-%m-%d %H:%M:%S')
+        print(start)
+        print(n_days.strftime('%Y-%m-%d %H:%M:%S'))
+        result = query.query_byDate("5",start,end)
+        print(result)
+
+
+
         # row = query.add(goodsNo, provideNo, companyId, number, purchasePrice, date, "未入库")
         # if row == 1:
         #     return json.dumps(return_success("Yes!"))
@@ -145,6 +159,61 @@ class Test11(unittest.TestCase):
         print(size)
         print(supresu_json)
         print(json.dumps(return_success(UserDao.to_dict(supresult)), ensure_ascii=False))
+    def test13(self):
+        queryCustomer = CustomerDao()
+        result = queryCustomer.query_byId("031f50f8-7691-33b0-9281-cafeba075c90")
+        print(len(result))
+        print(result[0][1])
+        print(result)
+    def test14(self):
+        query = SellDao()
+        companyId ="5"
+        date = "2019-7-11"
+        if date == None:
+            result = query.query_byCid(companyId)
+            size = len(result)
+            if size == 0:
+                return json.dumps(return_unsuccess('Error: No data'))
+            else:
+                print(json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder))
+        else:
+           # date = "2019-7-12"
+            start = datetime.datetime.strptime(date, '%Y-%m-%d')
+            delta = datetime.timedelta(days=1)
+            n_days = start + delta
+            end = n_days.strftime('%Y-%m-%d %H:%M:%S')
+            result = query.query_byDate(companyId, start, end)
+            size = len(result)
+            if size == 0:
+                return json.dumps(return_unsuccess('Error: No data'))
+            else:
+                print(json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder))
+    def test15(self):
+        query = SellDao()
+        queryCustomer = CustomerDao()
+        queryGoods = GoodsDao()
+        companyId ="5"
+        customerId = "201353eb-4f3b-3992-bdae-347841dc304d"
+        result = queryCustomer.query_byId(customerId)
+        if len(result) == 1:
+            customerName = result[0][1]
+        else:
+            customerName = ""
+        sumprice = 22.5
+        date = "2019-7-12"
+        id = str(uuid.uuid3(uuid.NAMESPACE_OID, date))
+        goodsId = "e7f00942-5aad-3df5-90d1-c850b0839ff2"
+        number = 5
+        goodsResult = queryGoods.query_byId(goodsId)
+        if len(goodsResult) == 1:
+            goodsName = goodsResult[0][1]
+        else:
+            goodsName = ""
+        row = query.add(id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName)
+        if row == 1:
+            return json.dumps(return_success("Yes!"))
+        else:
+            return json.dumps(return_unsuccess('Error: Add failed'))
     def test12(self):
         jieba.load_userdict("../app/utils/dict.txt")
         #去除停用词

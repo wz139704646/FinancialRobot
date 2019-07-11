@@ -23,7 +23,9 @@ class GoodsDao:
     def query_all(self):
         connection = MyHelper()
         return connection.executeQuery("select * from Goods")
-
+    def query_byId(self,id):
+        conn = MyHelper()
+        return conn.executeQuery("select * from Goods where id = %s", [id])
     def add(self, name, sellprice, companyId, type, unitInfo):
         id = uuid.uuid3(uuid.NAMESPACE_OID, str(time()))
         connection = MyHelper()

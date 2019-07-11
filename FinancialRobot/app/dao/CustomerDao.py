@@ -29,6 +29,9 @@ class CustomerDao:
     def query_byCompanyId(self,companyId):
         conn = MyHelper()
         return conn.executeQuery("select * from Customer where companyId = %s",[companyId])
+    def query_byId(self,id):
+        conn = MyHelper()
+        return conn.executeQuery("select * from Customer where ID = %s", [id])
     def add(self, id, name, phone,credit,companyId,bankName,bankAccount):
         conn = MyHelper()
         row = conn.executeUpdate("insert into Customer (ID, name, phone,credit,companyId,bankName,bankAccount) VALUES (%s,%s,%s,%s,%s,%s,%s)" ,[id, name, phone,credit,companyId,bankName,bankAccount])
