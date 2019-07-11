@@ -9,7 +9,8 @@
   </view>
 </view>
 <block wx:key wx:for='{{goodsList}}' wx:for-index='index'>
-  <van-card num="{{item.buyNum}}" tag="{{item.type}}" price="{{item.sellprice}}" desc="单位:{{item.unitInfo}}" title="{{item.name}}" thumb="{{'http://'+host+'/goodsPic/'+item.photo}}" thumb-mode="aspectFill" bindtap='showModal' id="{{item.index}}" data-target="addGood" data-id="{{item.id}}" data-buyNum="{{item.buyNum}}" data-name="{{item.name}}" data-price="{{item.sellprice}}"> 
+  <van-card num="{{item.buyNum}}" tag="{{item.type}}" price="{{item.sellprice}}" desc="单位:{{item.unitInfo}}" title="{{item.name}}" thumb="{{'http://'+host+'/goodsPic/'+item.photo}}" thumb-mode="aspectFill" bindtap='showModal' id="{{item.index}}" data-target="addGood"
+    data-id="{{item.id}}" data-buyNum="{{item.buyNum}}" data-name="{{item.name}}" data-price="{{item.sellprice}}">
   </van-card>
   <view class="divLine"></view>
 </block>
@@ -28,11 +29,28 @@
 <view class="cu-modal bottom-modal {{modalName=='addGood'?'show':''}}">
   <view class="cu-dialog">
     <view class="cu-bar bg-white">
-      <view class="action text-green" bindtap='changeBuyNum'>确定</view>
       <view class="action text-blue" bindtap="hideModal">取消</view>
+      <view class='center'>选择数量</view>
+      <view class="action text-green" bindtap='changeBuyNum'>确定</view>
     </view>
     <view class="padding-xl">
-      <input type='number' placeholder='请输入进货商品数量' value='{{tempNum}}' bindinput='inputChange'></input>
+      <!-- <input type='number' placeholder='请输入进货商品数量' value='{{tempNum}}' bindinput='inputChange'></input> -->
+      <view class="flex">
+        <view class="flex-sub padding-sm margin-xs radius">
+          <view class='text-bold text-left padding-top-sm'>商品名: {{curName}}</view>
+        </view>
+        <view class="flex-sub padding-sm margin-xs radius">
+          <van-stepper value="{{ tempNum }}" integer min="0" step="1" bind:change="inputChange" />
+        </view>
+      </view>
+      <view class='flex'>
+        <view class="flex-sub padding-sm margin-xs radius">
+          <view class='text-bold text-left margin-bottom-xs'>单价: {{curPrice}}</view>
+        </view>
+        <view class="flex-sub padding-sm margin-xs radius">
+          <view class='text-bold'>总价: {{curPrice*tempNum}}</view>
+        </view>
+      </view>
     </view>
   </view>
 </view>
@@ -44,7 +62,7 @@
       <view class="action text-grey">已选商品</view>
       <view class="action text-blue" bindtap="hideModal">确认</view>
     </view>
-    <block wx:key wx:for='{{buyList}}' wx:for-index='index' >
+    <block wx:key wx:for='{{buyList}}' wx:for-index='index'>
       <view class="cu-bar bg-gray">
         <view class="action text-black">商品:{{item.name}}</view>
         <view class="action text-black">单价:{{item.price}}</view>

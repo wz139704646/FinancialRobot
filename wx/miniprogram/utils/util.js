@@ -77,11 +77,23 @@ const bytes2Str = bytes => {
   return str.join("");
 }
 
+const getcurDateFormatString = date => {
+  let datestr = date.toLocaleDateString()
+  let dateArr = datestr.split('/')
+  for (let i = 1; i <= 2; i++) {
+    if (dateArr[i].length < 2) {
+      dateArr[i] = "0" + dateArr[1]
+    }
+  }
+  return dateArr.join('-')
+}
+
 
 module.exports = {
   json2form: json2form,
   encodeUTF8: encodeUTF8,
   decodeUTF8: decodeUTF8,
   encryptPasswd: encryptPasswd,
-  bytes2Str: bytes2Str
+  bytes2Str: bytes2Str,
+  getcurDateFormatString: getcurDateFormatString
 }

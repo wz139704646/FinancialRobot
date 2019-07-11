@@ -29,6 +29,26 @@ Page({
       host: host
     })
     that.initGoodList()
+    wx.getStorage({
+      key: 'buyInfo',
+      success: function (res) {
+        console.log('获取buyInfo成功')
+        if (res.data && res.data.list && res.data.list.length != 0) {
+          let len = res.data.list.length
+          that.setData({
+            buyList: res.data.list,
+            badge: len,
+            total: res.data.total
+          })
+        } else {
+          console.log('buyInfo 为空')
+        }
+      },
+      fail: err => {
+        console.log('获取buyInfo失败')
+        console.error(err)
+      }
+    })
   },
 
   initGoodList() {
@@ -120,10 +140,10 @@ Page({
     that.hideModal()
   },
   inputChange(e){
+    console.log(e)
     this.setData({
-      tempNum:e.detail.value
+      tempNum:e.detail
     })
-    console.log(e.detail.value)
   },
   showModal(e) {
     var modelName = this.data.modalName
