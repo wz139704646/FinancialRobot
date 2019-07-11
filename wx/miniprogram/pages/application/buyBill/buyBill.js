@@ -1,44 +1,65 @@
-
+var app = getApp()
+const host = app.globalData.requestHost
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    date: '2018-12-25',
+    date: '2019-07-10',
+    listdate:'2019-07-10',
     type: "1",
-    buyList:[],
-
+    buyList: [],
+    supplierId:0,
+    id:"",
+    brList:[]
   },
+
   DateChange(e) {
     this.setData({
       date: e.detail.value
     })
   },
-  addProvider(e){
+  addProvider(e) {
     wx.navigateTo({
       url: '../supplierList/supplierList?type=' + this.data.type,
     })
   },
-  addGoods(e){
+  addGoods(e) {
     wx.navigateTo({
       url: '../chooseGood/chooseGood',
     })
   },
-  onClick(e){
-    if(this.data.type=="1"){
-      this.setData({
-        type:"2"
-      })
-    }else{
-      this.setData({
-        type:"1"
-      })
-      
-    }
+  onClick(e) {
+    console.log(e)
+    this.setData({
+      type:e.detail.index + 1
+    })
   },
   //生成采购单
-  buyBill(){
+  buyBill() {
+    console.log(this.data)
     console.log("生成采购单")
+
+    wx.request({
+      url: 'http://' + host + '/addPurchase',
+      data: JSON.stringify({
+        companyId: "5",
+        buyList: this.data.buyList,
+        date: this.data.date,
+        supplierId: this.data.supplierId
+      }),
+      method: "POST",
+      header: {
+        "Content-Type": 'application/json'
+      },
+      success: res => {
+        console.log(res)
+        wx.showToast({
+          title: '已下单',
+        })
+      }
+    })
+  },
+  cancelBill(){
+    wx.redirectTo({
+      url: '../home/home',
+    })
   }
 })

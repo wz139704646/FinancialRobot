@@ -9,7 +9,6 @@ Page({
     hidden: true,
     customerList:[
       
-
     ],
 
     pycustomerList:[],
