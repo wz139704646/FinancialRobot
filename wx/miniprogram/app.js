@@ -19,8 +19,8 @@ App({
     
   },
   globalData: {
-    // requestHost: 'financialrobot.chinanorth.cloudapp.chinacloudapi.cn',
-    requestHost: 'localhost:5000',
+    requestHost: 'https://financialrobot.chinanorth.cloudapp.chinacloudapi.cn',
+    // requestHost: 'http://localhost:5000',
     ColorList: [{
       title: '嫣红',
       name: 'red',

@@ -191,7 +191,7 @@ Page({
           type: 0
         }),
         method: 'POST',
-        url: 'http://' + host + '/getVerification',
+        url: host + '/getVerification',
         success(res) {
           console.log(res.data)
           if (!res.data.success) {
@@ -272,7 +272,7 @@ Page({
     }
     // console.log("crypted pwd: " + crypted)
     wx.request({
-      url: 'http://'+host+'/login',
+      url: host+'/login',
       data: JSON.stringify({
         account: account,
         passwd: pwd,
@@ -326,7 +326,7 @@ Page({
                     if (!suc.result.errMsg) {
                       app.globalData.openid = suc.result.openid
                       wx.request({
-                        url: 'http://'+host+'/bindUserWx',
+                        url: host+'/bindUserWx',
                         method: 'POST',
                         header: {
                           "Content-Type": 'application/json'

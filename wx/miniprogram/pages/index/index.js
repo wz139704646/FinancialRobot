@@ -33,7 +33,7 @@ Page({
                   app.globalData.openid = suc.result.openid
                   console.log('get openid suc')
                   wx.request({
-                    url: 'http://' + host + '/queryUser',
+                    url: host + '/queryUser',
                     method: 'POST',
                     header: {
                       "Content-Type": 'application/json'
