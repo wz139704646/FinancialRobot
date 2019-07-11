@@ -3,12 +3,10 @@ const host = app.globalData.requestHost
 Page({
   data: {
     date: '2019-07-10',
-    listdate:'2019-07-10',
     type: "1",
     buyList: [],
     supplierId:0,
-    id:"",
-    brList:[]
+    id:""
   },
 
   DateChange(e) {
@@ -41,7 +39,7 @@ Page({
       url: 'http://' + host + '/addPurchase',
       data: JSON.stringify({
         companyId: "5",
-        buyList: this.data.buyList,
+        purchases: this.data.buyList,
         date: this.data.date,
         supplierId: this.data.supplierId
       }),

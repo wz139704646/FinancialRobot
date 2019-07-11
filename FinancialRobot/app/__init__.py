@@ -6,8 +6,7 @@ from app.views.wx import wx
 
 from app.views.web import web
 from app.views.picUpload import up
-
-
+from app.views.languageProcess import lanprocess
 
 
 
@@ -16,6 +15,7 @@ def create_app():
     app.register_blueprint(wx)
     app.register_blueprint(client, url_prefix='/client')
     app.register_blueprint(web)
+    app.register_blueprint(lanprocess)
     app.register_blueprint(up, url_prefix='/pic')
 
     @app.after_request

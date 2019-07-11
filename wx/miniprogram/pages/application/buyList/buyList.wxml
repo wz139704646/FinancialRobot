@@ -27,7 +27,7 @@
             {{item.date}}
           </view>
           <view class="text-gray text-sm">
-            金额:{{item.total}}
+            金额:{{item.number*item.purchasePrice}}
           </view>
         </view>
       </view>

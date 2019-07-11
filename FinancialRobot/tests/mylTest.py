@@ -2,6 +2,7 @@ import unittest
 import base64
 import binascii
 import json
+import jieba
 from hashlib import sha1
 
 from app.dao.CompanyDao import CompanyDao
@@ -50,4 +51,7 @@ class MylTest(unittest.TestCase):
         print(json.dumps(return_unsuccess("失败")))
 
     def test6(self):
-        con=MyHelper()
+        text = "我来到清华大学"
+        seg_list = jieba.cut(text, cut_all=True)
+        print(u"[全模式]:","/".join(seg_list))
+
