@@ -1,3 +1,4 @@
+PyJWT
 redis
 bigchaindb_driver
 qcloudsms_py

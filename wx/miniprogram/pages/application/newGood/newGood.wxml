@@ -1,0 +1,79 @@
+<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">新增货物</view>
+</cu-custom>
+
+<view class="weui-cell">
+  <view class="weui-cell__bd">
+    <view class="weui-uploader">
+      <view class="weui-uploader__hd">
+        <view class="weui-uploader__title">商品照片</view>
+      </view>
+      <view class="weui-uploader__bd">
+        <view class="weui-uploader__files">
+          <block wx:for="{{imageList}}" wx:for-item="image" wx:key>
+            <view class="weui-uploader__file">
+              <image class="weui-uploader__img" src="{{image}}" data-src="{{image}}" bindtap="previewImage"></image>
+            </view>
+          </block>
+        </view>
+        <view class="weui-uploader__input-box">
+          <view class="weui-uploader__input" bindtap="chooseImage"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="cu-form-group margin-top">
+  <view class="title">商品名称 *</view>
+  <input placeholder="请输入商品名称" style="text-align:right" value="{{name}}" bindinput='nameChange'></input>
+</view>
+<view class="cu-form-group">
+  <view class="title">商品类型 *</view>
+  <picker bindchange="goodChange" value="{{gindex}}" range="{{type}}">
+    <view class="picker">
+      {{gindex?type[gindex]:'选择一个商品类型'}}
+    </view>
+  </picker>
+</view>
+<view class="cu-form-group">
+  <view class="title">商品单位 *</view>
+  <picker bindchange="unitChange" value="{{uindex}}" range="{{unitInfo}}">
+    <view class="picker">
+      {{uindex?unitInfo[uindex]:'选择一个商品单位'}}
+    </view>
+  </picker>
+</view>
+<!-- 这个后台接口里没有，待定 -->
+<view class="cu-form-group margin-top">
+  <view class="title">商品品牌</view>
+  <input placeholder="请输入商品品牌" style="text-align:right" value='{{brand}}' bindinput='brandChange'></input>
+</view>
+<view class="cu-form-group">
+  <view class="title">规格型号</view>
+  <input placeholder="请输入规格型号" style="text-align:right" value='{{standard}}' bindinput='standardChange'></input>
+</view>
+<view class="cu-form-group">
+  <view class="title">条形码</view>
+  <input type='number' placeholder="请输入条形码" style="text-align:right" bindinput='barcodeChange' value='{{barcode}}'></input>
+	<image src='/imgs/saoma.png' class='saoma_size' bindtap='scanCode'></image>
+</view>
+<!-- =========== -->
+<view class="cu-form-group">
+  <view class="title">售价</view>
+  <input type='number' placeholder="请输入商品售价" style="text-align:right" value='{{sellprice}}' bindinput='sellpriceChange'></input>
+</view>
+<view class="cu-form-group">
+  <view class="title">默认仓库</view>
+  <picker bindchange="storeChange" value="{{sindex}}" range="{{store}}">
+    <view class="picker">
+      {{sindex?store[sindex]:'选择一个默认仓库'}}
+    </view>
+  </picker>
+</view>
+
+<view class="padding flex flex-direction">
+  <button class="cu-btn bg-red margin-tb-sm lg" bindtap='addsuccess'>确定</button>
+  <button class="cu-btn bg-grey lg" bindtap='addfail'>取消</button>
+</view>
