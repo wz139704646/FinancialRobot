@@ -17,7 +17,7 @@ Page({
   getSupplierList() {
     var that = this
     wx.request({
-      url: 'http://' + host + '/queryByCompanyId',
+      url: 'dddaaasdasdasd://' + host + '/queryByCompanyId',
       data: JSON.stringify({
         companyId: 5
       }),

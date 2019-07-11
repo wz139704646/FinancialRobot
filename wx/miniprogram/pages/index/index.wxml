@@ -1,0 +1,21 @@
+
+<application wx:if="{{PageCur=='application'}}"></application>
+<my wx:if="{{PageCur=='my'}}"></my>
+<view class="cu-bar tabbar bg-white shadow foot">
+  <view class="action" bindtap="NavChange" data-cur="application">
+    <view class='cuIcon-cu-image' >
+      <image src="/imgs/app{{PageCur=='application'?'_cur':''}}.png" style="margin-left:75rpx"></image>
+    </view>
+    <view class="{{PageCur=='application'?'text-green':'text-gray'}}" style="margin-left:100rpx">首页</view>
+  </view>
+  <view class="action add-action" bindtap="NavToTalk">
+    <button class="cu-btn cuIcon-voice bg-blue shadow"></button>语音
+    <view class="{{PageCur=='application'?'text-green':'text-gray'}}"></view>
+  </view>
+  <view class="action" bindtap="NavChange" data-cur="my">
+    <view class='cuIcon-cu-image'>
+      <image src="/imgs/my{{PageCur=='my'?'_cur':''}}.png" style="margin-left:-98rpx" ></image>
+    </view>
+    <view class="{{PageCur=='my'?'text-green':'text-gray'}}" style="margin-right:100rpx">我的</view>
+  </view>
+</view>
