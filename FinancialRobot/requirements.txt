@@ -1,3 +1,4 @@
+PyJWT
 redis
 jieba
 bigchaindb_driver
