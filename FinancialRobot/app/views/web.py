@@ -140,13 +140,16 @@ def RegisterPurchase():
     _json = request.json
     companyId = _json.get('companyId')
     purchases = _json.get('purchases')
+    provideNo = _json.get('supplierId')
+    date = _json.get('date')
+    id = str(uuid.uuid3(uuid.NAMESPACE_OID, date))
+    print(purchases)
     for puchase in purchases:
-        goodsNo = puchase['goodsNo']
-        number = puchase['amount']
-        provideNo = puchase['providerNo']
-        purchasePrice = puchase['costEach']
-        date = puchase['date']
-        row = query.add(goodsNo, provideNo, companyId, number, purchasePrice, date,"未入库")
+        goodsNo = puchase['id']
+        goodsName = puchase['name']
+        number = puchase['buyNum']
+        purchasePrice = puchase['price']
+        row = query.add(id,goodsNo,goodsName, provideNo, companyId, number, purchasePrice, date,"运")
         if row == 1:
            return json.dumps(return_success("Yes!"))
         else:
@@ -162,6 +165,8 @@ def queryPurchase():
     if size == 0:
         return json.dumps(return_unsuccess('Error: No data'))
     else:
-        return json.dumps(return_success(PurchaseDao.to_dict(result), ensure_ascii=False,cls=DecimalEncoder), ensure_ascii=False)
+        return json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+        # purjson = json.dumps(PurchaseDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder)
+        # return_success(purjson)
 
 

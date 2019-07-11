@@ -19,13 +19,15 @@ class PurchaseDao:
         result = []
         for row in data:
             res = {}
-            res['goodId'] = row[0]
-            res['supplierId'] = row[1]
-            res['companyId'] = row[2]
-            res['number'] = row[3]
-            res['purchasePrice'] = row[4]
-            res['date'] = row[5]
-            res['status'] = row[6]
+            res['id']=row[0]
+            res['goodId'] = row[1]
+            res['goodName'] = row[2]
+            res['supplierId'] = row[3]
+            res['companyId'] = row[4]
+            res['number'] = row[5]
+            res['purchasePrice'] = row[6]
+            res['date'] = row[7]
+            res['status'] = row[8]
             result.append(res)
         return result
     def query_all(self):
@@ -34,10 +36,10 @@ class PurchaseDao:
     def query_byCid(self,companyId):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where companyId=%s",[companyId])
-    def add(self, goodId, supplierId, companyId, number, purchasePrice,date,status):
+    def add(self, id, goodId, goodName, supplierId, companyId, number, purchasePrice,date,status):
         connection = MyHelper()
         row=connection.executeUpdate(
-            "insert into Purchase (goodId, supplierId, companyId, number, purchasePrice, date,status) VALUES (%s,%s,%s,%s,%s,%s,%s)",
-            [goodId, supplierId, companyId, number, purchasePrice, date,status])
+            "insert into Purchase (id,goodId, goodName, supplierId, companyId, number, purchasePrice, date,status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+            [id,goodId, goodName, supplierId, companyId, number, purchasePrice, date,status])
         return row
 
