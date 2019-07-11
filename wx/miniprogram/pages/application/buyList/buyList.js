@@ -6,29 +6,29 @@ Page({
     StatusBar: app.globalData.StatusBar,
     CustomBar: app.globalData.CustomBar,
     brList:[
-      {
-        id:111111,
-        goodid:1,
-        goodName:"aaa",
-        number:1,
-        purchasePrice:1,
-        date:'2019-07-01',
-        total:111,
-        status:"运",
-        index:0
-      }, {
-        id: 111111,
-        goodid: 1,
-        supplierid: 1,
-        goodName:"aaa",
-        number: 1,
-        purchasePrice: 1,
-        date: '2019-07-01',
-        surname: "zjj",
-        total: 111,
-        status: "到",
-        index:1
-      }
+      // {
+      //   id:111111,
+      //   goodid:1,
+      //   goodName:"aaa",
+      //   number:1,
+      //   purchasePrice:1,
+      //   date:'2019-07-01',
+      //   total:111,
+      //   status:"运",
+      //   index:0
+      // }, {
+      //   id: 111111,
+      //   goodid: 1,
+      //   supplierid: 1,
+      //   goodName:"aaa",
+      //   number: 1,
+      //   purchasePrice: 1,
+      //   date: '2019-07-01',
+      //   surname: "zjj",
+      //   total: 111,
+      //   status: "到",
+      //   index:1
+      // }
     ],
     allbrList:[],
     searchList:[]
@@ -44,12 +44,16 @@ Page({
       data: JSON.stringify({
         companyId: "5"
       }),
+      method: "POST",
+      header: {
+        "Content-Type": 'application/json'
+      },
       success(res){
         console.log(res)
-        this.setData({
-          brList:res.data.result.brList
-        })
-        that.initbrList()
+        // this.setData({
+        //   brList:res.data.result.brList
+        // })
+        // that.initbrList()
       }
     })
   },
