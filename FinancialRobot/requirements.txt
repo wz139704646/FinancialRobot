@@ -1,4 +1,7 @@
+pymongo==3.8.0
+PyJWT
 redis
+jieba
 bigchaindb_driver
 qcloudsms_py
 pymysql
