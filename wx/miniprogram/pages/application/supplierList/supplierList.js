@@ -185,6 +185,7 @@ Page({
     inputVal = e.detail.value
   },
   search(e) {
+    var that = this
     console.log("正在搜索")
     if (inputVal == "") {
       this.setData({
@@ -192,7 +193,7 @@ Page({
       })
     } else {
       this.data.pysupplierList = []
-      addElement()
+      that.addElement()
       for (let i = 0; i < this.data.supplierList.length; i++) {
         let j = this.data.supplierList[i].pinyin
         let k = j.toUpperCase().charCodeAt(0)
@@ -201,7 +202,7 @@ Page({
           this.data.pysupplierList[k - 65].sList.push(this.data.supplierList[i])
         }
       }
-      delElement()
+      that.delElement()
       console.log(this.data.pysupplierList)
 
       this.setData({

@@ -1,4 +1,5 @@
-// pages/application/recordInfo/recordInfo.js
+const app = getApp()
+const host = app.globalData.requestHost
 Page({
 
   /**
@@ -12,66 +13,41 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    var that = this 
     console.log(options)
-    // this.setData({
-    //   detail:options.data.data
-    // })
+    this.setData({
+      id:options.id
+    })
+    that.initInfo(options)
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
+  initInfo(e){
+    var that = this
+    wx.request({
+      url: 'http://' + host + '/queryPurchase',
+      data: JSON.stringify({
+        companyId: "5",
+        id: e.id
+      }),
+      method: "POST",
+      header: {
+        "Content-Type": 'application/json'
+      },
+      success(res) {
+        console.log(res)
+        that.setData({
+          buyList: res.data.result
+        })
+        that.calTotal(res)
+      }
+    })
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  },
-  delBill(){
+  delBill(e){
     wx.request({
       url: 'http://' + host + '/delBuy',
       data: JSON.stringify({
         companyId: "5",
-        id:""
       }),
       method: "POST",
       header: {
@@ -97,6 +73,17 @@ Page({
     console.log(e)
     wx.navigateBack({
       delta:1
+    })
+  },
+  calTotal(e) {
+    console.log(e.data.result)
+    var buyList = e.data.result
+    var total = 0
+    for (var index in buyList) {
+      total = total + buyList[index].number * buyList[index].purchasePrice
+    }
+    this.setData({
+      total: total
     })
   },
 

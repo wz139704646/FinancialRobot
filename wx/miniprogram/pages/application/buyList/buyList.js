@@ -99,6 +99,7 @@ Page({
     }
   },
   toDetail(e){
+    console.log(this.data)
     console.log(e)
     var index = e.currentTarget.dataset.index
     wx.navigateTo({

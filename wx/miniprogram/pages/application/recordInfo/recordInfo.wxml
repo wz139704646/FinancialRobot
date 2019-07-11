@@ -11,25 +11,25 @@
   <view class="title">开单日期</view>
   <picker disabled='{{true}}' mode="date" value="{{date}}">
     <view class="picker">
-      {{date}}
+      {{buyList[0].date}}
     </view>
   </picker>
 </view>
 <view class="cu-form-group">
   <view class="title">供应商</view>
-  <input disabled value='{{supplier}}' style="text-align:right"></input>
+  <input disabled value='{{buyList[0].supplierId}}' style="text-align:right"></input>
   <text class="cuIcon-friendadd text-orange"></text>
 </view>
-<view class="cu-form-group" bindtap='addGoods'>
+<view class="cu-form-group">
   <view class="title">商品</view>
   <input disabled placeholder='请选择' style="text-align:right"></input>
   <text class="cuIcon-goods text-orange"></text>
 </view>
 <block wx:key wx:for='{{buyList}}' wx:for-index='index'>
   <view class="cu-bar bg-gray">
-    <view class="action text-black">{{item.name}}</view>
-    <view class="action text-black">单价:{{item.price}}</view>
-    <view class='action text-black'>数量:{{item.buyNum}}</view>
+    <view class="action text-black">{{item.goodName}}</view>
+    <view class="action text-black">单价:{{item.purchasePrice}}</view>
+    <view class='action text-black'>数量:{{item.number}}</view>
   </view>
   <view class="divLine"></view>
 </block>
