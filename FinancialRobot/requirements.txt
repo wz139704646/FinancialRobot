@@ -1,4 +1,5 @@
 redis
+jieba
 bigchaindb_driver
 qcloudsms_py
 pymysql
