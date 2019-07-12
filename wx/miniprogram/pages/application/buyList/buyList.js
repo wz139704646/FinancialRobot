@@ -26,6 +26,9 @@ Page({
       },
       success(res){
         console.log(res)
+        for (var index in res.data.result){
+          res.data.result[index].date = res.data.result[index].date.toString().substring(0,10)
+        }
         that.setData({
           brList:res.data.result
         })
@@ -92,7 +95,6 @@ Page({
           this.data.searchList.push(this.data.brList[i])
         }
       }
-
       this.setData({
         brList: this.data.searchList
       });
@@ -105,5 +107,6 @@ Page({
     wx.navigateTo({
       url: '../recordInfo/recordInfo?id='+this.data.allbrList[index].id
     })
-  }
+  },
+  
 })
