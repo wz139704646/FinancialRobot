@@ -1,11 +1,13 @@
 // import Toast from 'vant-weapp/toast/toast';
 
 const app = getApp();
+const util = require('../../utils/util.js')
 var inputVal = '';
 var msgList = [];
 var windowWidth = wx.getSystemInfoSync().windowWidth;
 var windowHeight = wx.getSystemInfoSync().windowHeight;
 var keyHeight = 0;
+var host = app.globalData.requestHost
 
 /**
  * 初始化数据
@@ -91,21 +93,67 @@ Page({
       inputVal,
       toView: 'msg-' + (msgList.length - 1),
       scrollHeight: '85vh'
-    }, res => {
-      msgList.push({
-        speaker: 'server',
-        contentType: 'text',
-        content: e.detail.value
-      }),
-      this.setData({
-        msgList,
-        toView: 'msg-' + (msgList.length - 1),
-        scrollHeight: '85vh'
-      })
     });
 
-
-    //这里写处理对话的代码
+    // 处理对话，调用自然语言处理
+    let date = util.getcurDateFormatString(new Date())
+    console.log(date)
+    wx.request({
+      url: host+'/languageProcess',
+      method: 'POST',
+      header: {
+        "Content-Type": 'application/json'
+      },
+      data: JSON.stringify({
+        language: e.detail.value,
+        companyId: app.globalData.companyId,
+        time: date
+      }),
+      success: res => {
+        console.log('process succeed')
+        if(res.statusCode != 200){
+          wx.showToast({
+            title: '出现未知错误',
+            image: '../../imgs/fail.png'
+          })
+          return
+        }
+        let data = res.data
+        if(data.success){
+          result = data.result
+          // 将返回信息作为server方发送
+          if(result && result.length>0){
+            for(let idx in result){
+              msgList.push({
+                speaker: 'server',
+                contentType: 'text',
+                content: result[idx]
+              })
+            }
+          } else {
+            msgList.push({
+              speaker: 'server',
+              contentType: 'text',
+              content: '不好意思，我听不懂你在说什么'
+            })
+          }
+        } else {
+          msgList.push({
+            speaker: 'server',
+            contentType: 'text',
+            content: '不好意思，我听不懂你在说什么'
+          })
+        }
+      },
+      fail: err => {
+        console.log('request failed')
+        console.error(err)
+        wx.showToast({
+          title: '出现未知错误',
+          image: '../../imgs/fail.png'
+        })
+      }
+    })
 
 
   },
