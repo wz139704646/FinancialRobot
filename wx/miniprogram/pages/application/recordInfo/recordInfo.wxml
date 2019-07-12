@@ -16,20 +16,21 @@
   </picker>
 </view>
 <view class="cu-form-group">
-  <view class="title">供应商</view>
+  <view class="title">{{back ? back=='sell' ? '客户' : '供应商' : '出错'}}</view>
   <input disabled value='{{buyList[0].supplierId}}' style="text-align:right"></input>
   <text class="cuIcon-friendadd text-orange"></text>
 </view>
 <view class="cu-form-group">
   <view class="title">商品</view>
-  <input disabled placeholder='请选择' style="text-align:right"></input>
+  <input disabled placeholder='' style="text-align:right"></input>
   <text class="cuIcon-goods text-orange"></text>
 </view>
 <block wx:key wx:for='{{buyList}}' wx:for-index='index'>
   <view class="cu-bar bg-gray">
-    <view class="action text-black">{{item.goodName}}</view>
-    <view class="action text-black">单价:{{item.purchasePrice}}</view>
+    <view class="action text-black">{{back ? back=='sell' ? item.goodsName : item.goodName : '出错'}}</view>
+    <view class="action text-black">单价:{{back ? back=='sell' ? item.sumprice/item.number : item.purchasePrice : '出错'}}</view>
     <view class='action text-black'>数量:{{item.number}}</view>
+    <view class="action text-black">合计:{{back ? back=='sell' ? item.sumprice : item.purchasePrice*item.number : '出错'}}</view>
   </view>
   <view class="divLine"></view>
 </block>
@@ -38,7 +39,7 @@
 </view>
 <view class="divLine"></view>
 <view class="cu-bar bg-white">
-  <view class="action text-red" bindtap="delBill">删除订单</view>
+  <view class="action text-red" bindtap="delBuy">删除订单</view>
   <view class="action text-blue" bindtap="backToList">返回列表</view>
 </view>
 
