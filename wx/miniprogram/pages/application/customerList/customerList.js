@@ -99,8 +99,16 @@ Page({
       listCur: this.data.pycustomerList[0].first
     });
   },
-  onLoad() {
-    this.getCustomerList()
+  onLoad(options) {
+    if(options.back){
+      this.setData({
+        back: options.back
+      }, res => {
+        this.getCustomerList()
+      })
+    } else {
+      this.getCustomerList()
+    }
   },
   onReady() {
     let that = this;
@@ -206,4 +214,21 @@ Page({
     }
 
   },
+
+  choose: function(e) {
+    let back = this.data.back
+    if(back){
+      var pages = getCurrentPages();
+      var currPage = pages[pages.length - 1];   //当前页面
+      var prevPage = pages[pages.length - 2];  //上一个页面
+      var cus = e.currentTarget.dataset.cus
+      //直接调用上一个页面对象的setData()方法，把数据存到上一个页面中去
+      prevPage.setData({
+        customer: cus
+      });
+      wx.navigateBack({
+        delta: 1
+      })
+    }
+  }
 });

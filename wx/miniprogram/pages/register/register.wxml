@@ -23,7 +23,7 @@
   <view class="cu-bar bg-white round search fixed margin-top margin-bottom">
     <view class="search-form round">
       <text class="cuIcon-search"></text>
-      <input type="text" placeholder="输入搜索的关键词" confirm-type="search" bindinput='search'></input>
+      <input type="text" placeholder="输入搜索的关键词" confirm-type="search" bindinput='search' bindconfirm='search'></input>
     </view>
   </view>
   <view class='indexes padding-top-xl '>
