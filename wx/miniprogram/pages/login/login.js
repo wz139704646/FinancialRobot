@@ -12,6 +12,7 @@ Page({
     state: true,
     loginText: "验证码登录",
     disabled: false,
+    codename: '发送验证码'
   },
 
   onLoad: function (options) {
@@ -203,7 +204,6 @@ Page({
             return
           }
           _this.setData({
-            iscode: res.data.result.code,
             disabled: true
           })
           var num = 61;

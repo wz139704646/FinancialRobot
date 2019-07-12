@@ -14,7 +14,7 @@
       </view>
       <view hidden='{{state}}'>
         <van-field value="{{ messagecode }}" center clearable label="短信验证码" placeholder="请输入验证码" left-icon='comment-o' border="{{ false }}" use-button-slot bindinput="setCode">
-          <van-button slot="button" size="small" type="primary" bindtap="sendCode" disabled='{{disabled}}'>发送验证码</van-button>
+          <van-button slot="button" size="small" type="primary" bindtap="sendCode" disabled='{{disabled}}'>{{codename}}</van-button>
         </van-field>
       </view>
     </van-cell-group>
