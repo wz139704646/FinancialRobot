@@ -19,7 +19,7 @@ Page({
         sumprice: 111,
         status: "运",
         index: 0,
-        customerName: 'hjx'
+        customerName: '黄家兴'
       }, {
         id: 111111,
         goodid: 1,
@@ -32,7 +32,7 @@ Page({
         sumprice: 111,
         status: "到",
         index: 1,
-        customerName: 'zqr'
+        customerName: '戢启瑞'
       }
     ]
   },
@@ -53,13 +53,14 @@ Page({
       }),
       success: res => {
         // 添加拼音属性
+        console.log(res)
         let list = res.data.selList
         wx.cloud.callFunction({
           name: 'convert2pinyin',
           data: {
             jsonStr: JSON.stringify(list),
             field: 'goodsName',
-            pinyin: pinyin
+            pinyin: 'pinyin'
           }
         }).then( res => {
           // 存储索引列表和所有列表
@@ -77,6 +78,13 @@ Page({
             title: '商品信息出错',
             icon: 'none'
           })
+        })
+      },
+      fail: err1 => {
+        console.error(err1)
+        wx.showToast({
+          title: '加载失败',
+          image: '../../../imgs/fail.png'
         })
       }
     })
@@ -136,15 +144,32 @@ Page({
     console.log(e)
     var index = e.currentTarget.dataset.index
     wx.navigateTo({
-      url: '../recordInfo/recordInfo?id=' + this.data.allbrList[index].id
+      url: '../recordInfo/recordInfo?type=sell'+'&id=' + this.data.allbrList[index].id
     })
   },
 
-  inputChange: function(e){
-
-  },
-
   search: function(e){
-    
+    let searchText = e.detail.value
+    if(!searchText || !this.data.allList)
+      return
+    searchText = searchText.toLowerCase().split(' ').join('')
+    timetext = searchText.split('-').join('')
+    let slist = this.data.allList
+    let sellList = []
+    for(var i in slist){
+      let gname = slist[i].goodsName
+      let cname = slist[i].customerName
+      let id = slist[i].id
+      let date = slist[i].date.split('-').join('')
+      if(gname.toLowerCase().indexOf(searchText)!=-1
+      || cname.toLowerCase().indexOf(searchText)!=-1
+      || id.indexOf(searchText)!=-1
+      || date.indexOf(timetext)!=-1){
+        sellList.push(slist[i])
+      }
+    }
+    this.setData({
+      sellList: sellList
+    })
   }
 })

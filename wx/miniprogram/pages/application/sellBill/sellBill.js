@@ -95,7 +95,7 @@ Page({
 
   addCustomer: function(e) {
     wx.navigateTo({
-      url: '../customerList/customerList',
+      url: '../customerList/customerList?back=sell',
     })
   },
 
@@ -115,6 +115,18 @@ Page({
 
   submitBill: function(e) {
     let that = this
+    let slist = this.data.buyList
+    if(!slist || slist.length==0)
+      return
+
+    // 处理前端销售单数据，发送给后台
+    let goodsList = []
+    for(let i in slist){
+      goodsList.push({
+        goodsId: slist[i].id,
+        number: slist[i].number
+      })
+    }
     wx.request({
       url: host+'/addSell',
       method: 'POST',
@@ -126,7 +138,7 @@ Page({
         customerId: that.data.customer.id,
         date: that.data.date,
         sumprice: that.data.total,
-        // goodsList: 
+        goodsList: goodsList
       }),
       success: res => {
         console.log(res)
@@ -134,6 +146,7 @@ Page({
     })
   },
 
+  // 取消订单，回到首页
   cancelBill() {
     wx.redirectTo({
       url: '../home/home',
