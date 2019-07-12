@@ -35,11 +35,15 @@ Page({
       },
       success(res) {
         console.log(res)
+        var date = res.data.result[0].date
+        res.data.result[0].date = date.toString().substring(0,10) 
+        console.log(date)
         that.setData({
           buyList: res.data.result
         })
         that.calTotal(res)
-      }
+      },
+      
     })
   },
 
@@ -48,6 +52,8 @@ Page({
       url: 'http://' + host + '/delBuy',
       data: JSON.stringify({
         companyId: "5",
+        id:this.data.id
+
       }),
       method: "POST",
       header: {
@@ -55,6 +61,10 @@ Page({
       },
       success: res => {
         console.log(res)
+        wx.showToast({
+          title: '订单已删除',
+          duration:4000
+        })
         var pages = getCurrentPages();
         var currPage = pages[pages.length - 1];   //当前页面
         var prevPage = pages[pages.length - 2];  //上一个页面
@@ -66,6 +76,9 @@ Page({
         wx.navigateBack({
           delta: 1
         })
+      },
+      fail:res=>{
+        console.log("删除失败")
       }
     })
   },
