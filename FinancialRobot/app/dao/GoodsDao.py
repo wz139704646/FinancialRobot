@@ -57,3 +57,19 @@ class GoodsDao:
             _param.append(type)
         connection = MyHelper()
         return connection.executeQuery(_sql, _param)
+
+    def query_by_warehouse(self, companyId, wareHouseId):
+        connection = MyHelper()
+        # wareHouseId为空
+        if wareHouseId:
+            return connection.executeQuery("select * from Goods "
+                                           "where Goods.id in "
+                                           "(select GoodsStore.goodsId from GoodsStore "
+                                           "where companyId = %s and wareId = %s)",
+                                           [companyId, wareHouseId])
+        else:
+            return connection.executeQuery("select * from Goods "
+                                           "where Goods.id in "
+                                           "(select * from GoodsStore "
+                                           "where companyId = %s order by goodsId)",
+                                           [companyId])

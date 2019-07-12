@@ -1,7 +1,7 @@
 from flask import Flask, request
-from app.views.client import client
+from app.views.trans import trans
 from app.views.wx import wx
-
+from app.config import MONGO_URI
 # from app.views.smsVertify import sms
 
 from app.views.web import web
@@ -9,14 +9,14 @@ from app.views.picUpload import up
 from app.views.languageProcess import lanprocess
 
 
-
 def create_app():
     app = Flask(__name__)
     app.register_blueprint(wx)
-    app.register_blueprint(client, url_prefix='/client')
+    app.register_blueprint(trans, url_prefix='/trans')
     app.register_blueprint(web)
     app.register_blueprint(lanprocess)
     app.register_blueprint(up, url_prefix='/pic')
+    app.config["MONGO_URI"] = MONGO_URI
 
     @app.after_request
     def after_request(response):
