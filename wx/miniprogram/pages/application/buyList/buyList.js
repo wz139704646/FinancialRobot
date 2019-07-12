@@ -7,9 +7,14 @@ Page({
     CustomBar: app.globalData.CustomBar,
     brList:[],
     allbrList:[],
-    searchList:[]
+    searchList:[],
+    fun:null
   },
   onLoad(options){
+    console.log(options)
+    this.setData({
+      fun:options.fun
+    })
     var that = this
     that.getbrList()
   },
@@ -105,7 +110,7 @@ Page({
     console.log(e)
     var index = e.currentTarget.dataset.index
     wx.navigateTo({
-      url: '../recordInfo/recordInfo?back=buy&id='+this.data.allbrList[index].id
+      url: '../recordInfo/recordInfo?back=buy&id=' + this.data.allbrList[index].id + '&fun=' + this.data.fun
     })
   },
   

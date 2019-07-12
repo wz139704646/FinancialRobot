@@ -39,7 +39,9 @@
 </view>
 <view class="divLine"></view>
 <view class="cu-bar bg-white">
-  <view class="action text-red" bindtap="delBuy">删除订单</view>
+  <view wx:if="{{fun==null}}"class="action text-red" bindtap="delBuy">删除订单</view>
+  <view wx:if="{{fun=='入库'}}" class="action text-red" bindtap="buyArrived">确认入库</view>
+  <view wx:if="{{fun=='出库'}}" class="action text-red" bindtap="sellOut">确认出库</view>
   <view class="action text-blue" bindtap="backToList">返回列表</view>
 </view>
 

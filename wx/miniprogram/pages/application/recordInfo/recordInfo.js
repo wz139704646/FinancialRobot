@@ -24,7 +24,8 @@ Page({
     }
     this.setData({
       id:options.id,
-      back: options.back
+      back: options.back,
+      fun: options.fun
     })
     that.initInfo(options)
   },
@@ -34,7 +35,7 @@ Page({
     var id = e.id
     var back = e.back 
     // 根据返回页面获取请求不同的api
-    let api = back == 'sell' ? 'querySell' : 'queryPurchase'
+    let api = back == 'sell' ? '/querySellById' : '/queryPurchaseById'
     wx.request({
       url: host + api,
       data: JSON.stringify({
@@ -148,5 +149,13 @@ Page({
       total: total
     })
   },
+  //确认入库
+  buyArrived(){
+
+  },
+  //确认出库
+  sellOut(){
+
+  }
 
 })

@@ -1,4 +1,7 @@
-// pages/application/newStorage/newStorage.js
+const app = getApp()
+const host = app.globalData.requestHost
+var name = ''
+var phone = ''
 Page({
 
   /**
@@ -7,60 +10,44 @@ Page({
   data: {
 
   },
-
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-
+  //输入值改变
+  nameChange(e) {
+    console.log(e.detail.value)
+    name = e.detail.value
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
+  siteChange(e) {
+    console.log(e.detail.value)
+    site = e.detail.value
   },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
+  //确认添加
+  addsuccess(e) {
+    wx.request({
+      url: 'http://' + host + '/addWarehouse',
+      data: JSON.stringify({
+        companyId: "5",
+        name: name,
+        site: site
+      }),
+      method: "POST",
+      header: {
+        "Content-Type": 'application/json'
+      },
+      success: res => {
+        wx.showToast({
+          title: 'add success',
+          duration:4000
+        })
+        console.log(res)
+        wx.redirectTo({
+          url: '/pages/index/index',
+        })
+      }
+    })
   },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
+  //取消添加
+  addfail(e) {
+    wx.redirectTo({
+      url: '/pages/index/index',
+    })
   },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  }
 })

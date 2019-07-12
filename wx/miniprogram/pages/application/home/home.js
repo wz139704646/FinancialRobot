@@ -8,7 +8,7 @@ Page({
       color: 'red',
       badge: 0,
       name: '销售记录',
-      url: "/pages/application/sellList/sellList"
+      url: "/pages/application/sellList/sellList?fun=null"
     }, {
       icon: 'friendadd',
       color: 'orange',
@@ -39,7 +39,7 @@ Page({
       color: 'red',
       badge: 0,
       name: '采购记录',
-      url: '/pages/application/buyList/buyList'
+      url: '/pages/application/buyList/buyList?fun=null'
     }, {
       icon: 'friendaddfill',
       color: 'orange',
@@ -130,14 +130,14 @@ Page({
       icon: 'edit',
       color: 'red',
       badge: 0,
-      name: '其他入库',
-      url: '/pages/application/inStore/inStore'
+      name: '入库',
+      url: '/pages/application/buyList/buyList?fun=入库'
     }, {
       icon: 'edit',
       color: 'orange',
       badge: 0,
-      name: '其他出库',
-      url: ''
+      name: '出库',
+      url: '/pages/application/sellList/sellList?fun=出库'
     }],
     financialIconList: [{
       icon: 'ticket',

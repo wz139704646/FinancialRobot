@@ -11,7 +11,7 @@ Page({
   data: {
     type:["批发"]
   },
-
+  //确认添加
   addsuccess(e) {
     wx.request({
       url: 'http://' + host + '/addSupplier',
@@ -33,15 +33,19 @@ Page({
         wx.showToast({
           title: 'add success',
         })
-        console.log(res)
+        wx.redirectTo({
+          url: '/pages/index/index',
+        })
       }
     })
   },
+  //取消添加
   addfail(e) {
     wx.redirectTo({
       url: '/pages/index/index',
     })
   },
+  //一系列输入框的valuechange
   nameChange(e) {
     console.log(e.detail.value)
     name = e.detail.value

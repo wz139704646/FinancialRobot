@@ -24,7 +24,6 @@ const initPage = function (page) {
 
 Page({
   data: {
-    date: '2019-07-10',
     type: "1",
     buyList: [],
     supplierId:0,
