@@ -22,7 +22,8 @@
     "pages/application/chooseGood/chooseGood",
     "pages/application/recordInfo/recordInfo",
     "pages/application/sellBill/sellBill",
-    "pages/application/inStore/inStore"
+    "pages/application/inStore/inStore",
+    "pages/application/newStorage/newStorage"
   ],
   "window": {
     "navigationBarBackgroundColor": "#39b54a",
