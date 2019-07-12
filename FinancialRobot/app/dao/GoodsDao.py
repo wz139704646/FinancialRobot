@@ -23,16 +23,18 @@ class GoodsDao:
     def query_all(self):
         connection = MyHelper()
         return connection.executeQuery("select * from Goods")
-    def query_byId(self,id):
+
+    def query_byId(self, id):
         conn = MyHelper()
         return conn.executeQuery("select * from Goods where id = %s", [id])
+
     def add(self, name, sellprice, companyId, type, unitInfo):
         id = uuid.uuid3(uuid.NAMESPACE_OID, str(time()))
         connection = MyHelper()
         row = connection.executeUpdate(
             "insert into Goods (id, name, sellprice, companyId, type, unitInfo) VALUES (%s,%s,%s,%s,%s,%s)",
             [str(id), name, sellprice, companyId, type, unitInfo])
-        res={"row":row,"id":id.__str__()}
+        res = {"row": row, "id": id.__str__()}
         return res
 
     def update_photo(self, id, photo):

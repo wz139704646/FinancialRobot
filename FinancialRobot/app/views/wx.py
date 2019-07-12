@@ -37,7 +37,6 @@ def userRegister():
     verification = _json.get("verification")
 
     # 验证码验证
-    # TODO
     true_veri = redis_store.get('veri' + account)
     print(true_veri)
     print(type(true_veri))
@@ -115,7 +114,7 @@ def login():
         suc = res.get("success")
         if not suc:
 
-            redis_store.delete('veri'+account)
+            redis_store.delete('veri' + account)
             resp = return_success(UserDao.to_dict(res))
             resp['token'] = token
         else:

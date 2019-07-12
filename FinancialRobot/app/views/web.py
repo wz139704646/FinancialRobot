@@ -7,15 +7,17 @@ from app.dao.SupplierDao import SupplierDao
 from app.dao.CustomerDao import CustomerDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.WareHouseDao import WareHouseDao
-from app.dao.PurchaseDao import PurchaseDao,DecimalEncoder
-from app.dao.SellDao import SellDao,DecimalEncoder
+from app.dao.PurchaseDao import PurchaseDao
+from app.dao.SellDao import SellDao
 from app.utils.res_json import *
-import uuid,datetime,time
+from app.utils.decimal_encoder import DecimalEncoder
+import uuid, datetime, time
 import json
 
 web = Blueprint("web", __name__)
 
-#注册公司
+
+# 注册公司
 @web.route("/CompanyRegister", methods=["GET", "POST"])
 def CompanyRegister():
     if request.method == 'GET':
@@ -24,23 +26,27 @@ def CompanyRegister():
         companyname = request.form.get("companyname")
         place = request.form.get("place")
         helper = MyHelper()
-        id = uuid.uuid3("公司",companyname)
+        id = uuid.uuid3("公司", companyname)
         row = helper.executeUpdate("insert into Company (id, name, place) values (%s,%s,%s)",
                                    [id, companyname, place])
         if row == 1:
             return render_template("RegisterCompany.html")
         else:
             return False
-#查询公司列表
-@web.route("/query_Company",methods=["GET"])
+
+
+# 查询公司列表
+@web.route("/query_Company", methods=["GET"])
 def query_Company():
     query = CompanyDao()
     result = query.queryAll()
     return json.dumps(return_success(CompanyDao.to_dict(result)), ensure_ascii=False)
-#增加供应商
+
+
+# 增加供应商
 @web.route("/addSupplier", methods=["POST"])
 def add_Supplier():
-    supquery =  SupplierDao()
+    supquery = SupplierDao()
     _json = request.json
     supname = _json['name']
     supcid = _json['companyId']
@@ -50,19 +56,23 @@ def add_Supplier():
     taxpayerNumber = _json['taxpayerNumber']
     bankname = _json['bankname']
     bankaccount = _json['bankaccount']
-    row=supquery.add(supid,supname,supphone,site,taxpayerNumber,bankaccount,bankname,supcid)
+    row = supquery.add(supid, supname, supphone, site, taxpayerNumber, bankaccount, bankname, supcid)
     if row == 1:
         return json.dumps(return_success(supid))
     else:
         return json.dumps(return_unsuccess('Error: Add false'))
-#查询所有供应商
-@web.route("/queryAllSupplier",methods=["POST"])
+
+
+# 查询所有供应商
+@web.route("/queryAllSupplier", methods=["POST"])
 def query_AllSupplier():
     queryAllsup = SupplierDao()
     supresult = queryAllsup.queryAll()
     return json.dumps(return_success(SupplierDao.to_dict(supresult)), ensure_ascii=False)
-#根据公司id查询供应商
-@web.route("/queryByCompanyId",methods=["POST"])
+
+
+# 根据公司id查询供应商
+@web.route("/queryByCompanyId", methods=["POST"])
 def query_Supplier_Bycid():
     supqueryBycid = SupplierDao()
     _sjson = request.json
@@ -73,8 +83,10 @@ def query_Supplier_Bycid():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(SupplierDao.to_dict(supQueryresult)), ensure_ascii=False)
-#增加客户
-@web.route("/addCustomer",methods=["POST"])
+
+
+# 增加客户
+@web.route("/addCustomer", methods=["POST"])
 def AddCustomer():
     _json = request.json
     companyId = _json['companyId']
@@ -83,15 +95,17 @@ def AddCustomer():
     phone = _json['phone']
     bankAccount = _json['bankAccount']
     bankname = _json['bankname']
-    credit="良好"
+    credit = "良好"
     addCustomer = CustomerDao()
     row = addCustomer.add(ID, name, phone, credit, companyId, bankname, bankAccount)
     if row == 1:
         return json.dumps(return_success(ID))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
-#客户列表
-@web.route("/queryAllCustomer",methods=["POST"])
+
+
+# 客户列表
+@web.route("/queryAllCustomer", methods=["POST"])
 def query_AllCustomer():
     queryAllCus = CustomerDao()
     _json = request.json
@@ -102,14 +116,16 @@ def query_AllCustomer():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(CustomerDao.to_dict(Cusresult)), ensure_ascii=False)
-#查询客户
-@web.route("/queryCustomer",methods=["POST"])
+
+
+# 查询客户
+@web.route("/queryCustomer", methods=["POST"])
 def queryCustomer():
-    query=CustomerDao()
+    query = CustomerDao()
     _json = request.json
     companyId = _json['companyId']
-    if json.get('name')==None:
-        if json.get('phone')==None:
+    if _json.get('name') == None:
+        if _json.get('phone') == None:
             Cusresult = query.query_byCompanyId(companyId)
             size = len(Cusresult)
             if size == 0:
@@ -118,8 +134,8 @@ def queryCustomer():
                 return json.dumps(return_success(CustomerDao.to_dict(Cusresult)), ensure_ascii=False)
         else:
             phone = _json['phone']
-            newphone = '%'+phone+'%'
-            Cusresult = query.query_by_phone(companyId,newphone)
+            newphone = '%' + phone + '%'
+            Cusresult = query.query_by_phone(companyId, newphone)
             size = len(Cusresult)
             if size == 0:
                 return json.dumps(return_unsuccess('Error: No data'))
@@ -129,15 +145,16 @@ def queryCustomer():
     else:
         name = _json['name']
         newname = '%' + name + '%'
-        Cusresult = query.query_by_phone(companyId,newname)
+        Cusresult = query.query_by_phone(companyId, newname)
         size = len(Cusresult)
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
         else:
             return json.dumps(return_success(CustomerDao.to_dict(Cusresult)), ensure_ascii=False)
 
-#登记进货
-@web.route("/addPurchase",methods=["POST"])
+
+# 登记进货
+@web.route("/addPurchase", methods=["POST"])
 def RegisterPurchase():
     query = PurchaseDao()
     _json = request.json
@@ -157,8 +174,10 @@ def RegisterPurchase():
             return json.dumps(return_success("Yes!"))
         else:
             return json.dumps(return_unsuccess('Error: Add failed'))
-#查询进货记录
-@web.route("/queryPurchase",methods=["POST"])
+
+
+# 查询进货记录
+@web.route("/queryPurchase", methods=["POST"])
 def queryPurchase():
     query = PurchaseDao()
     _json = request.json
@@ -169,7 +188,7 @@ def queryPurchase():
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
         else:
-            return json.dumps(return_success(PurchaseDao.to_dict(result), ensure_ascii=False,cls=DecimalEncoder), ensure_ascii=False)
+            return json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
         date = _json.get('date')
         start = datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -177,14 +196,15 @@ def queryPurchase():
         n_days = start + delta
         end = n_days.strftime('%Y-%m-%d %H:%M:%S')
         result = query.query_byDate(companyId, start, end)
-        size=len(result)
+        size = len(result)
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
         else:
-            return json.dumps(return_success(PurchaseDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder),
-                              ensure_ascii=False)
-#插入销售记录
-@web.route("/addSell",methods=["POST"])
+            return json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+
+
+# 插入销售记录
+@web.route("/addSell", methods=["POST"])
 def addSell():
     query = SellDao()
     queryCustomer = CustomerDao()
@@ -193,7 +213,7 @@ def addSell():
     companyId = _json.get('companyId')
     customerId = _json.get('customerId')
     result = queryCustomer.query_byId(customerId)
-    if len(result)==1:
+    if len(result) == 1:
         customerName = result[0][1]
     else:
         customerName = ""
@@ -215,8 +235,10 @@ def addSell():
             return json.dumps(return_success("Yes!"))
         else:
             return json.dumps(return_unsuccess('Error: Add failed'))
-#查询销售记录
-@web.route("/querySell",methods=["POST"])
+
+
+# 查询销售记录
+@web.route("/querySell", methods=["POST"])
 def querySell():
     query = SellDao()
     _json = request.json
@@ -227,8 +249,7 @@ def querySell():
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
         else:
-            return json.dumps(return_success(SellDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder),
-                              ensure_ascii=False)
+            return json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
         date = _json.get('date')
         start = datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -240,10 +261,11 @@ def querySell():
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
         else:
-            return json.dumps(return_success(SellDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder),
-                              ensure_ascii=False)
-#根据Id查询销售记录
-@web.route("/querySellById",methods=["POST"])
+            return json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+
+
+# 根据Id查询销售记录
+@web.route("/querySellById", methods=["POST"])
 def querySellById():
     query = SellDao()
     _json = request.json
@@ -253,10 +275,11 @@ def querySellById():
     if size == 0:
         return json.dumps(return_unsuccess('Error: No data'))
     else:
-        return json.dumps(return_success(SellDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder),
-                              ensure_ascii=False)
-#根据Id查询进货记录
-@web.route("/queryPurchaseById",methods=["POST"])
+        return json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+
+
+# 根据Id查询进货记录
+@web.route("/queryPurchaseById", methods=["POST"])
 def queryPurchaseById():
     query = PurchaseDao()
     _json = request.json
@@ -266,10 +289,11 @@ def queryPurchaseById():
     if size == 0:
         return json.dumps(return_unsuccess('Error: No data'))
     else:
-        return json.dumps(return_success(PurchaseDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder),
-                          ensure_ascii=False)
-#根据Id查询供应商名称
-@web.route("/querySupplierById",methods=["POST"])
+        return json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+
+
+# 根据Id查询供应商名称
+@web.route("/querySupplierById", methods=["POST"])
 def querySupplierById():
     query = SupplierDao()
     _json = request.json
@@ -279,9 +303,10 @@ def querySupplierById():
     if size == 0:
         return json.dumps(return_unsuccess('Error: No data'))
     else:
-        return json.dumps(return_success(SupplierDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder),
-                          ensure_ascii=False)
-@web.route("/addWarehouse",methods=["POST"])
+        return json.dumps(return_success(SupplierDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+
+
+@web.route("/addWarehouse", methods=["POST"])
 def addWarehouse():
     _json = request.json
     companyId = _json['companyId']
@@ -294,13 +319,15 @@ def addWarehouse():
         return json.dumps(return_success(ID))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
-#查询仓库
-@web.route("/queryWarehouse",methods=["POST"])
+
+
+# 查询仓库
+@web.route("/queryWarehouse", methods=["POST"])
 def queryWarehouse():
     _json = request.json
     companyId = _json['companyId']
     query = WareHouseDao()
-    if json.get('name') == None:
+    if _json.get('name') == None:
         Cusresult = query.query_byCompanyId(companyId)
         size = len(Cusresult)
         if size == 0:

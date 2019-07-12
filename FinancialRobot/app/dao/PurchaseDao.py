@@ -4,14 +4,14 @@ from app.utils.DBHelper import MyHelper
 import uuid
 import  decimal,json
 import datetime
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            return float(o)
-        if isinstance(o, datetime.datetime):
-            return o.strftime("%Y-%m-%d %H:%M:%S")
-        else:
-            super(DecimalEncoder, self).default(o)
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, o):
+#         if isinstance(o, decimal.Decimal):
+#             return float(o)
+#         if isinstance(o, datetime.datetime):
+#             return o.strftime("%Y-%m-%d %H:%M:%S")
+#         else:
+#             super(DecimalEncoder, self).default(o)
 
 class PurchaseDao:
     @classmethod

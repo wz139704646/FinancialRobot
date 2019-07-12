@@ -2,16 +2,18 @@
 # -*- coding:utf-8 -*-
 from app.utils.DBHelper import MyHelper
 import uuid
-import  decimal,json
+import decimal, json
 import datetime
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            return float(o)
-        if isinstance(o, datetime.datetime):
-            return o.strftime("%Y-%m-%d %H:%M:%S")
-        else:
-            super(DecimalEncoder, self).default(o)
+
+
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, o):
+#         if isinstance(o, decimal.Decimal):
+#             return float(o)
+#         if isinstance(o, datetime.datetime):
+#             return o.strftime("%Y-%m-%d %H:%M:%S")
+#         else:
+#             super(DecimalEncoder, self).default(o)
 
 class SellDao:
     @classmethod
@@ -30,21 +32,27 @@ class SellDao:
             res['goodsName'] = row[8]
             result.append(res)
         return result
+
     def query_all(self):
         connection = MyHelper()
         return connection.executeQuery("select * from Sell")
-    def query_byId(self,id):
+
+    def query_byId(self, id):
         connection = MyHelper()
-        return connection.executeQuery("select * from Sell where id = %s",[id])
-    def query_byCid(self,companyId):
+        return connection.executeQuery("select * from Sell where id = %s", [id])
+
+    def query_byCid(self, companyId):
         connection = MyHelper()
-        return connection.executeQuery("select * from Sell where companyId=%s",[companyId])
-    def query_byDate(self, companyId,start,end):
+        return connection.executeQuery("select * from Sell where companyId=%s", [companyId])
+
+    def query_byDate(self, companyId, start, end):
         connection = MyHelper()
-        return connection.executeQuery("select * from Sell where companyId=%s and date >= %s and date <%s", [companyId,start,end])
-    def add(self,id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName):
+        return connection.executeQuery("select * from Sell where companyId=%s and date >= %s and date <%s",
+                                       [companyId, start, end])
+
+    def add(self, id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName):
         connection = MyHelper()
-        row=connection.executeUpdate(
+        row = connection.executeUpdate(
             "insert into Sell (id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            [id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName])
+            [id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName])
         return row
