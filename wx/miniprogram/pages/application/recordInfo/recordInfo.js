@@ -13,21 +13,33 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    var that = this 
+    var that = this
     console.log(options)
+    if(!options.id || !options.back){
+      wx.showToast({
+        title: '获取订单信息失败！',
+        icon: 'none'
+      })
+      return
+    }
     this.setData({
-      id:options.id
+      id:options.id,
+      back: options.back
     })
     that.initInfo(options)
   },
 
   initInfo(e){
     var that = this
+    var id = e.id
+    var back = e.back 
+    // 根据返回页面获取请求不同的api
+    let api = back == 'sell' ? 'querySell' : 'queryPurchase'
     wx.request({
-      url: 'http://' + host + '/queryPurchase',
+      url: host + api,
       data: JSON.stringify({
         companyId: "5",
-        id: e.id
+        id: id
       }),
       method: "POST",
       header: {
@@ -35,13 +47,46 @@ Page({
       },
       success(res) {
         console.log(res)
-        var date = res.data.result[0].date
-        res.data.result[0].date = date.toString().substring(0,10) 
-        console.log(date)
+        let data = res.data
+        let back = that.data.back
+        let list = []
+        // 处理返回的同一订单的商品信息列表
+        // 购货单
+        if(back == 'buy'){
+          list = data.result
+          if(list && list.length>0){
+            list[0].date = date.toString().substring(0, 10)
+          } else {
+            wx.showToast({
+              title: '订单号错误',
+              image: '../../../imgs/fail.png'
+            })
+            return
+          }
+        }
+        // 销货单
+        else if(back == 'sell') {
+          list = data.selList
+          if(list && list.length>0) {
+            list[0].date = date.toString().substring(0, 10)
+          } else {
+            wx.showToast({
+              title: '订单号错误',
+              image: '../../../imgs/fail.png'
+            })
+            return 
+          }
+        } else {
+          wx.showToast({
+            title: '出现未知错误',
+            image: '../../../imgs/fail.png'
+          })
+          return 
+        }
         that.setData({
-          buyList: res.data.result
+          buyList: list
         })
-        that.calTotal(res)
+        that.calTotal(list, back)
       },
       
     })
@@ -88,12 +133,16 @@ Page({
       delta:1
     })
   },
-  calTotal(e) {
-    console.log(e.data.result)
-    var buyList = e.data.result
+  calTotal(list, back) {
     var total = 0
-    for (var index in buyList) {
-      total = total + buyList[index].number * buyList[index].purchasePrice
+    if(back == 'buy') {
+      for (var index in buyList) {
+        total = total + list[index].number * list[index].purchasePrice
+      }
+    } else {
+      for(var index in buyList) {
+        total += list[index].sumprice
+      }
     }
     this.setData({
       total: total

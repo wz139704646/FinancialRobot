@@ -144,7 +144,7 @@ Page({
     console.log(e)
     var index = e.currentTarget.dataset.index
     wx.navigateTo({
-      url: '../recordInfo/recordInfo?type=sell'+'&id=' + this.data.allbrList[index].id
+      url: '../recordInfo/recordInfo?back=sell'+'&id=' + this.data.allbrList[index].id
     })
   },
 
