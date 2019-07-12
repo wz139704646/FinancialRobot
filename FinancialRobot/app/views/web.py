@@ -164,7 +164,7 @@ def RegisterPurchase():
     purchases = _json.get('purchases')
     provideNo = _json.get('supplierId')
     date = _json.get('date')
-    id = str(uuid.uuid3(uuid.NAMESPACE_OID, date))
+    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(time.time())))
     print(purchases)
     for puchase in purchases:
         goodsNo = puchase['id']
@@ -222,7 +222,7 @@ def addSell():
     sumprice = _json.get('sumprice')
     date = _json.get('date')
     goodsList = _json.get('goodsList')
-    id = str(uuid.uuid3(uuid.NAMESPACE_OID, date))
+    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(time.time())))
     print(goodsList)
     for puchase in goodsList:
         goodsId = puchase['goodsId']

@@ -246,6 +246,11 @@ class Test11(unittest.TestCase):
         outMoneyarray.append(outString)
         print(outMoneyarray)
         print(finalresult)
+    def test20(self):
+        id = str(uuid.uuid3(uuid.NAMESPACE_OID, "1"))
+        id2 = str(uuid.uuid3(uuid.NAMESPACE_OID, "1"))
+        print(id)
+        print(id2)
     def test12(self):
         companyId="5"
         date="2019-7-12"
