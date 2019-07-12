@@ -121,11 +121,11 @@ Page({
       name: '调拨记录',
       url: ''
     }, {
-      icon: 'search',
+      icon: 'pick',
       color: 'olive',
       badge: 0,
-      name: '查看近期',
-      url: ''
+      name: '新增仓库',
+      url: '/pages/application/newStorage/newStorage'
     }, {
       icon: 'edit',
       color: 'red',
@@ -176,6 +176,7 @@ Page({
     })
   },
 
+  //分页面跳转
   show(e) {
     console.log("navigate")
     wx.navigateTo({
