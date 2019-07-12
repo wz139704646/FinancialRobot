@@ -24,6 +24,9 @@ class SupplierDao:
     def query_byCompanyId(self,companyId):
         conn = MyHelper()
         return conn.executeQuery("select * from Supplier where companyId = %s",[companyId])
+    def query_byId(self, id):
+        connection = MyHelper()
+        return connection.executeQuery("select * from Supplier where id = %s", [id])
     def add(self, id, name, phone,site,taxpayerNumber,bankaccount,bankname,companyId):
         conn = MyHelper()
         row=conn.executeUpdate("insert into Supplier (id, name, phone,site,taxpayerNumber,bankaccount,bankname,companyId) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)" ,[id, name, phone,site,taxpayerNumber,bankaccount,bankname,companyId])

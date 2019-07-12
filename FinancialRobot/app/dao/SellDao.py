@@ -33,6 +33,9 @@ class SellDao:
     def query_all(self):
         connection = MyHelper()
         return connection.executeQuery("select * from Sell")
+    def query_byId(self,id):
+        connection = MyHelper()
+        return connection.executeQuery("select * from Sell where id = %s",[id])
     def query_byCid(self,companyId):
         connection = MyHelper()
         return connection.executeQuery("select * from Sell where companyId=%s",[companyId])
