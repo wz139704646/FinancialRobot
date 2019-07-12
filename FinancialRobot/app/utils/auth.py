@@ -24,30 +24,25 @@ class Auth():
         token = str(encoded, encoding='ascii')
         return token
 
+
     @staticmethod
     def decode_jwt(token):
         """
         解密token
         :param token:  token 字符串
-        :return:  包含用户信息字典的payload
+        :return:  用户信息字典
         """
         payload = jwt.decode(token, config.SECRET_KEY, algorithms='HS256')
-        if 'data' in payload and 'exp':
-            data = payload['data']
+        if 'data' in payload:
             return payload
         else:
             raise jwt.InvalidTokenError
 
-    @staticmethod
-    def identify(request):
+    def identify(self, request):
         """
         用户鉴权
         :param request: 发起的请求
-        :return: 验证结果，{
-                                'auth': 是否成功
-                                'errMsg': 调用是否成功的提示信息
-                                'data': 如果成功时返回，用户信息字典
-                            }
+        :return:
         """
         auth_header = request.headers.get('Authorization')
         print(auth_header)
@@ -59,11 +54,11 @@ class Auth():
             else:
                 auth_token = token_arr[1]
                 try:
-                    payload = Auth.decode_jwt(auth_token)
+                    payload = Auth.decode_jwt(auth_header)
                 except Exception as e:
                     print(e)
                     return {'auth': False, 'errMsg': 'token解码失败'}
                 else:
-                    return {'auth': True, 'data': payload, 'errMsg': 'token解码成功'}
+                    return {'auth': True, 'data': payload}
         else:
             return {'auth': False, 'errMsg': '没有携带token'}

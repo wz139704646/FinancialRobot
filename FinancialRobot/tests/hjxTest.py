@@ -8,7 +8,7 @@ import jieba
 import time,datetime
 from flask import Blueprint, render_template, request
 from app.dao.WareHouseDao import WareHouseDao
-from app.dao.PurchaseDao import PurchaseDao,DecimalEncoder
+from app.dao.PurchaseDao import PurchaseDao
 from app.utils.DBHelper import MyHelper
 from app.dao.CompanyDao import CompanyDao
 from app.dao.SellDao import SellDao

@@ -25,6 +25,7 @@ class ZjjTesst(unittest.TestCase):
     def test1(self):
         asyncio.run(main())
 
+
     def test2(self):
         expire_time = datetime.datetime.utcnow() + datetime.timedelta(seconds=5)
         payload = {
@@ -43,3 +44,4 @@ class ZjjTesst(unittest.TestCase):
             print(payload1)
         except jwt.ExpiredSignatureError:
             print('token expired!')
+

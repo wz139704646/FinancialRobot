@@ -169,11 +169,9 @@ def RegisterPurchase():
         goodsName = puchase['name']
         number = puchase['buyNum']
         purchasePrice = puchase['price']
-<<<<<<< HEAD
-        row = query.add(id,goodsNo,goodsName, provideNo, companyId, number, purchasePrice, date,"运")
-=======
+
         row = query.add(id, goodsNo, goodsName, provideNo, companyId, number, purchasePrice, date, "运")
->>>>>>> aa9aebaf39bca536beea815a64bf8252c017c56a
+
         if row == 1:
             return json.dumps(return_success("Yes!"))
         else:
@@ -294,11 +292,8 @@ def queryPurchaseById():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
-<<<<<<< HEAD
         # purjson = json.dumps(PurchaseDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder)
         # return_success(purjson)
-=======
->>>>>>> aa9aebaf39bca536beea815a64bf8252c017c56a
 
 
 # 根据Id查询供应商名称

@@ -36,12 +36,15 @@ class PurchaseDao:
     def query_byCid(self,companyId):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where companyId=%s",[companyId])
-<<<<<<< HEAD
-=======
+
     def query_byId(self, id):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where id = %s", [id])
->>>>>>> aa9aebaf39bca536beea815a64bf8252c017c56a
+
+    def query_byId(self, id):
+        connection = MyHelper()
+        return connection.executeQuery("select * from Purchase where id = %s", [id])
+
     def add(self, id, goodId, goodName, supplierId, companyId, number, purchasePrice,date,status):
         connection = MyHelper()
         row=connection.executeUpdate(
