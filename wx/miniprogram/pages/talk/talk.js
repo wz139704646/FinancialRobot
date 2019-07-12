@@ -77,6 +77,43 @@ Page({
 
   },
 
+  onShow: function(){
+    const recorder = wx.getRecorderManager()
+    let that = this
+    recorder.onStart(() => {
+      console.log("录音开始")
+      that.setData({
+        recordStarted: true
+      })
+      // wx.showToast({
+      //   title: '录音中',
+      //   duration: 30000,
+      //   image: '/imgs/voice.gif'
+      // })
+
+    })
+    recorder.onStop(res => {
+      // wx.hideToast()
+      this.setData({
+        recordStarted: false
+      })
+      this.speechRecognition(res)
+    })
+    recorder.onError(err => {
+      console.error(err)
+      that.setData({
+        recordStarted: false
+      })
+    })
+    recorder.onInterruptionBegin(inter => {
+      console.log("recording interrupted")
+      that.setData({
+        recordStarted: false
+      })
+      that.recordEnds(null)
+    })
+  },
+
   sendMsg: function (e) {
     console.log("send")
     if (e.detail.value == "")
@@ -175,7 +212,6 @@ Page({
   },
 
   recordBegins: function(e) {
-    let that = this
     const recorder = wx.getRecorderManager()
     const options = {
       duration: 30000,
@@ -185,43 +221,34 @@ Page({
       format: 'mp3',
       frameSize: 50
     }
-    recorder.onStart(() => {
-      console.log("录音开始")
-      that.setData({
-        recordStarted: true
-      })
-      // wx.showToast({
-      //   title: '录音中',
-      //   duration: 30000,
-      //   image: '/imgs/voice.gif'
-      // })
-      
+    wx.getSetting({
+      success: suc => {
+        console.log('get setting suc')
+        if(suc.authSetting['scope.record']){
+          recorder.start(options)
+        } else {
+          wx.authorize({
+            scope: 'scope.record',
+            success: () => {
+              console.log('authorize suc')
+            },
+            fail: () => {
+              console.log('authorize failed')
+              wx.showToast({
+                title: '获取用户授权失败, 无法录音',
+                icon: 'none'
+              })
+            }
+          })
+        }
+      }
     })
-    recorder.onStop(res => {
-      // wx.hideToast()
-      this.setData({
-        recordStarted: false
-      })
-      this.speechRecognition(res)
-    })
-    recorder.onError( err => {
-      console.error(err)
-      that.setData({
-        recordStarted: false
-      })
-    } )
-    recorder.onInterruptionBegin( inter => {
-      console.log("recording interrupted")
-      that.setData({
-        recordStarted: false
-      })
-      that.recordEnds(null)
-    })
-    recorder.start(options)
   },
 
   recordEnds: function(e) {
-    wx.getRecorderManager().stop()
+    if(this.data.recordStarted){
+      wx.getRecorderManager().stop()
+    }
   },
 
   speechRecognition: function (res) {
