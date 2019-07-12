@@ -105,7 +105,7 @@ Page({
     console.log(e)
     var index = e.currentTarget.dataset.index
     wx.navigateTo({
-      url: '../recordInfo/recordInfo?id='+this.data.allbrList[index].id
+      url: '../recordInfo/recordInfo?back=buy&id='+this.data.allbrList[index].id
     })
   },
   

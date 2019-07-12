@@ -1,5 +1,27 @@
 var app = getApp()
 const host = app.globalData.requestHost
+const util = require('../../../utils/util.js')
+
+const initPage = function (page) {
+  let date = util.getcurDateFormatString(new Date())
+  // 清除buyInfo缓存
+  wx.removeStorage({
+    key: 'buyInfo',
+    success: function (res) {
+      console.log('清理buyInfo缓存:')
+      console.log(res)
+    },
+    fail: err => {
+      console.log('清理buyInfo缓存失败:')
+      console.error(err)
+    }
+  })
+  // 设置日期属性
+  page.setData({
+    date: date
+  })
+}
+
 Page({
   data: {
     date: '2019-07-10',
@@ -7,6 +29,10 @@ Page({
     buyList: [],
     supplierId:0,
     id:""
+  },
+
+  onLoad: function(options) {
+    initPage(this)
   },
 
   DateChange(e) {
@@ -20,8 +46,15 @@ Page({
     })
   },
   addGoods(e) {
+    try {
+      wx.setStorageSync('buyInfo',
+        {
+          list: this.data.buyList,
+          total: this.data.total
+        })
+    } catch (e) { console.error(e) }
     wx.navigateTo({
-      url: '../chooseGood/chooseGood',
+      url: '../chooseGood/chooseGood?back=buy',
     })
   },
   onClick(e) {
