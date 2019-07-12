@@ -276,7 +276,7 @@ Page({
       data: JSON.stringify({
         account: account,
         passwd: pwd,
-        type: 0
+        type: state ? 0 : 1
       }),
       method: "POST",
       header: {
