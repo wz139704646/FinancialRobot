@@ -30,6 +30,7 @@ class SellDao:
             res['date'] = row[6]
             res['customerName'] = row[7]
             res['goodsName'] = row[8]
+            res['unitInfo'] = row[9]
             result.append(res)
         return result
 
@@ -50,9 +51,9 @@ class SellDao:
         return connection.executeQuery("select * from Sell where companyId=%s and date >= %s and date <%s",
                                        [companyId, start, end])
 
-    def add(self, id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName):
+    def add(self, id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName,unitInfo):
         connection = MyHelper()
         row = connection.executeUpdate(
-            "insert into Sell (id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            [id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName])
+            "insert into Sell (id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName,unitInfo) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+            [id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName,unitInfo])
         return row

@@ -5,11 +5,13 @@ import requests
 import uuid
 import json
 import jieba
-import time,datetime
+import string
+import datetime
 from flask import Blueprint, render_template, request
 from app.dao.WareHouseDao import WareHouseDao
-from app.dao.PurchaseDao import PurchaseDao,DecimalEncoder
+from app.dao.PurchaseDao import PurchaseDao
 from app.utils.DBHelper import MyHelper
+from app.utils.timeProcess import timeProcess
 from app.dao.CompanyDao import CompanyDao
 from app.dao.SellDao import SellDao
 from app.dao.CustomerDao import CustomerDao
@@ -23,7 +25,7 @@ from app.utils.res_json import *
 class Test1(unittest.TestCase):
     def test1(self):
         a=WareHouseDao()
-        result = a.getAllInfo()
+        result = a.queryAllInfo()
         print(result)
 
 class Test2(unittest.TestCase):
@@ -80,9 +82,6 @@ class Test7(unittest.TestCase):
         size = len(supresult)
         print(supresult)
         supresu_json = json.dumps(CustomerDao.to_dict(supresult), ensure_ascii=False)
-        id = supresu_json['id']
-
-        print(id)
         print(supresu_json)
 class Test8(unittest.TestCase):
     def test8(self):
@@ -91,7 +90,7 @@ class Test8(unittest.TestCase):
         companyId="5"
         input = '%'+name+'%'
         #and name like / % " + name + " / % "
-        result= conn.executeQuery("select * from Customer where companyId = %s and name LIKE %s ",[companyId,input])
+        result = conn.executeQuery("select * from Customer where companyId = %s and name LIKE %s ",[companyId,input])
         size = len(result)
         print(size)
         print(result)
@@ -175,7 +174,7 @@ class Test11(unittest.TestCase):
             if size == 0:
                 return json.dumps(return_unsuccess('Error: No data'))
             else:
-                print(json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder))
+                print(json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False))
         else:
            # date = "2019-7-12"
             start = datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -187,7 +186,7 @@ class Test11(unittest.TestCase):
             if size == 0:
                 return json.dumps(return_unsuccess('Error: No data'))
             else:
-                print(json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder))
+                print(json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False))
     def test15(self):
         query = SellDao()
         queryCustomer = CustomerDao()
@@ -214,7 +213,43 @@ class Test11(unittest.TestCase):
             return json.dumps(return_success("Yes!"))
         else:
             return json.dumps(return_unsuccess('Error: Add failed'))
+    def test16(self):
+        date = "2019-7-12"
+        start = datetime.datetime.strptime(date, '%Y-%m-%d')
+        monday=timeProcess.get_current_week(start)
+        print(monday)
+        delta = datetime.timedelta(days=7)
+        n_days = monday + delta
+        print(n_days)
+        fist = datetime.date(start.year, start.month - 1, 1)
+        last = datetime.date(start.year, start.month, 1) - datetime.timedelta(1)
+        print(fist)
+        print(last)
+    def test17(self):
+        query = PurchaseDao()
+        date = "2019-7-10"
+        inputTime = datetime.datetime.strptime(date, '%Y-%m-%d')
+        delta = datetime.timedelta(days=1)
+        n_days = inputTime + delta
+        end = n_days.strftime('%Y-%m-%d %H:%M:%S')
+        start = inputTime
+        result = query.query_byDate("5",start,end)
+        finalresult=[]
+        print(result[0])
+        outMoneyarray=[]
+        outMoney = 0
+        for buy in result:
+            mid="购入 "+buy[2]+" "+str(buy[5])+"个"+"，单价"+str(buy[6])+"元"
+            outMoney+=float(buy[4])*float(buy[5])
+            finalresult.append(mid)
+        outString="进货支出"+str(outMoney)+"元"
+        outMoneyarray.append(outString)
+        print(outMoneyarray)
+        print(finalresult)
     def test12(self):
+        companyId="5"
+        date="2019-7-12"
+        language=""
         jieba.load_userdict("../app/utils/dict.txt")
         #去除停用词
         stopwords = {}.fromkeys(['的', '包括', '等', '是','多少'])
@@ -234,11 +269,11 @@ class Test11(unittest.TestCase):
         nouns3 = ['库存']
 
         text1 = "上周进了多少货"
-        text2 = "今天卖了多少东西"
+        text2 = "今天进了什么货"
         text3 = "看一下库存"
         text4 = "今天花了多少钱"
         # 精确模式
-        segs = jieba.cut(text1, cut_all=False)
+        segs = jieba.cut(text2, cut_all=False)
         final = []
         for seg in segs:
             if seg not in stopwords:
@@ -272,61 +307,84 @@ class Test11(unittest.TestCase):
         print(time)
         print(action)
         print(nouns)
-        if action==1 and nouns==1:
-            if time == 1:
-                print("今天的销售量")
-            if time ==2:
-                print("昨天的销售量")
-            if time ==3:
-                print("这周的销售量")
-            if time ==4:
-                print("上周的销售量")
-            if time ==5:
-                print("这个月的销售量")
-        if action ==1 and nouns ==2:
-            if time == 1:
-                print("今天的销售额")
-            if time == 2:
-                print("昨天的销售额")
-            if time == 3:
-                print("这周的销售额")
-            if time == 4:
-                print("上周的销售额")
-            if time == 5:
-                print("这个月的销售额")
+        querySell = SellDao()
+        queryPurchase = PurchaseDao()
+        inputTime = datetime.datetime.strptime(date, '%Y-%m-%d')
+        #对时间进行判断
+        if time == 1:
+            delta = datetime.timedelta(days=1)
+            n_days = inputTime + delta
+            end = n_days.strftime('%Y-%m-%d %H:%M:%S')
+            start=inputTime
+        if time == 2:
+            delta = datetime.timedelta(days=1)
+            n_days = inputTime - delta
+            start = n_days.strftime('%Y-%m-%d %H:%M:%S')
+            end=inputTime
+        if time == 3:
+            start = timeProcess.get_current_week(inputTime)
+            delta = datetime.timedelta(days=7)
+            end = start + delta
+        if time == 4:
+            end = timeProcess.get_current_week(inputTime)
+            delta = datetime.timedelta(days=7)
+            start = end - delta
+        if time == 5:
+            start = datetime.date(inputTime.year, inputTime.month - 1, 1)
+            end = datetime.date(inputTime.year, inputTime.month, 1) - datetime.timedelta(1)
+        #对行为进行判断
+        if action == 1:
+            resultInfo=[]
+            resultString=""
+            inMoney=0
+            outMoney=0
+            result = querySell.query_byDate(companyId, start, end)
+            size = len(result)
+            if size >= 1:
+                for i in result:
+                    purchasePrice = GoodsDao.get_BuyPrice(i[2])
+                    outMoney += purchasePrice * i[4]
+                    inMoney += i[5]
+                    midstr = i[8] + "," + str(i[4]) + i[9] + "," + "共" + str(i[5]) + "元"
+                    resultInfo.append(midstr)
+            else:
+                print("未查询到数据")
+            resultString="卖出了"+str(inMoney)+"元"+";"+"成本"+str(outMoney)+"元"+";"+"利润"+str(inMoney-outMoney)+"元"
+            if nouns==1:
+                print(resultInfo)
+            if nouns==2:
+                print (resultString)
         if action ==2 and nouns ==1:
-            if time == 1:
-                print("今天进的货")
-            if time == 2:
-                print("昨天的进的货")
-            if time == 3:
-                print("这周进的货")
-            if time == 4:
-                print("上周进的货")
-            if time == 5:
-                print("这个月进的货")
+            result = queryPurchase.query_byDate(companyId, start, end)
+            finalresult = []
+            outMoneyarray = []
+            outMoney = 0
+            size = len(result)
+            if size >= 1:
+                for buy in result:
+                    mid = "购入 " + buy[2] + " " + str(buy[5]) + "个" + "，单价" + str(buy[6]) + "元"
+                    outMoney += float(buy[4]) * float(buy[5])
+                    finalresult.append(mid)
+            else:
+                print("未查询到数据")
+            outString = "进货支出" + str(outMoney) + "元"
+            outMoneyarray.append(outString)
+            print(finalresult)
         if action == 3 and (nouns == 1 or nouns ==3):
-            if time == 1:
-                print("今天的库存")
-            if time == 2:
-                print("今天的库存")
-            if time == 3:
-                print("今天的库存")
-            if time == 4:
-                print("今天的库存")
-            if time == 5:
-                print("今天的库存")
-        if action == 4 and nouns == 2 :
-            if time == 1:
-                print("今天花了多少钱")
-            if time == 2:
-                print("昨天花了多少钱")
-            if time == 3:
-                print("这周花了多少钱")
-            if time == 4:
-                print("上周花了多少钱")
-            if time == 5:
-                print("这个月花了多少钱")
+            print("仓库还剩的货")
+        if action == 4 and nouns == 2:
+            result = queryPurchase.query_byDate(companyId, start, end)
+            outMoneyarray = []
+            outMoney = 0
+            size = len(result)
+            if size >= 1:
+                for buy in result:
+                    outMoney += float(buy[4]) * float(buy[5])
+            else:
+                print("未查询到数据")
+            outString = "进货支出" + str(outMoney) + "元"
+            outMoneyarray.append(outString)
+            print(outMoneyarray)
 
 
 
