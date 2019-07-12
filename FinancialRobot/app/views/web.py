@@ -11,7 +11,9 @@ from app.dao.PurchaseDao import PurchaseDao
 from app.dao.SellDao import SellDao
 from app.utils.res_json import *
 from app.utils.decimal_encoder import DecimalEncoder
-import uuid, datetime, time
+import uuid
+import datetime
+import time
 import json
 
 web = Blueprint("web", __name__)
@@ -26,7 +28,7 @@ def CompanyRegister():
         companyname = request.form.get("companyname")
         place = request.form.get("place")
         helper = MyHelper()
-        id = uuid.uuid3("公司", companyname)
+        id = str(uuid.uuid3(uuid.NAMESPACE_OID, companyname))
         row = helper.executeUpdate("insert into Company (id, name, place) values (%s,%s,%s)",
                                    [id, companyname, place])
         if row == 1:
@@ -162,7 +164,7 @@ def RegisterPurchase():
     purchases = _json.get('purchases')
     provideNo = _json.get('supplierId')
     date = _json.get('date')
-    id = str(uuid.uuid3(uuid.NAMESPACE_OID, date))
+    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(time.time())))
     print(purchases)
     for puchase in purchases:
         goodsNo = puchase['id']
@@ -222,7 +224,7 @@ def addSell():
     sumprice = _json.get('sumprice')
     date = _json.get('date')
     goodsList = _json.get('goodsList')
-    id = str(uuid.uuid3(uuid.NAMESPACE_OID, date))
+    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(time.time())))
     print(goodsList)
     for puchase in goodsList:
         goodsId = puchase['goodsId']
@@ -230,9 +232,10 @@ def addSell():
         goodsResult = queryGoods.query_byId(goodsId)
         if len(goodsResult) == 1:
             goodsName = goodsResult[0][1]
+            goodsUnit = goodsResult[0][5]
         else:
             goodsName = ""
-        row = query.add(id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName)
+        row = query.add(id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName,goodsUnit)
         if row == 1:
             return json.dumps(return_success("Yes!"))
         else:
@@ -309,6 +312,18 @@ def querySupplierById():
     else:
         return json.dumps(return_success(SupplierDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
 
+# 根据Id查询客户
+@web.route("/queryCustomerById", methods=["POST"])
+def queryCustomerById():
+    query = CustomerDao()
+    _json = request.json
+    id = _json.get('id')
+    result = query.query_byId(id)
+    size = len(result)
+    if size == 0:
+        return json.dumps(return_unsuccess('Error: No data'))
+    else:
+        return json.dumps(return_success(CustomerDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
 
 @web.route("/addWarehouse", methods=["POST"])
 def addWarehouse():

@@ -41,7 +41,11 @@ class GoodsDao:
         connection = MyHelper()
         row = connection.executeUpdate("update Goods set photo = %s where id = %s", [photo, id])
         return row
-
+    @classmethod
+    def get_BuyPrice(self,id):
+        connection = MyHelper()
+        row = connection.executeQuery("select purchasePrice from Purchase where goodId = %s",[id])
+        return row[0][0]
     def query_by_companyId(self, companyId, name, type):
         _param = [companyId]
         _sql = "select * from Goods where companyId = %s"
@@ -53,3 +57,19 @@ class GoodsDao:
             _param.append(type)
         connection = MyHelper()
         return connection.executeQuery(_sql, _param)
+
+    def query_by_warehouse(self, companyId, wareHouseId):
+        connection = MyHelper()
+        # wareHouseId为空
+        if wareHouseId:
+            return connection.executeQuery("select * from Goods "
+                                           "where Goods.id in "
+                                           "(select GoodsStore.goodsId from GoodsStore "
+                                           "where companyId = %s and wareId = %s)",
+                                           [companyId, wareHouseId])
+        else:
+            return connection.executeQuery("select * from Goods "
+                                           "where Goods.id in "
+                                           "(select * from GoodsStore "
+                                           "where companyId = %s order by goodsId)",
+                                           [companyId])

@@ -4,6 +4,7 @@ import json
 import base64
 from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
+from app.dao.WareHouseDao import WareHouseDao
 from app.utils.DBHelper import MyHelper
 from app.utils.decimal_encoder import DecimalEncoder
 from app.utils.res_json import *
@@ -122,6 +123,46 @@ def login():
         return jsonify(resp)
 
 
+@wx.route("/getVerification", methods=['POST'])
+def getVerification():
+    appid = 1400226777
+    appkey = '8e4b05566cb1021da046f438b5db2736'
+    phonenumber = request.json.get('account')
+    type = request.json.get('type')
+    ssender = SmsSingleSender(appid, appkey)
+    template_id = 363932
+    sms_sign = 'Fibot小程序 '
+
+    if type == 0:
+        stype = '登录'
+    else:
+        stype = '注册'
+
+    # 生成验证码，使用redis缓存，并设置过期时间
+    veri = ""
+    for i in range(6):
+        veri += str(random.randint(0, 9))
+    redis_store.set('veri' + phonenumber, veri)
+    redis_store.expire('veri' + phonenumber, due)
+
+    params = [stype, veri, round(due / 60)]
+    try:
+        result = ssender.send_with_param(nationcode=86, phone_number=phonenumber, template_id=template_id,
+                                         params=params, sign=sms_sign, extend="", ext="")
+    except HTTPError as e:
+        print(e)
+    except Exception as e:
+        print(e)
+
+    try:
+        print(result)
+    except Exception as e:
+        print(e)
+
+    # print(result)
+    return jsonify({'success': True, 'errMsg': '验证码发送完成'})
+
+
 @wx.route("/queryUser", methods=["POST"])
 def queryUser():
     _openid = request.json.get('openid')
@@ -176,41 +217,31 @@ def queryGoods():
         return json.dumps(return_unsuccess("查询失败"), ensure_ascii=False)
 
 
-@wx.route("/getVerification", methods=['POST'])
-def getVerification():
-    appid = 1400226777
-    appkey = '8e4b05566cb1021da046f438b5db2736'
-    phonenumber = request.json.get('account')
-    type = request.json.get('type')
-    ssender = SmsSingleSender(appid, appkey)
-    template_id = 363932
-    sms_sign = 'Fibot小程序 '
-
-    if type == 0:
-        stype = '登录'
+@wx.route("/storeInWarehouse", methods=["POST"])
+def store_in_warehouse():
+    _json = request.json
+    _companyId = _json.get("companyId")
+    _id = _json.get("id")
+    _wareHouseId = _json.get("wareHouseId")
+    print(_json)
+    wareHouse_dao = WareHouseDao()
+    res = wareHouse_dao.storage(_companyId, _id, _wareHouseId)
+    if res:
+        return jsonify(return_success(""))
     else:
-        stype = '注册'
+        return jsonify(return_unsuccess("添加失败"))
 
-    # 生成验证码，使用redis缓存，并设置过期时间
-    veri = ""
-    for i in range(6):
-        veri += str(random.randint(0, 9))
-    redis_store.set('veri' + phonenumber, veri)
-    redis_store.expire('veri' + phonenumber, due)
 
-    params = [stype, veri, round(due / 60)]
-    try:
-        result = ssender.send_with_param(nationcode=86, phone_number=phonenumber, template_id=template_id,
-                                         params=params, sign=sms_sign, extend="", ext="")
-    except HTTPError as e:
-        print(e)
-    except Exception as e:
-        print(e)
-
-    try:
-        print(result)
-    except Exception as e:
-        print(e)
-
-    # print(result)
-    return jsonify({'success': True, 'errMsg': '验证码发送完成'})
+@wx.route("/queryStoreGoods", methods=["POST"])
+def query_by_warehouse():
+    _json = request.json
+    _companyId = _json.get("companyId")
+    _wareHouseId = _json.get("wareHouseId")
+    goods_dao = GoodsDao()
+    res = goods_dao.query_by_warehouse(_companyId, _wareHouseId)
+    size = len(res)
+    if size >= 0:
+        return json.dumps(return_success({'goodsList': GoodsDao.to_dict(res)}),
+                          cls=DecimalEncoder, ensure_ascii=False)
+    else:
+        return jsonify(return_unsuccess("查询失败"))

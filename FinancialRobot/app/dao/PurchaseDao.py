@@ -33,6 +33,11 @@ class PurchaseDao:
     def query_all(self):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase")
+
+    def query_byDate(self, companyId, start, end):
+        connection = MyHelper()
+        return connection.executeQuery("select * from Purchase where companyId=%s and date >= %s and date <%s",
+                                       [companyId, start, end])
     def query_byCid(self,companyId):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where companyId=%s",[companyId])

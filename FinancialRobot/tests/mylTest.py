@@ -8,6 +8,7 @@ from hashlib import sha1
 from app.dao.CompanyDao import CompanyDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
+from app.utils.BigchainUtils import BigchainUtils
 from app.utils.DBHelper import MyHelper
 from app.utils.decimal_encoder import DecimalEncoder
 from app.utils.res_json import *
@@ -53,5 +54,9 @@ class MylTest(unittest.TestCase):
     def test6(self):
         text = "我来到清华大学"
         seg_list = jieba.cut(text, cut_all=True)
-        print(u"[全模式]:","/".join(seg_list))
+        print(u"[全模式]:", "/".join(seg_list))
 
+    def test7(self):
+        mongo = BigchainUtils.get_mongo()
+        trans = mongo.db.transactions.find({"operation": "TRANSFER"})
+        print(list(trans))

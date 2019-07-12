@@ -2,6 +2,9 @@ import bigchaindb_driver.crypto
 # !!!要安装bigchaindb_driver必须先安装pywin32
 from collections import namedtuple
 from bigchaindb_driver import BigchainDB
+from app.config import BIGCHAINDB_URL
+from flask_pymongo import PyMongo
+from manage import app
 
 
 class BigchainUtils(object):
@@ -15,8 +18,12 @@ class BigchainUtils(object):
         pair = namedtuple('CryptoKeypair', ('private_key', 'public_key'))
         return pair(private_key=private_key, public_key=public_key)
 
+    @staticmethod
+    def get_mongo():
+        return PyMongo(app)
+
     def __init__(self):
-        self.conn = BigchainDB("http://42.159.81.168:9984/")
+        self.conn = BigchainDB(BIGCHAINDB_URL)
 
     def create_asset(self, signer, asset, metadata=None):
         # Prepare transaction
@@ -35,11 +42,11 @@ class BigchainUtils(object):
             return False
 
     def send_asset(self, txid, signer, recipient):
-
+        # Find previous transaction
         prev_tx = self.conn.transactions.retrieve(txid)
-
+        # prepare transfer transaction
         prepared_transfer_tx = self._craft_tx(prev_tx, recipient.public_key)
-
+        # Fulfill transfer transaction
         fulfilled_transfer_tx = self.conn.transactions.fulfill(
             prepared_transfer_tx,
             private_keys=signer.private_key,
@@ -51,7 +58,8 @@ class BigchainUtils(object):
         try:
             status = self.conn.transactions.status(txid)
             return status
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     def get_transaction(self, txid):
