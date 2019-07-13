@@ -21,6 +21,8 @@ def languageProcess():
     print(_json)
     companyId = _json.get('companyId')
     date = _json.get('time')
+    date = datetime.datetime.now()
+    print(date)
     language = _json.get('language')
    # language="今天花了多少钱"
     UPLOAD_FOLDER = '../utils/dict.txt'

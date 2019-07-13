@@ -50,7 +50,7 @@ def api_upload():
             goods_dao.update_photo(id, new_filename)
             return json.dumps(return_success({"new_filename": new_filename}), ensure_ascii=False)
         else:
-            return json.dumps(return_unsuccess("文件大小超出1MB"), ensure_ascii=False)
+            return json.dumps(return_unsuccess("文件大小超出5MB"), ensure_ascii=False)
     else:
         return json.dumps(return_unsuccess("文件格式不正确"), ensure_ascii=False)
 
