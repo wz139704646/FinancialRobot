@@ -13,7 +13,7 @@ up = Blueprint("up", __name__)
 UPLOAD_FOLDER = '../static/img/upload'
 basedir = os.path.abspath(os.path.dirname(__file__))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF'}
-MAX_CONTENT_LENGTH = 1 * 1024 * 1024  # 1MB
+MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 1MB
 
 
 def allowed_file(filename):
@@ -33,7 +33,7 @@ def api_upload():
         os.makedirs(file_dir)
     f, = request.files.values()
     id = request.form.get("id")
-
+    print(id)
     size = len(f.read())
     print(size)
     f.seek(0)
@@ -45,6 +45,7 @@ def api_upload():
             new_filename = Pic_str().create_uuid() + '.' + ext
             f.save(os.path.join(file_dir, new_filename))
             f.close()
+            # 更新photo
             goods_dao = GoodsDao()
             goods_dao.update_photo(id, new_filename)
             return json.dumps(return_success({"new_filename": new_filename}), ensure_ascii=False)
