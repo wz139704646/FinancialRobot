@@ -1,7 +1,0 @@
-{
-  "usingComponents": {
-    "van-card": "vant-weapp/card",
-    "van-button": "vant-weapp/button",
-    "van-stepper": "vant-weapp/stepper"
-  }
-}
