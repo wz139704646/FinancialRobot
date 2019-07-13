@@ -6,7 +6,7 @@ from app.config import MONGO_URI
 
 from app.views.web import web
 from app.views.picUpload import up
-from app.views.languageProcess import lanprocess
+from app.utils.languageProcess import lanprocess
 
 
 def create_app():
