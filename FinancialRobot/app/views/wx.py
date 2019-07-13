@@ -158,9 +158,12 @@ def getVerification():
         print(result)
     except Exception as e:
         print(e)
-
-    # print(result)
-    return jsonify({'success': True, 'errMsg': '验证码发送完成'})
+        return jsonify({'success': True, 'errMsg': '出现未知错误'})
+    result = json.loads(result)
+    if result.result == 0:
+        return jsonify({'success': True, 'errMsg': '验证码发送完成'})
+    else:
+        return jsonify({'success': False, 'errMsg': result.errMsg})
 
 
 @wx.route("/queryUser", methods=["POST"])

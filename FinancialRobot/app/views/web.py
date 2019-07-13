@@ -172,6 +172,7 @@ def RegisterPurchase():
         number = puchase['buyNum']
         purchasePrice = puchase['price']
         row = query.add(id, goodsNo, goodsName, provideNo, companyId, number, purchasePrice, date, "运")
+
         if row == 1:
             return json.dumps(return_success("Yes!"))
         else:
@@ -293,6 +294,10 @@ def queryPurchaseById():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+
+        # purjson = json.dumps(PurchaseDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder)
+        # return_success(purjson)
+
 
 
 # 根据Id查询供应商名称

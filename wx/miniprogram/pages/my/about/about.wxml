@@ -1,0 +1,11 @@
+<cu-custom bgColor="bg-gradual-green" isBack="{{true}}"><view slot="backText">返回</view><view slot="content">关于</view></cu-custom>
+<view class='margin-xl bg-white padding-xl radius shadow-lg'>
+  <view class='text-center margin-bottom text-lg  text-grey'>关于Fibot新型财务机器人</view>
+  <view class='text-content'>
+    <view>Hi！欢迎使用财务机器人Fibot!</view>
+    <view class='margin-top-sm'>该项目旨在建立一款全新的财务机器人，可以同时方便用户以及开发者</view>
+    <view class='margin-top-sm'>对于用户，可以动态展示他们想要的财务信息，只要有输入中有这些数据，我们都能满足筛选、计算、展示的需求</view>
+    <view class='margin-top-sm'>对于开发者，可以十分方便的进行迭代，加入新的功能，而不影响软件结构的内部耦合复杂度</view>
+    <view class='margin-top-sm'>更多功能敬请期待！</view>
+  </view>
+</view>

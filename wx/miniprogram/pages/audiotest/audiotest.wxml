@@ -1,0 +1,8 @@
+<!--miniprogram/pages/audiotest.wxml-->
+<cu-custom bgColor="bg-gradual-blue">
+  <view slot="content">语音</view>
+</cu-custom>
+
+<view class="padding flex flex-direction">
+  <button class="cu-btn bg-grey lg" catchtouchstart='recordBegins' catchtouchend='recordEnds'>录音</button>
+</view>
