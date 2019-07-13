@@ -298,6 +298,10 @@ def queryPurchaseById():
         # purjson = json.dumps(PurchaseDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder)
         # return_success(purjson)
 
+        # purjson = json.dumps(PurchaseDao.to_dict(result), ensure_ascii=False, cls=DecimalEncoder)
+        # return_success(purjson)
+
+
 
 # 根据Id查询供应商名称
 @web.route("/querySupplierById", methods=["POST"])

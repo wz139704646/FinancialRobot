@@ -70,6 +70,6 @@ class GoodsDao:
         else:
             return connection.executeQuery("select * from Goods "
                                            "where Goods.id in "
-                                           "(select * from GoodsStore "
-                                           "where companyId = %s order by goodsId)",
+                                           "(select GoodsStore.goodsId from GoodsStore "
+                                           "where companyId = %s order by wareId)",
                                            [companyId])

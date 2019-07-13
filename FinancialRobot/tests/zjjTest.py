@@ -43,5 +43,6 @@ class ZjjTesst(unittest.TestCase):
             print('token decoded:')
             print(payload1)
         except jwt.ExpiredSignatureError:
+
             print('token expired!')
 

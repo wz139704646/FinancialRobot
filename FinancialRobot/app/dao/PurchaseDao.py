@@ -2,8 +2,10 @@
 # -*- coding:utf-8 -*-
 from app.utils.DBHelper import MyHelper
 import uuid
-import  decimal,json
+import decimal, json
 import datetime
+
+
 # class DecimalEncoder(json.JSONEncoder):
 #     def default(self, o):
 #         if isinstance(o, decimal.Decimal):
@@ -19,7 +21,7 @@ class PurchaseDao:
         result = []
         for row in data:
             res = {}
-            res['id']=row[0]
+            res['id'] = row[0]
             res['goodId'] = row[1]
             res['goodName'] = row[2]
             res['supplierId'] = row[3]
@@ -30,6 +32,7 @@ class PurchaseDao:
             res['status'] = row[8]
             result.append(res)
         return result
+
     def query_all(self):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase")
@@ -38,7 +41,8 @@ class PurchaseDao:
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where companyId=%s and date >= %s and date <%s",
                                        [companyId, start, end])
-    def query_byCid(self,companyId):
+
+    def query_byCid(self, companyId):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where companyId=%s",[companyId])
 
@@ -46,15 +50,15 @@ class PurchaseDao:
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where id = %s", [id])
 
+
     def query_byId(self, id):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where id = %s", [id])
 
-    def add(self, id, goodId, goodName, supplierId, companyId, number, purchasePrice,date,status):
+
+    def add(self, id, goodId, goodName, supplierId, companyId, number, purchasePrice, date, status):
         connection = MyHelper()
-        row=connection.executeUpdate(
+        row = connection.executeUpdate(
             "insert into Purchase (id,goodId, goodName, supplierId, companyId, number, purchasePrice, date,status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            [id,goodId, goodName, supplierId, companyId, number, purchasePrice, date,status])
+            [id, goodId, goodName, supplierId, companyId, number, purchasePrice, date, status])
         return row
-
-
