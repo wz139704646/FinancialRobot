@@ -114,9 +114,10 @@ def login():
         res = json.loads(check_account())
         suc = res.get("success")
         if not suc:
-
+            print(res)
             redis_store.delete('veri' + account)
-            resp = return_success(UserDao.to_dict(res))
+            user = UserDao().query_by_account(account)
+            resp = return_success(UserDao.to_dict(user))
             resp['token'] = token
         else:
             resp = return_unsuccess('Error: No such user')

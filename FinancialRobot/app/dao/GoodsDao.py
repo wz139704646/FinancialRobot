@@ -17,6 +17,8 @@ class GoodsDao:
             res['unitInfo'] = row[5]
             res['brand'] = row[6]
             res['photo'] = row[7]
+            res['barcode'] = row[8]
+            res['WarehouseId'] = row[9]
             result.append(res)
         return result
 
@@ -41,11 +43,13 @@ class GoodsDao:
         connection = MyHelper()
         row = connection.executeUpdate("update Goods set photo = %s where id = %s", [photo, id])
         return row
+
     @classmethod
-    def get_BuyPrice(self,id):
+    def get_BuyPrice(self, id):
         connection = MyHelper()
-        row = connection.executeQuery("select purchasePrice from Purchase where goodId = %s",[id])
+        row = connection.executeQuery("select purchasePrice from Purchase where goodId = %s", [id])
         return row[0][0]
+
     def query_by_companyId(self, companyId, name, type):
         _param = [companyId]
         _sql = "select * from Goods where companyId = %s"
