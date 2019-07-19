@@ -240,6 +240,7 @@ def query_by_warehouse():
     _json = request.json
     _companyId = _json.get("companyId")
     _wareHouseId = _json.get("wareHouseId")
+    print(_json)
     goods_dao = GoodsDao()
     res = goods_dao.query_by_warehouse(_companyId, _wareHouseId)
     size = len(res)

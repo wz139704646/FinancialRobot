@@ -13,7 +13,7 @@ up = Blueprint("up", __name__)
 UPLOAD_FOLDER = '../static/img/upload'
 basedir = os.path.abspath(os.path.dirname(__file__))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF'}
-MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 1MB
+MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB
 
 
 def allowed_file(filename):

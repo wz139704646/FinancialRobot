@@ -8,6 +8,7 @@ from hashlib import sha1
 from app.dao.CompanyDao import CompanyDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
+from app.dao.WareHouseDao import WareHouseDao
 from app.utils.BigchainUtils import BigchainUtils
 from app.utils.DBHelper import MyHelper
 from app.utils.decimal_encoder import DecimalEncoder
@@ -60,3 +61,8 @@ class MylTest(unittest.TestCase):
         mongo = BigchainUtils.get_mongo()
         trans = mongo.db.transactions.find({"operation": "TRANSFER"})
         print(list(trans))
+
+    def test8(self):
+        goods = GoodsDao()
+        res = goods.query_by_warehouse("5", None)
+        print(json.dumps(GoodsDao.to_ware_dict(res), cls=DecimalEncoder, ensure_ascii=False))
