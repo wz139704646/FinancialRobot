@@ -1,3 +1,4 @@
+import time
 import unittest
 import base64
 import binascii
@@ -7,6 +8,7 @@ from hashlib import sha1
 
 from app.dao.CompanyDao import CompanyDao
 from app.dao.GoodsDao import GoodsDao
+from app.dao.RARPDao import RARPDao
 from app.dao.UserDao import UserDao
 from app.dao.WareHouseDao import WareHouseDao
 from app.utils.BigchainUtils import BigchainUtils
@@ -66,3 +68,19 @@ class MylTest(unittest.TestCase):
         goods = GoodsDao()
         res = goods.query_by_warehouse("5", None)
         print(json.dumps(GoodsDao.to_ware_dict(res), cls=DecimalEncoder, ensure_ascii=False))
+
+    def test9(self):
+        arap = RARPDao()
+        row = arap.add_purchase_pay("d63190d1-cecc-3aaa-b30f-3c843469b9eb", "钱不够")
+        # row = arap.add_sell_receive("11c139c0-0f22-31f4-a880-25d30f0f1d61","some day")
+        print(row)
+
+    def test10(self):
+        arap = RARPDao()
+        # row = arap.add_payment("d63190d1-cecc-3aaa-b30f-3c843469b9eb", 10,
+        #                        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        # row = arap.add_receive("11c139c0-0f22-31f4-a880-25d30f0f1d61", 100,
+        #                        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        # re = arap.query_purchase_pay_remain("d63190d1-cecc-3aaa-b30f-3c843469b9eb")
+        re = arap.query_sell_receive_remain("11c139c0-0f22-31f4-a880-25d30f0f1d61")
+        print(re)
