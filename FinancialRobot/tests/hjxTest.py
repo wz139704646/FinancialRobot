@@ -253,7 +253,7 @@ class Test11(unittest.TestCase):
         print(id2)
     def test12(self):
         companyId="5"
-        date="2019-7-12"
+        date="2019-7-14"
         language=""
         jieba.load_userdict("../app/utils/dict.txt")
         #去除停用词
@@ -274,7 +274,7 @@ class Test11(unittest.TestCase):
         nouns3 = ['库存']
 
         text1 = "上周进了多少货"
-        text2 = "今天进了什么货"
+        text2 = "今天卖了什么东西"
         text3 = "看一下库存"
         text4 = "今天花了多少钱"
         # 精确模式
@@ -337,6 +337,8 @@ class Test11(unittest.TestCase):
         if time == 5:
             start = datetime.date(inputTime.year, inputTime.month - 1, 1)
             end = datetime.date(inputTime.year, inputTime.month, 1) - datetime.timedelta(1)
+        print(start)
+        print(end)
         #对行为进行判断
         if action == 1:
             resultInfo=[]

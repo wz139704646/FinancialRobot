@@ -172,10 +172,10 @@ def RegisterPurchase():
         number = puchase['buyNum']
         purchasePrice = puchase['price']
         row = query.add(id, goodsNo, goodsName, provideNo, companyId, number, purchasePrice, date, "运")
-        if row == 1:
-            return json.dumps(return_success("Yes!"))
-        else:
-            return json.dumps(return_unsuccess('Error: Add failed'))
+    if row == 1:
+        return json.dumps(return_success("Yes!"))
+    else:
+        return json.dumps(return_unsuccess('Error: Add failed'))
 
 
 # 查询进货记录
@@ -234,10 +234,10 @@ def addSell():
         else:
             goodsName = ""
         row = query.add(id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName,goodsUnit)
-        if row == 1:
-            return json.dumps(return_success("Yes!"))
-        else:
-            return json.dumps(return_unsuccess('Error: Add failed'))
+    if row == 1:
+        return json.dumps(return_success("Yes!"))
+    else:
+        return json.dumps(return_unsuccess('Error: Add failed'))
 
 
 # 查询销售记录
