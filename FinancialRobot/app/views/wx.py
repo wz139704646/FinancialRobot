@@ -114,9 +114,10 @@ def login():
         res = json.loads(check_account())
         suc = res.get("success")
         if not suc:
-
+            print(res)
             redis_store.delete('veri' + account)
-            resp = return_success(UserDao.to_dict(res))
+            user = UserDao().query_by_account(account)
+            resp = return_success(UserDao.to_dict(user))
             resp['token'] = token
         else:
             resp = return_unsuccess('Error: No such user')
@@ -158,9 +159,11 @@ def getVerification():
         print(result)
     except Exception as e:
         print(e)
-
-    # print(result)
-    return jsonify({'success': True, 'errMsg': '验证码发送完成'})
+        return jsonify({'success': True, 'errMsg': '出现未知错误'})
+    if result.get('result') == 0:
+        return jsonify({'success': True, 'errMsg': '验证码发送完成'})
+    else:
+        return jsonify({'success': False, 'errMsg': result.get('errMsg')})
 
 
 @wx.route("/queryUser", methods=["POST"])
@@ -237,6 +240,7 @@ def query_by_warehouse():
     _json = request.json
     _companyId = _json.get("companyId")
     _wareHouseId = _json.get("wareHouseId")
+    print(_json)
     goods_dao = GoodsDao()
     res = goods_dao.query_by_warehouse(_companyId, _wareHouseId)
     size = len(res)

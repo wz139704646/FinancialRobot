@@ -3,7 +3,9 @@
 import uuid
 import json
 import jieba
+import os
 import datetime
+from app.utils.res_json import return_success,return_unsuccess
 from flask import Blueprint, render_template, request
 from app.dao.WareHouseDao import WareHouseDao
 from app.dao.PurchaseDao import PurchaseDao
@@ -16,10 +18,16 @@ lanprocess = Blueprint("lanprocess", __name__)
 @lanprocess.route("/languageProcess", methods=["GET", "POST"])
 def languageProcess():
     _json = request.json
+    print(_json)
     companyId = _json.get('companyId')
-    date = _json.get('date')
+    date = _json.get('time')
     language = _json.get('language')
-    jieba.load_userdict("../app/utils/dict.txt")
+   # language="今天花了多少钱"
+    UPLOAD_FOLDER = '../utils/dict.txt'
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    file_dir = os.path.join(basedir, UPLOAD_FOLDER)
+
+    jieba.load_userdict(file_dir)
     # 去除停用词
     stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少'])
     time1 = ['今天', '这一天']
@@ -72,6 +80,7 @@ def languageProcess():
     querySell = SellDao()
     queryPurchase = PurchaseDao()
     inputTime = datetime.datetime.strptime(date, '%Y-%m-%d')
+
     # 对时间进行判断
     if time == 1:
         delta = datetime.timedelta(days=1)
@@ -94,13 +103,19 @@ def languageProcess():
     if time == 5:
         start = datetime.date(inputTime.year, inputTime.month - 1, 1)
         end = datetime.date(inputTime.year, inputTime.month, 1) - datetime.timedelta(1)
+    print(start)
+    print(end)
+    print(action)
+    print(nouns)
     # 对行为进行判断
     if action == 1:
         resultInfo = []
+        resultArray=[]
         resultString = ""
         inMoney = 0
         outMoney = 0
         result = querySell.query_byDate(companyId, start, end)
+        print(result)
         size = len(result)
         if size >= 1:
             for i in result:
@@ -114,39 +129,51 @@ def languageProcess():
         resultString = "卖出了" + str(inMoney) + "元" + ";" + "成本" + str(outMoney) + "元" + ";" + "利润" + str(
             inMoney - outMoney) + "元"
         if nouns == 1:
-            return resultInfo
+            return json.dumps(return_success(resultInfo),ensure_ascii=False)
+            #return resultInfo
+
         if nouns == 2:
-            return resultString
+            resultArray.append(resultString)
+            return json.dumps(return_success(resultArray),ensure_ascii=False)
+
     if action == 2 and nouns == 1:
         result = queryPurchase.query_byDate(companyId, start, end)
         finalresult = []
         outMoneyarray = []
         outMoney = 0
         size = len(result)
+        print(result)
         if size >= 1:
             for buy in result:
                 mid = "购入 " + buy[2] + " " + str(buy[5]) + "个" + "，单价" + str(buy[6]) + "元"
-                outMoney += float(buy[4]) * float(buy[5])
+                aa=float(buy[5]) * float(buy[6])
+                print(aa)
+                outMoney += aa
                 finalresult.append(mid)
         else:
             finalresult.append("未查询到数据")
         outString = "进货支出" + str(outMoney) + "元"
         outMoneyarray.append(outString)
-        return finalresult
+        return json.dumps(return_success(finalresult),ensure_ascii=False)
+
     if action == 3 and (nouns == 1 or nouns == 3):
         return ("仓库还剩的货")
     if action == 4 and nouns == 2:
         result = queryPurchase.query_byDate(companyId, start, end)
         outMoneyarray = []
         outMoney = 0
+        print(result)
         size = len(result)
         if size >= 1:
             for buy in result:
-                outMoney += float(buy[4]) * float(buy[5])
+                aa = float(buy[5]) * float(buy[6])
+                print(aa)
+                outMoney += aa
+
         else:
             print("未查询到数据")
         outString = "进货支出" + str(outMoney) + "元"
         outMoneyarray.append(outString)
-        return outMoneyarray
+        return json.dumps(return_success(outMoneyarray), ensure_ascii=False)
 
 

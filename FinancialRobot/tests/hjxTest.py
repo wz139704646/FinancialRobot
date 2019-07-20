@@ -24,9 +24,8 @@ from app.utils.res_json import *
 
 class Test1(unittest.TestCase):
     def test1(self):
-        a=WareHouseDao()
-        result = a.queryAllInfo()
-        print(result)
+        date = datetime.datetime.now()
+        print(date)
 
 class Test2(unittest.TestCase):
     def test2(self):

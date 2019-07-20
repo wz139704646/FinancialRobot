@@ -17,6 +17,8 @@ class GoodsDao:
             res['unitInfo'] = row[5]
             res['brand'] = row[6]
             res['photo'] = row[7]
+            res['barcode'] = row[8]
+            res['WarehouseId'] = row[9]
             result.append(res)
         return result
 
@@ -41,11 +43,13 @@ class GoodsDao:
         connection = MyHelper()
         row = connection.executeUpdate("update Goods set photo = %s where id = %s", [photo, id])
         return row
+
     @classmethod
-    def get_BuyPrice(self,id):
+    def get_BuyPrice(self, id):
         connection = MyHelper()
-        row = connection.executeQuery("select purchasePrice from Purchase where goodId = %s",[id])
+        row = connection.executeQuery("select purchasePrice from Purchase where goodId = %s", [id])
         return row[0][0]
+
     def query_by_companyId(self, companyId, name, type):
         _param = [companyId]
         _sql = "select * from Goods where companyId = %s"
@@ -58,18 +62,38 @@ class GoodsDao:
         connection = MyHelper()
         return connection.executeQuery(_sql, _param)
 
+    @classmethod
+    def to_ware_dict(cls, data):
+        result = []
+        for row in data:
+            res = {}
+            res['id'] = row[0]
+            res['name'] = row[1]
+            res['type'] = row[2]
+            res['sellprice'] = row[3]
+            res['unitInfo'] = row[4]
+            res['amount'] = row[5]
+            res['WarehouseId'] = row[6]
+            res['photo'] = row[7]
+            result.append(res)
+        return result
+
     def query_by_warehouse(self, companyId, wareHouseId):
         connection = MyHelper()
         # wareHouseId为空
         if wareHouseId:
-            return connection.executeQuery("select * from Goods "
-                                           "where Goods.id in "
-                                           "(select GoodsStore.goodsId from GoodsStore "
-                                           "where companyId = %s and wareId = %s)",
-                                           [companyId, wareHouseId])
+            return connection.executeQuery("select Goods.id, Goods.name, Goods.type, "
+                                           "Goods.sellprice,Goods.unitInfo,GoodsStore.number,"
+                                           "Goods.WarehouseId, Goods.photo "
+                                           "from Goods, GoodsStore "
+                                           "where Goods.id=GoodsStore.goodsId and "
+                                           "GoodsStore.wareId = %s and Goods.companyId = %s",
+                                           [wareHouseId, companyId])
         else:
-            return connection.executeQuery("select * from Goods "
-                                           "where Goods.id in "
-                                           "(select * from GoodsStore "
-                                           "where companyId = %s order by goodsId)",
+            return connection.executeQuery("select Goods.id, Goods.name, Goods.type, "
+                                           "Goods.sellprice,Goods.unitInfo,GoodsStore.number,"
+                                           "Goods.WarehouseId, Goods.photo "
+                                           "from Goods, GoodsStore "
+                                           "where Goods.id=GoodsStore.goodsId and "
+                                           "Goods.companyId = %s order by GoodsStore.wareId",
                                            [companyId])

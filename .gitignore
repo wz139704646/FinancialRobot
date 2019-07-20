@@ -8,6 +8,7 @@ project.config.json
 __pycache__/
 *.py[cod]
 *$py.class
+
 #.idea
 .idea/ 
 
