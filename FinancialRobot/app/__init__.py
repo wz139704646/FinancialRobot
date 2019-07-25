@@ -3,7 +3,7 @@ from app.views.trans import trans
 from app.views.wx import wx
 from app.config import MONGO_URI
 # from app.views.smsVertify import sms
-
+from app.views.InOutMoney import inout_Money
 from app.views.web import web
 from app.views.picUpload import up
 from app.utils.languageProcess import lanprocess
@@ -14,6 +14,7 @@ def create_app():
     app.register_blueprint(wx)
     app.register_blueprint(trans, url_prefix='/trans')
     app.register_blueprint(web)
+    app.register_blueprint(inout_Money)
     app.register_blueprint(lanprocess)
     app.register_blueprint(up, url_prefix='/pic')
     app.config["MONGO_URI"] = MONGO_URI

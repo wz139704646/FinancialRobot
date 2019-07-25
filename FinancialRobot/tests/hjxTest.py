@@ -9,7 +9,9 @@ import string
 import datetime
 from flask import Blueprint, render_template, request
 from app.dao.WareHouseDao import WareHouseDao
+from app.dao.COHDao import COHDao
 from app.dao.PurchaseDao import PurchaseDao
+from app.dao.BankStatementDao import BankStatementDao
 from app.utils.DBHelper import MyHelper
 from app.utils.timeProcess import timeProcess
 from app.dao.CompanyDao import CompanyDao
@@ -250,6 +252,13 @@ class Test11(unittest.TestCase):
         id2 = str(uuid.uuid3(uuid.NAMESPACE_OID, "1"))
         print(id)
         print(id2)
+    def test21(self):
+        ad=BankStatementDao()
+        result=ad.queryByName('花旗银行')
+        a=len(result)
+        print(a)
+        print(result[0][7])
+
     def test12(self):
         companyId="5"
         date="2019-7-14"
