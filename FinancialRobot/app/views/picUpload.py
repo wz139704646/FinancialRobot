@@ -46,9 +46,12 @@ def api_upload():
             f.save(os.path.join(file_dir, new_filename))
             f.close()
             # 更新photo
-            goods_dao = GoodsDao()
-            goods_dao.update_photo(id, new_filename)
-            return json.dumps(return_success({"new_filename": new_filename}), ensure_ascii=False)
+            try:
+                goods_dao = GoodsDao()
+                goods_dao.update_photo(id, new_filename)
+                return json.dumps(return_success({"new_filename": new_filename}), ensure_ascii=False)
+            except Exception as e:
+                return json.dumps(return_success({"new_filename": new_filename, 'Error': str(e)}), ensure_ascii=False)
         else:
             return json.dumps(return_unsuccess("文件大小超出5MB"), ensure_ascii=False)
     else:
@@ -91,4 +94,3 @@ def delete_file(filename):
         print(e)
         return json.dumps(return_unsuccess(e))
     return json.dumps(return_success("删除成功"))
-

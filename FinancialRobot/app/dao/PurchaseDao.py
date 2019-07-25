@@ -51,10 +51,6 @@ class PurchaseDao:
         return connection.executeQuery("select * from Purchase where id = %s", [id])
 
 
-    def query_byId(self, id):
-        connection = MyHelper()
-        return connection.executeQuery("select * from Purchase where id = %s", [id])
-
 
     def add(self, id, goodId, goodName, supplierId, companyId, number, purchasePrice, date, status):
         connection = MyHelper()
