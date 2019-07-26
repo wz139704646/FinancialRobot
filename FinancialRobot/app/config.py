@@ -6,7 +6,6 @@ user = "root"
 password = "Wdrs14569*"
 charset = "utf8"
 
-
 dbname = "financialrobot"
 
 redis_port = 6379
