@@ -8,13 +8,8 @@ class UserDao:
     def to_dict(cls, data):
         result = []
         for row in data:
-            res = {}
-            res['account'] = row[0]
-            res['password'] = row[1]
-            res['companyId'] = row[2]
-            res['ID'] = row[3]
-            res['position'] = row[4]
-            res['openid'] = row[5]
+            res = {'account': row[0], 'password': row[1], 'companyId': row[2], 'ID': row[3], 'position': row[4],
+                   'openid': row[5]}
             result.append(res)
         return result
 

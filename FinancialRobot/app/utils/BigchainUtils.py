@@ -4,7 +4,6 @@ from collections import namedtuple
 from bigchaindb_driver import BigchainDB
 from app.config import BIGCHAINDB_URL
 from flask_pymongo import PyMongo
-from manage import app
 
 
 class BigchainUtils(object):
@@ -18,9 +17,7 @@ class BigchainUtils(object):
         pair = namedtuple('CryptoKeypair', ('private_key', 'public_key'))
         return pair(private_key=private_key, public_key=public_key)
 
-    @staticmethod
-    def get_mongo():
-        return PyMongo(app)
+
 
     def __init__(self):
         self.conn = BigchainDB(BIGCHAINDB_URL)

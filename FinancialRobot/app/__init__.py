@@ -1,4 +1,7 @@
 from flask import Flask, request
+from flask_pymongo import PyMongo
+
+from app.views.bigdb import big_db
 from app.views.trans import trans
 from app.views.wx import wx
 from app.config import MONGO_URI
@@ -11,7 +14,10 @@ from app.utils.languageProcess import lanprocess
 
 def create_app():
     app = Flask(__name__)
+    mongo = PyMongo(app)
+
     app.register_blueprint(wx)
+    app.register_blueprint(big_db)
     app.register_blueprint(trans, url_prefix='/trans')
     app.register_blueprint(web)
     app.register_blueprint(inout_Money)
@@ -29,4 +35,4 @@ def create_app():
                 response.headers['Access-Control-Allow-Headers'] = headers
         return response
 
-    return app
+    return app, mongo
