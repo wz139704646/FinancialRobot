@@ -14,7 +14,6 @@ from app.utils.languageProcess import lanprocess
 
 def create_app():
     app = Flask(__name__)
-    mongo = PyMongo(app)
 
     app.register_blueprint(wx)
     app.register_blueprint(big_db)
@@ -23,7 +22,9 @@ def create_app():
     app.register_blueprint(inout_Money)
     app.register_blueprint(lanprocess)
     app.register_blueprint(up, url_prefix='/pic')
+
     app.config["MONGO_URI"] = MONGO_URI
+    # mongo = PyMongo(app)
 
     @app.after_request
     def after_request(response):
@@ -35,4 +36,4 @@ def create_app():
                 response.headers['Access-Control-Allow-Headers'] = headers
         return response
 
-    return app, mongo
+    return app

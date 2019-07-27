@@ -1,7 +1,9 @@
-import manage
+from flask_pymongo import PyMongo
+
+from manage import app
 
 
 class MongoUtils:
     @staticmethod
     def get_mongo():
-        return manage.mongo
+        return PyMongo(app)
