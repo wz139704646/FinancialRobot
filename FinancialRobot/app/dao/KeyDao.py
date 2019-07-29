@@ -22,3 +22,11 @@ class KeyDao:
     def queryKeys(self, _id):
         connection = MyHelper()
         return connection.executeQuery("select * from UserKeys where userId = %s", [_id])
+
+    def query_private_key(self, _id):
+        connection = MyHelper()
+        return connection.executeQuery("select privateKey from UserKeys where userId = %s", [_id])
+
+    def query_public_key(self, _id):
+        connection = MyHelper()
+        return connection.executeQuery("select publicKey from UserKeys where userId = %s", [_id])

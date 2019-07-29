@@ -25,6 +25,26 @@ def queryKeys(id):
     except Exception as e:
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
+
+@big_db.route('/queryPublicKey/<string:id>', methods=['POST'])
+def queryPubKeys(id):
+    keys_dao = KeyDao()
+    try:
+        res = keys_dao.query_public_key(id)
+        return json.dumps(return_success({'publicKey': res[0][0]}))
+    except Exception as e:
+        return json.dumps(return_unsuccess('Error ' + str(e)))
+
+
+@big_db.route('/queryPrivateKey/<string:id>', methods=['POST'])
+def queryPriKeys(id):
+    keys_dao = KeyDao()
+    try:
+        res = keys_dao.query_private_key(id)
+        return json.dumps(return_success({'privateKey': res[0][0]}))
+    except Exception as e:
+        return json.dumps(return_unsuccess('Error ' + str(e)))
+
 # bdb = BigchainDB('https://test.bigchaindb.com')
 # alice = generate_keypair()
 # tx = bdb.transactions.prepare(
