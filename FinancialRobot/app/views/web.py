@@ -159,6 +159,7 @@ def queryCustomer():
 @web.route("/addPurchase", methods=["POST"])
 def RegisterPurchase():
     query = PurchaseDao()
+    rows=[]
     _json = request.json
     companyId = _json.get('companyId')
     purchases = _json.get('purchases')
@@ -167,14 +168,22 @@ def RegisterPurchase():
     id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(time.time())))
     print(purchases)
     for puchase in purchases:
-        goodsNo = puchase['id']
+        goodsId = puchase['id']
+        print(goodsId)
         goodsName = puchase['name']
+        print(goodsName)
         number = puchase['buyNum']
+        print(number)
         purchasePrice = puchase['price']
-
-        row = query.add(id, goodsNo, goodsName, provideNo, companyId, number, purchasePrice, date, "运")
-    if row == 1:
-        return json.dumps(return_success("Yes!"))
+        print(purchasePrice)
+        row = query.add(id, goodsId, goodsName, provideNo, companyId, number, purchasePrice, date, "运")
+        rows.append(row)
+    print(rows)
+    length=0
+    for arow in rows:
+        length+=arow
+    if length == len(rows):
+        return json.dumps(return_success(id))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
 
@@ -213,6 +222,7 @@ def addSell():
     queryCustomer = CustomerDao()
     queryGoods = GoodsDao()
     _json = request.json
+    rows=[]
     companyId = _json.get('companyId')
     customerId = _json.get('customerId')
     result = queryCustomer.query_byId(customerId)
@@ -235,8 +245,12 @@ def addSell():
         else:
             goodsName = ""
         row = query.add(id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName,goodsUnit)
-    if row == 1:
-        return json.dumps(return_success("Yes!"))
+        rows.append(row)
+    length=0
+    for arow in rows:
+        length+=arow
+    if length == len(goodsList):
+        return json.dumps(return_success(id))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
 
@@ -331,10 +345,10 @@ def queryCustomerById():
 @web.route("/addWarehouse", methods=["POST"])
 def addWarehouse():
     _json = request.json
-    companyId = _json['companyId']
-    name = _json['name']
+    companyId = _json.get('companyId')
+    name = _json.get('name')
     ID = str(uuid.uuid3(uuid.NAMESPACE_OID, name))
-    site = _json['site']
+    site = _json.get('site')
     addWarehouse = WareHouseDao()
     row = addWarehouse.add(ID, name, site, companyId)
     if row == 1:
@@ -347,7 +361,7 @@ def addWarehouse():
 @web.route("/queryWarehouse", methods=["POST"])
 def queryWarehouse():
     _json = request.json
-    companyId = _json['companyId']
+    companyId = _json.get('companyId')
     query = WareHouseDao()
     if _json.get('name') == None:
         Cusresult = query.query_byCompanyId(companyId)
@@ -357,7 +371,7 @@ def queryWarehouse():
         else:
             return json.dumps(return_success(WareHouseDao.to_dict(Cusresult)), ensure_ascii=False)
     else:
-        name = _json['name']
+        name = _json.get('name')
         newname = '%' + name + '%'
         Cusresult = query.query_by_name(companyId, newname)
         size = len(Cusresult)
