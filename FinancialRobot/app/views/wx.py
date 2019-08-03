@@ -34,14 +34,15 @@ def decode_token():
     token = _json.get('token')
     token_arr = token.split(' ')
     if (not token_arr) or (token_arr[0] != "JWT") or (len(token_arr) != 2):
-        return {'auth': False, 'errMsg': '验证头信息不正确'}
+        return {'success': False, 'errMsg': '验证头信息不正确'}
     else:
         auth_token = token_arr[1]
         try:
             data = Auth.decode_jwt(auth_token).get('data')
+            print(data)
         except Exception as e:
             print(e)
-            return {'auth': False, 'errMsg': 'token解码失败'}
+            return {'success': False, 'errMsg': 'token解码失败'}
         else:
             account = data.get('account')
             user_dao = UserDao()
@@ -113,7 +114,7 @@ def login():
     password = _json.get('passwd')
     # 生成token
     login_time = int(time())
-    token = util.create_jwt({'account': account, 'login_time': login_time})
+    token = Auth.create_jwt({'account': account, 'login_time': login_time})
     # 账号密码登陆
     if login_type == 0:
         store = base64.b64decode(password)
@@ -156,6 +157,7 @@ def login():
         size = len(res)
         if size == 1:
             resp = return_success(UserDao.to_dict(res))
+            token = Auth.create_jwt({'account': res[0][0], 'login_time': login_time})
             resp['token'] = token
             return jsonify(resp)
         else:
