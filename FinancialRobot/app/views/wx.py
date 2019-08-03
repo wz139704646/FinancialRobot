@@ -32,14 +32,24 @@ def hello():
 def decode_token():
     _json = request.json
     token = _json.get('token')
-    data = Auth.decode_jwt(token).get('data')
-    account = data.get('account')
-    user_dao = UserDao()
-    try:
-        res = user_dao.query_by_account(account)
-        return json.dumps(return_success(UserDao.to_dict(res)), ensure_ascii=False)
-    except Exception as e:
-        return json.dumps((return_unsuccess("Error: " + str(e))))
+    token_arr = token.split(' ')
+    if (not token_arr) or (token_arr[0] != "JWT") or (len(token_arr) != 2):
+        return {'auth': False, 'errMsg': '验证头信息不正确'}
+    else:
+        auth_token = token_arr[1]
+        try:
+            data = Auth.decode_jwt(auth_token).get('data')
+        except Exception as e:
+            print(e)
+            return {'auth': False, 'errMsg': 'token解码失败'}
+        else:
+            account = data.get('account')
+            user_dao = UserDao()
+            try:
+                res = user_dao.query_by_account(account)
+                return json.dumps(return_success(UserDao.to_dict(res)), ensure_ascii=False)
+            except Exception as e:
+                return json.dumps((return_unsuccess("Error: " + str(e))))
 
 
 @wx.route("/userRegister", methods=["POST"])
