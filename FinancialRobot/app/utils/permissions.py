@@ -13,6 +13,8 @@ def check_token(func):
     """
     def wrapper(*args, **kwargs):
         # TODO: 注意，这里粗略的获取了request对象，目前该装饰器只能装饰request在函数的第一个参数的函数
+        print(args)
+        print(kwargs)
         token = args[0].headers.get("HTTP_TOKEN")
         print(token)
         if token:

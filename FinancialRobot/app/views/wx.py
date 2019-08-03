@@ -15,6 +15,7 @@ from qcloudsms_py import SmsSingleSender
 from qcloudsms_py.httpclient import HTTPError
 import random
 from app.config import redis_store
+from app.utils.auth import Auth
 
 wx = Blueprint("wx", __name__)
 wx.secret_key = 'secret_key_1'
@@ -25,6 +26,20 @@ due = 5 * 60
 @wx.route("/")
 def hello():
     return render_template("index.html")
+
+
+@wx.route("/decodeToken", methods=["POST"])
+def decode_token():
+    _json = request.json
+    token = _json.get('token')
+    data = Auth.decode_jwt(token).get('data')
+    account = data.get('account')
+    user_dao = UserDao()
+    try:
+        res = user_dao.query_by_account(account)
+        return json.dumps(return_success(UserDao.to_dict(res)), ensure_ascii=False)
+    except Exception as e:
+        return json.dumps((return_unsuccess("Error: " + str(e))))
 
 
 @wx.route("/userRegister", methods=["POST"])
@@ -83,12 +98,13 @@ def check_account():
 @wx.route("/login", methods=['POST'])
 def login():
     _json = request.json
-    login_type = _json['type']
-    # 账号密码登陆
-    account = _json['account']
-    password = _json['passwd']
+    login_type = _json.get('type')
+    account = _json.get('account')
+    password = _json.get('passwd')
+    # 生成token
     login_time = int(time())
     token = util.create_jwt({'account': account, 'login_time': login_time})
+    # 账号密码登陆
     if login_type == 0:
         store = base64.b64decode(password)
         store_in = binascii.hexlify(store)
@@ -105,7 +121,7 @@ def login():
         else:
             return jsonify(return_unsuccess('Error: No such user'))
     # 验证码登陆
-    else:
+    elif login_type == 1:
         true_veri = redis_store.get('veri' + account)
         if not true_veri:
             return jsonify(return_unsuccess("验证码过期"))
@@ -122,6 +138,20 @@ def login():
         else:
             resp = return_unsuccess('Error: No such user')
         return jsonify(resp)
+    # openid登陆
+    elif login_type == 2:
+        openid = _json.get("openid")
+        user_dao = UserDao()
+        res = user_dao.query_by_openid_account(account, openid)
+        size = len(res)
+        if size == 1:
+            resp = return_success(UserDao.to_dict(res))
+            resp['token'] = token
+            return jsonify(resp)
+        else:
+            return jsonify(return_unsuccess('Error: No such user'))
+    else:
+        return False
 
 
 @wx.route("/getVerification", methods=['POST'])
@@ -184,11 +214,11 @@ def bindUserWx():
     _openid = request.json.get('openid')
     _account = request.json.get('account')
     user_dao = UserDao()
-    row = user_dao.bind_wx(_account, _openid)
-    if row == 1:
+    try:
+        user_dao.bind_wx(_account, _openid)
         return json.dumps(return_success(""))
-    else:
-        return json.dumps(return_unsuccess("Bind Failed"))
+    except Exception as e:
+        return json.dumps(return_unsuccess("Bind Failed " + str(e)))
 
 
 @wx.route("/addGoods", methods=['POST'])
