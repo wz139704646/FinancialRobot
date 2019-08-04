@@ -15,6 +15,7 @@ from app.dao.BankStatementDao import BankStatementDao
 from app.utils.DBHelper import MyHelper
 from app.utils.timeProcess import timeProcess
 from app.dao.CompanyDao import CompanyDao
+from app.dao.DailyfundDao import DailyfundDao
 from app.dao.SellDao import SellDao
 from app.dao.CustomerDao import CustomerDao
 from app.dao.SupplierDao import SupplierDao
@@ -270,8 +271,10 @@ class Test11(unittest.TestCase):
         dateZero=date_zero.strftime('%Y-%m-%d %H:%M:%S')
         print(dateZero)
         print(date_tomorrow.strftime('%Y-%m-%d %H:%M:%S'))
-
-
+    def test23(self):
+        query=DailyfundDao()
+        result=query.queryAll()
+        print(result)
 
     def test12(self):
         companyId="5"

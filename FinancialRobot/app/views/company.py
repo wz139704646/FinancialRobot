@@ -32,3 +32,11 @@ def query_Company():
     query = CompanyDao()
     result = query.queryAll()
     return json.dumps(return_success(CompanyDao.to_dict(result)), ensure_ascii=False)
+# 查询公司名称
+@company.route("/query_CompanyName", methods=["GET"])
+def query_CompanyName():
+    query = CompanyDao()
+    _json = request.json
+    id = _json.get('id')
+    result = query.queryNameById(id)
+    return json.dumps(return_success(result[0][0]), ensure_ascii=False)

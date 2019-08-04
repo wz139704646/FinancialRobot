@@ -18,7 +18,9 @@ class CompanyDao:
     def query_cname_cplace(self):
         conn = MyHelper()
         return conn.executeQuery("select name,place from Company")
-
+    def queryNameById(self,id):
+        conn = MyHelper()
+        return conn.executeQuery("select name from Company where id=%s",[id])
     def add(self, id, name, place):
         conn = MyHelper()
         row=conn.executeUpdate("insert into Company (id, name, place) VALUES (%s,%s,%s)", [id, name, place])

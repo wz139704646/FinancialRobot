@@ -1,7 +1,8 @@
 #!/usr/bin/env python 
 # -*- coding:utf-8 -*-
-from flask import Blueprint, render_template, request
+from flask import Blueprint, request
 from app.dao.COHDao import COHDao
+from app.dao.CompanyDao import CompanyDao
 from app.dao.BankStatementDao import BankStatementDao
 from app.dao.DailyfundDao import DailyfundDao
 from app.utils.json_util import *
@@ -50,44 +51,50 @@ def queryAllCashRecord():
 @inout_Money.route("/addBankRecord", methods=["GET", "POST"])
 def addBankRecord():
     query = BankStatementDao()
+    queryName = CompanyDao()
     _json = request.json
     voucher = _json.get('voucher')
     bankName= _json.get('bankName')
-    companyName = _json.get('companyName')
-    clearForm = _json.get('clearForm')
-    amount =float(_json.get('amount'))
-    date = _json.get('date')
-    status = "未核对"
-    bankResult=query.queryByName(bankName)
-    if len(bankResult)==0:
-        balance=amount
-    else:
-        balance=bankResult[0][7]+amount
-    sumResult = query.queryNow()
-    if len(sumResult)==0:
-        sumBalance=balance
-    else:
-        sumBalance=sumResult[0][8]+amount
-    row = query.add(voucher, bankName, companyName,clearForm,amount,date,status,balance,sumBalance)
-    changeDescription="在 "+bankName+clearForm+str(abs(amount))+"元  "
-    insertDailyRow=InsertDailyfund(date,changeDescription,amount)
-    if row == 1:
-        if insertDailyRow==1:
-            return json.dumps(return_success('Add succeed！'))
+    companyId=_json.get('companyId')
+    comResult=queryName.queryNameById(companyId)
+    if len(comResult)==1:
+        companyName=comResult[0][0]
+        clearForm = _json.get('clearForm')
+        amount = float(_json.get('amount'))
+        date = _json.get('date')
+        status = "未核对"
+        bankResult = query.queryByName(bankName)
+        if len(bankResult) == 0:
+            balance = amount
         else:
-            return json.dumps(return_unsuccess('Error: Daily fund add failed,bank add succeed'))
+            balance = bankResult[0][7] + amount
+        sumResult = query.queryNow()
+        if len(sumResult) == 0:
+            sumBalance = balance
+        else:
+            sumBalance = sumResult[0][8] + amount
+        row = query.add(voucher, bankName, companyName, clearForm, amount, date, status, balance, sumBalance)
+        changeDescription = "在 " + bankName + clearForm + str(abs(amount)) + "元  "
+        insertDailyRow = InsertDailyfund(date, changeDescription, amount)
+        if row == 1:
+            if insertDailyRow == 1:
+                return json.dumps(return_success('Add succeed！'))
+            else:
+                return json.dumps(return_unsuccess('Error: Daily fund add failed,bank add succeed'))
+        else:
+            return json.dumps(return_unsuccess('Error: Add failed'))
     else:
-        return json.dumps(return_unsuccess('Error: Add failed'))
+        return json.dumps(return_unsuccess('Error: CompanyId error!'))
+
+
 
 def InsertDailyfund(date,changeDescription,amount):
     query=DailyfundDao()
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
     date_zero = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
-    date_tomorrow = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
-    date_yesterday = d.replace(year=d.year, month=d.month, day=d.day - 1, hour=0, minute=0, second=0)
     result = query.query_by_date(date_zero)
     if len(result)==0:
-        yester_result = query.query_by_date(date_yesterday)
+        yester_result = query.queryAll()
         if len(yester_result)==0:
             yesterMoney=0
             row = query.add(yesterMoney,changeDescription,amount,amount,date_zero)

@@ -22,7 +22,7 @@ class DailyfundDao:
 
     def queryAll(self):
         conn = MyHelper()
-        return conn.executeQuery("select * from Dailyfund order by date")
+        return conn.executeQuery("select * from Dailyfund order by date desc ")
 
     def query_by_date(self,date):
         connection = MyHelper()
