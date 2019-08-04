@@ -1,7 +1,7 @@
 from app.utils.util import decode_jwt
-
+from flask import Flask,render_template,redirect,request,session
 import logging
-
+import functools
 logger = logging.getLogger(__name__)
 
 
@@ -11,11 +11,10 @@ def check_token(func):
     :param func:
     :return:
     """
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        # TODO: 注意，这里粗略的获取了request对象，目前该装饰器只能装饰request在函数的第一个参数的函数
-        print(args)
-        print(kwargs)
-        token = args[0].headers.get("HTTP_TOKEN")
+        print(request)
+        token = request.headers.get("Authorization")
         print(token)
         if token:
             try:

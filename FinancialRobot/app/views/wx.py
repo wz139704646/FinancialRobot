@@ -8,14 +8,13 @@ from app.dao.WareHouseDao import WareHouseDao
 from app.utils.DBHelper import MyHelper
 from app.utils.decimal_encoder import DecimalEncoder
 from app.utils.res_json import *
-from app.utils.permissions import check_token
 from app.utils import util
 from time import time
 from qcloudsms_py import SmsSingleSender
 from qcloudsms_py.httpclient import HTTPError
 import random
 from app.config import redis_store
-from app.utils.auth import Auth
+from app.utils.auth import *
 
 wx = Blueprint("wx", __name__)
 wx.secret_key = 'secret_key_1'
@@ -29,6 +28,7 @@ def hello():
 
 
 @wx.route("/decodeToken", methods=["POST"])
+@check_token
 def decode_token():
     _json = request.json
     token = _json.get('token')
@@ -59,6 +59,11 @@ def userRegister():
     print(_json)
 
     account = _json.get("account")
+    res = json.loads(check_account())
+    suc = res.get("success")
+    if not suc:
+        return jsonify(return_unsuccess("账户重复"))
+
     companyId = _json.get("companyId")
     password = _json.get("passwd")
     verification = _json.get("verification")
@@ -83,19 +88,20 @@ def userRegister():
     store_in = binascii.hexlify(store)
     strpass = str(store_in, 'utf-8')
     print(strpass)
-    user_dao = UserDao()
-    row = user_dao.add(account, strpass, companyId)
-    if row == 1:
+    try:
+        user_dao = UserDao()
+        user_dao.add(account, strpass, companyId)
         resp = return_success("")
         resp['token'] = token
         return jsonify(resp)
-    else:
-        return json.dumps(return_unsuccess("注册失败"))
+    except Exception as e:
+        print(e)
+        return json.dumps(return_unsuccess("注册失败"), ensure_ascii=False)
 
 
 @wx.route("/checkAccount")
 def check_account():
-    account = request.json['account']
+    account = request.json.get('account')
     # 到数据库中进行查询
     user_dao = UserDao()
     result = user_dao.query_by_account(account)
@@ -163,7 +169,7 @@ def login():
         else:
             return jsonify(return_unsuccess('Error: No such user'))
     else:
-        return False
+        return jsonify(return_unsuccess('Error: Wrong Login Method'))
 
 
 @wx.route("/getVerification", methods=['POST'])

@@ -1,10 +1,32 @@
-from flask import jsonify
+import functools
+from flask import jsonify, request
+import logging
 import datetime, time
 from app import config
 import jwt
 
+logger = logging.getLogger(__name__)
 
-class Auth():
+
+def check_token(func):
+    """
+    装饰器，验证token
+    :param func:
+    :return:
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        res = Auth.identify(request)
+        if res['auth']:
+            return func(*args, **kwargs)
+        else:
+            raise Exception(res['errMsg'])
+
+    return wrapper
+
+
+class Auth:
     @staticmethod
     def create_jwt(user_dict):
         """
@@ -39,17 +61,17 @@ class Auth():
             raise jwt.InvalidTokenError
 
     @staticmethod
-    def identify(request):
+    def identify(_request):
         """
         用户鉴权
-        :param request: 发起的请求
+        :param _request: 发起的请求
         :return: 验证结果，{
                                 'auth': 是否成功
                                 'errMsg': 调用是否成功的提示信息
                                 'data': 如果成功时返回，用户信息字典
                             }
         """
-        auth_header = request.headers.get('Authorization')
+        auth_header = _request.headers.get('Authorization')
         print(auth_header)
         if auth_header:
             # 请求头中携带Authorization格式为：JWT jwtstr
