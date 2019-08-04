@@ -4,9 +4,11 @@ from app.views.trans import trans
 from app.views.wx import wx
 from app.config import MONGO_URI
 from app.views.InOutMoney import inout_Money
-from app.views.web import web
 from app.views.picUpload import up
 from app.views.goods import goods
+from app.views.customer import customer
+from app.views.supplier import supplier
+from app.views.company import company
 from app.views.warehouse import warehouse
 from app.views.sell import sell
 from app.views.purchase import purchase
@@ -24,7 +26,9 @@ def create_app():
     app.register_blueprint(purchase)
     app.register_blueprint(big_db)
     app.register_blueprint(trans, url_prefix='/trans')
-    app.register_blueprint(web)
+    app.register_blueprint(supplier)
+    app.register_blueprint(company)
+    app.register_blueprint(customer)
     app.register_blueprint(inout_Money)
     app.register_blueprint(lanprocess)
     app.register_blueprint(up, url_prefix='/pic')

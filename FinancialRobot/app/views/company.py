@@ -1,0 +1,34 @@
+#!/usr/bin/env python 
+# -*- coding:utf-8 -*-
+from flask import Blueprint, render_template, request
+from app.utils.DBHelper import MyHelper
+from app.dao.CompanyDao import CompanyDao
+from app.utils.json_util import *
+import uuid
+import json
+
+company = Blueprint("company", __name__)
+
+# 注册公司
+@company.route("/CompanyRegister", methods=["GET", "POST"])
+def CompanyRegister():
+    if request.method == 'GET':
+        return render_template("RegisterCompany.html")
+    else:
+        companyname = request.form.get("companyname")
+        place = request.form.get("place")
+        helper = MyHelper()
+        id = str(uuid.uuid3(uuid.NAMESPACE_OID, companyname))
+        row = helper.executeUpdate("insert into Company (id, name, place) values (%s,%s,%s)",
+                                   [id, companyname, place])
+        if row == 1:
+            return render_template("RegisterCompany.html")
+        else:
+            return False
+
+# 查询公司列表
+@company.route("/query_Company", methods=["GET"])
+def query_Company():
+    query = CompanyDao()
+    result = query.queryAll()
+    return json.dumps(return_success(CompanyDao.to_dict(result)), ensure_ascii=False)

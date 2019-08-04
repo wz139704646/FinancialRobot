@@ -56,12 +56,21 @@ def querySell():
     _json = request.json
     companyId = _json.get('companyId')
     if _json.get('date') == None:
-        result = query.query_byCid(companyId)
-        size = len(result)
-        if size == 0:
-            return json.dumps(return_unsuccess('Error: No data'))
+        if _json.get('id')==None:
+            result = query.query_byCid(companyId)
+            size = len(result)
+            if size == 0:
+                return json.dumps(return_unsuccess('Error: No data'))
+            else:
+                return json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
         else:
-            return json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+            id=_json.get('id')
+            result=query.query_byId(id)
+            size = len(result)
+            if size == 0:
+                return json.dumps(return_unsuccess('Error: No data'))
+            else:
+                return json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
         date = _json.get('date')
         start = datetime.datetime.strptime(date, '%Y-%m-%d')
