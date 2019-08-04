@@ -4,6 +4,7 @@ import logging
 import datetime, time
 from app import config
 import jwt
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,8 @@ def check_token(func):
         if res['auth']:
             return func(*args, **kwargs)
         else:
-            raise Exception(res['errMsg'])
+            # raise Exception(res['errMsg'])
+            return json.dumps(res, ensure_ascii=False), 555
 
     return wrapper
 

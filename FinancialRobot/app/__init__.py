@@ -10,7 +10,7 @@ from app.views.InOutMoney import inout_Money
 from app.views.web import web
 from app.views.picUpload import up
 from app.utils.languageProcess import lanprocess
-
+from app.utils.auth import *
 
 def create_app():
     app = Flask(__name__)
@@ -24,7 +24,17 @@ def create_app():
     app.register_blueprint(up, url_prefix='/pic')
 
     app.config["MONGO_URI"] = MONGO_URI
+
     # mongo = PyMongo(app)
+
+    @app.before_request
+    # @check_token
+    def res():
+        print(request.host_url)
+        print(request.base_url)
+        print(request.full_path)
+        print(request.url)
+        print(request.path)
 
     @app.after_request
     def after_request(response):

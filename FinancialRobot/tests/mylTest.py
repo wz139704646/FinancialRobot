@@ -15,7 +15,7 @@ from app.utils.BigchainUtils import BigchainUtils
 from app.utils.DBHelper import MyHelper
 from app.utils.decimal_encoder import DecimalEncoder
 from app.utils.res_json import *
-
+import requests
 
 class MylTest(unittest.TestCase):
     def test1(self):
@@ -70,4 +70,8 @@ class MylTest(unittest.TestCase):
         print(json.dumps(GoodsDao.to_ware_dict(res), cls=DecimalEncoder, ensure_ascii=False))
 
     def test9(self):
-        pass
+        url = 'http://127.0.0.1:5000/decodeToken'
+        headers = {'Content-Type':'application/json','Authorization':'JWT aseyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzAwMDAyMjYsImlhdCI6MTU2NDgxNjIyNiwiZGF0YSI6eyJhY2NvdW50IjpudWxsLCJsb2dpbl90aW1lIjoxNTY0ODE2MjI2fX0.G_J58Zvgo__XYC-FxnxJO69hUw6l-1eZexu9FEIJGjg'}
+        payload = {'token':'1321'}
+        r = requests.post(url, headers=headers,data=json.dumps(payload))
+        print(r.text)

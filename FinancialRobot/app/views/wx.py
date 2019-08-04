@@ -9,7 +9,7 @@ from app.utils.DBHelper import MyHelper
 from app.utils.decimal_encoder import DecimalEncoder
 from app.utils.res_json import *
 from app.utils import util
-from time import time
+import time
 from qcloudsms_py import SmsSingleSender
 from qcloudsms_py.httpclient import HTTPError
 import random
@@ -34,7 +34,7 @@ def decode_token():
     token = _json.get('token')
     token_arr = token.split(' ')
     if (not token_arr) or (token_arr[0] != "JWT") or (len(token_arr) != 2):
-        return {'success': False, 'errMsg': '验证头信息不正确'}
+        return json.dumps(return_unsuccess('验证头信息不正确'), ensure_ascii=False)
     else:
         auth_token = token_arr[1]
         try:
@@ -42,7 +42,7 @@ def decode_token():
             print(data)
         except Exception as e:
             print(e)
-            return {'success': False, 'errMsg': 'token解码失败'}
+            return json.dumps(return_unsuccess('token解码失败'), ensure_ascii=False)
         else:
             account = data.get('account')
             user_dao = UserDao()
@@ -80,7 +80,7 @@ def userRegister():
     redis_store.delete('veri' + account)
 
     # 生成token
-    login_time = int(time())
+    login_time = int(time.time())
     token = util.create_jwt({'account': account, 'login_time': login_time})
 
     # 密码处理
@@ -119,7 +119,7 @@ def login():
     account = _json.get('account')
     password = _json.get('passwd')
     # 生成token
-    login_time = int(time())
+    login_time = int(time.time())
     token = Auth.create_jwt({'account': account, 'login_time': login_time})
     # 账号密码登陆
     if login_type == 0:
