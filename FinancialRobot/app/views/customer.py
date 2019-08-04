@@ -7,6 +7,8 @@ import uuid
 import json
 
 customer = Blueprint("customer", __name__)
+
+
 # 增加客户
 @customer.route("/addCustomer", methods=["POST"])
 def AddCustomer():
@@ -73,6 +75,8 @@ def queryCustomer():
             return json.dumps(return_unsuccess('Error: No data'))
         else:
             return json.dumps(return_success(CustomerDao.to_dict(Cusresult)), ensure_ascii=False)
+
+
 # 根据Id查询客户
 @customer.route("/queryCustomerById", methods=["POST"])
 def queryCustomerById():

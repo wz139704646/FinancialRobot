@@ -41,6 +41,7 @@ def query_by_warehouse():
     else:
         return jsonify(return_unsuccess("查询失败"))
 
+
 # 添加仓库
 @warehouse.route("/addWarehouse", methods=["POST"])
 def addWarehouse():

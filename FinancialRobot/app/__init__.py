@@ -1,6 +1,5 @@
 from flask import Flask, request
 from app.views.bigdb import big_db
-from app.views.trans import trans
 from app.views.wx import wx
 from app.config import MONGO_URI
 from app.views.InOutMoney import inout_Money
@@ -25,7 +24,6 @@ def create_app():
     app.register_blueprint(sell)
     app.register_blueprint(purchase)
     app.register_blueprint(big_db)
-    app.register_blueprint(trans, url_prefix='/trans')
     app.register_blueprint(supplier)
     app.register_blueprint(company)
     app.register_blueprint(customer)

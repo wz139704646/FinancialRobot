@@ -7,6 +7,8 @@ import uuid
 import json
 
 supplier = Blueprint("supplier", __name__)
+
+
 # 增加供应商
 @supplier.route("/addSupplier", methods=["POST"])
 def add_Supplier():
@@ -26,12 +28,14 @@ def add_Supplier():
     else:
         return json.dumps(return_unsuccess('Error: Add false'))
 
+
 # 查询所有供应商
 @supplier.route("/queryAllSupplier", methods=["POST"])
 def query_AllSupplier():
     queryAllsup = SupplierDao()
     supresult = queryAllsup.queryAll()
     return json.dumps(return_success(SupplierDao.to_dict(supresult)), ensure_ascii=False)
+
 
 # 根据公司id查询供应商
 @supplier.route("/queryByCompanyId", methods=["POST"])
@@ -47,8 +51,6 @@ def query_Supplier_Bycid():
         return json.dumps(return_success(SupplierDao.to_dict(supQueryresult)), ensure_ascii=False)
 
 
-
-
 # 根据Id查询供应商名称
 @supplier.route("/querySupplierById", methods=["POST"])
 def querySupplierById():
@@ -61,5 +63,3 @@ def querySupplierById():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(SupplierDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
-
-
