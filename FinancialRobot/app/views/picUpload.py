@@ -3,11 +3,9 @@
 from werkzeug.utils import secure_filename
 from flask import Blueprint, render_template, request, make_response, send_from_directory, abort
 import os
-import json
-
 from app.dao.GoodsDao import GoodsDao
 from app.utils.pic_str import *
-from app.utils.res_json import *
+from app.utils.json_util import *
 
 up = Blueprint("up", __name__)
 UPLOAD_FOLDER = '../static/img/upload'

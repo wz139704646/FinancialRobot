@@ -2,14 +2,8 @@ import binascii
 from flask import Blueprint, render_template, request, session, jsonify
 import json
 import base64
-from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
-from app.dao.WareHouseDao import WareHouseDao
-from app.utils.DBHelper import MyHelper
-from app.utils.decimal_encoder import DecimalEncoder
-from app.utils.res_json import *
-from app.utils import util
-import time
+from app.utils.json_util import *
 from qcloudsms_py import SmsSingleSender
 from qcloudsms_py.httpclient import HTTPError
 import random
@@ -81,7 +75,7 @@ def userRegister():
 
     # 生成token
     login_time = int(time.time())
-    token = util.create_jwt({'account': account, 'login_time': login_time})
+    token = Auth.create_jwt({'account': account, 'login_time': login_time})
 
     # 密码处理
     store = base64.b64decode(password)
@@ -239,61 +233,4 @@ def bindUserWx():
         return json.dumps(return_unsuccess("Bind Failed " + str(e)))
 
 
-@wx.route("/addGoods", methods=['POST'])
-def addGoods():
-    _json = request.json
-    print(_json)
-    goods_dao = GoodsDao()
-    res = goods_dao.add(_json.get('name'), _json.get('sellprice'), _json.get('companyId'),
-                        _json.get('type'), _json.get('unitInfo'))
-    if res["row"] == 1:
-        return json.dumps(return_success({"id": res["id"]}))
-    else:
-        return json.dumps(return_unsuccess("添加商品失败"), ensure_ascii=False)
 
-
-@wx.route("/queryGoods", methods=['POST'])
-def queryGoods():
-    _json = request.json
-    companyId = _json.get('companyId')
-    name = _json.get('name')
-    type = _json.get('type')
-    goods_dao = GoodsDao()
-    result = goods_dao.query_by_companyId(companyId, name, type)
-    size = len(result)
-    if size >= 0:
-        return json.dumps(return_success({'goodsList': GoodsDao.to_dict(result)}),
-                          cls=DecimalEncoder, ensure_ascii=False)
-    else:
-        return json.dumps(return_unsuccess("查询失败"), ensure_ascii=False)
-
-
-@wx.route("/storeInWarehouse", methods=["POST"])
-def store_in_warehouse():
-    _json = request.json
-    _companyId = _json.get("companyId")
-    _id = _json.get("id")
-    _wareHouseId = _json.get("wareHouseId")
-    print(_json)
-    wareHouse_dao = WareHouseDao()
-    res = wareHouse_dao.storage(_companyId, _id, _wareHouseId)
-    if res:
-        return jsonify(return_success(""))
-    else:
-        return jsonify(return_unsuccess("添加失败"))
-
-
-@wx.route("/queryStoreGoods", methods=["POST"])
-def query_by_warehouse():
-    _json = request.json
-    _companyId = _json.get("companyId")
-    _wareHouseId = _json.get("wareHouseId")
-    print(_json)
-    goods_dao = GoodsDao()
-    res = goods_dao.query_by_warehouse(_companyId, _wareHouseId)
-    size = len(res)
-    if size >= 0:
-        return json.dumps(return_success({'goodsList': GoodsDao.to_dict(res)}),
-                          cls=DecimalEncoder, ensure_ascii=False)
-    else:
-        return jsonify(return_unsuccess("查询失败"))

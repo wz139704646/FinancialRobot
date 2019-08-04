@@ -20,7 +20,7 @@ from app.dao.CustomerDao import CustomerDao
 from app.dao.SupplierDao import SupplierDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
-from app.utils.res_json import *
+from app.utils.json_util import *
 
 # -*- encoding: utf-8 -*-
 

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session, jsonify
-from app.utils.res_json import *
+from app.utils.json_util import *
 from app.dao.KeyDao import KeyDao
 
 big_db = Blueprint("big_db", __name__)

@@ -5,7 +5,7 @@ import json
 import jieba
 import os
 import datetime
-from app.utils.res_json import return_success,return_unsuccess
+from app.utils.json_util import *
 from flask import Blueprint, render_template, request
 from app.dao.WareHouseDao import WareHouseDao
 from app.dao.PurchaseDao import PurchaseDao

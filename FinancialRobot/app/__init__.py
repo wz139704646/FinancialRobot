@@ -1,21 +1,27 @@
 from flask import Flask, request
-from flask_pymongo import PyMongo
-
 from app.views.bigdb import big_db
 from app.views.trans import trans
 from app.views.wx import wx
 from app.config import MONGO_URI
-# from app.views.smsVertify import sms
 from app.views.InOutMoney import inout_Money
 from app.views.web import web
 from app.views.picUpload import up
+from app.views.goods import goods
+from app.views.warehouse import warehouse
+from app.views.sell import sell
+from app.views.purchase import purchase
 from app.utils.languageProcess import lanprocess
 from app.utils.auth import *
+
 
 def create_app():
     app = Flask(__name__)
 
     app.register_blueprint(wx)
+    app.register_blueprint(goods)
+    app.register_blueprint(warehouse)
+    app.register_blueprint(sell)
+    app.register_blueprint(purchase)
     app.register_blueprint(big_db)
     app.register_blueprint(trans, url_prefix='/trans')
     app.register_blueprint(web)
@@ -30,10 +36,6 @@ def create_app():
     @app.before_request
     # @check_token
     def res():
-        print(request.host_url)
-        print(request.base_url)
-        print(request.full_path)
-        print(request.url)
         print(request.path)
 
     @app.after_request

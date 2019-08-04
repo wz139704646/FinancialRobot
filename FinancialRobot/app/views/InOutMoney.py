@@ -4,8 +4,7 @@ from flask import Blueprint, render_template, request
 from app.dao.COHDao import COHDao
 from app.dao.BankStatementDao import BankStatementDao
 from app.dao.DailyfundDao import DailyfundDao
-from app.utils.res_json import *
-from app.utils.decimal_encoder import DecimalEncoder
+from app.utils.json_util import *
 import uuid
 import datetime
 import time
