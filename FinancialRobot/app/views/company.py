@@ -9,6 +9,7 @@ import json
 
 company = Blueprint("company", __name__)
 
+
 # 注册公司
 @company.route("/CompanyRegister", methods=["GET", "POST"])
 def CompanyRegister():
@@ -25,6 +26,7 @@ def CompanyRegister():
             return render_template("RegisterCompany.html")
         else:
             return False
+
 
 # 查询公司列表
 @company.route("/query_Company", methods=["GET"])

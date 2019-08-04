@@ -17,7 +17,7 @@ def addSell():
     queryCustomer = CustomerDao()
     queryGoods = GoodsDao()
     _json = request.json
-    rows=[]
+    rows = []
     companyId = _json.get('companyId')
     customerId = _json.get('customerId')
     result = queryCustomer.query_byId(customerId)
@@ -39,15 +39,16 @@ def addSell():
             goodsUnit = goodsResult[0][5]
         else:
             goodsName = ""
-        row = query.add(id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName,goodsUnit)
+        row = query.add(id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, goodsUnit)
         rows.append(row)
-    length=0
+    length = 0
     for arow in rows:
-        length+=arow
+        length += arow
     if length == len(goodsList):
         return json.dumps(return_success(id))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
+
 
 # 查询销售记录
 @sell.route("/querySell", methods=["POST"])
@@ -56,7 +57,7 @@ def querySell():
     _json = request.json
     companyId = _json.get('companyId')
     if _json.get('date') == None:
-        if _json.get('id')==None:
+        if _json.get('id') == None:
             result = query.query_byCid(companyId)
             size = len(result)
             if size == 0:
@@ -64,8 +65,8 @@ def querySell():
             else:
                 return json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
         else:
-            id=_json.get('id')
-            result=query.query_byId(id)
+            id = _json.get('id')
+            result = query.query_byId(id)
             size = len(result)
             if size == 0:
                 return json.dumps(return_unsuccess('Error: No data'))

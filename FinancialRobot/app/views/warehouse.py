@@ -17,12 +17,12 @@ def store_in_warehouse():
     _id = _json.get("id")
     _wareHouseId = _json.get("wareHouseId")
     print(_json)
-    wareHouse_dao = WareHouseDao()
-    res = wareHouse_dao.storage(_companyId, _id, _wareHouseId)
-    if res:
+    warehouse_dao = WareHouseDao()
+    try:
+        warehouse_dao.storage(_companyId, _id, _wareHouseId)
         return jsonify(return_success(""))
-    else:
-        return jsonify(return_unsuccess("添加失败"))
+    except Exception as e:
+        return jsonify(return_unsuccess("添加失败" + str(e)))
 
 
 # 查询库存
@@ -40,6 +40,7 @@ def query_by_warehouse():
                           cls=DecimalEncoder, ensure_ascii=False)
     else:
         return jsonify(return_unsuccess("查询失败"))
+
 
 # 添加仓库
 @warehouse.route("/addWarehouse", methods=["POST"])
@@ -63,7 +64,7 @@ def queryWarehouse():
     _json = request.json
     companyId = _json.get('companyId')
     query = WareHouseDao()
-    if _json.get('name') == None:
+    if _json.get('name') is None:
         Cusresult = query.query_byCompanyId(companyId)
         size = len(Cusresult)
         if size == 0:

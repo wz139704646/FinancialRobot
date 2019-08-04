@@ -16,6 +16,7 @@ from app.utils.DBHelper import MyHelper
 from app.utils.json_util import *
 import requests
 
+
 class MylTest(unittest.TestCase):
     def test1(self):
         userdao = UserDao()
@@ -70,7 +71,8 @@ class MylTest(unittest.TestCase):
 
     def test9(self):
         url = 'http://127.0.0.1:5000/decodeToken'
-        headers = {'Content-Type':'application/json','Authorization':'JWT aseyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzAwMDAyMjYsImlhdCI6MTU2NDgxNjIyNiwiZGF0YSI6eyJhY2NvdW50IjpudWxsLCJsb2dpbl90aW1lIjoxNTY0ODE2MjI2fX0.G_J58Zvgo__XYC-FxnxJO69hUw6l-1eZexu9FEIJGjg'}
-        payload = {'token':'1321'}
-        r = requests.post(url, headers=headers,data=json.dumps(payload))
+        headers = {'Content-Type': 'application/json',
+                   'Authorization': 'JWT aseyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzAwMDAyMjYsImlhdCI6MTU2NDgxNjIyNiwiZGF0YSI6eyJhY2NvdW50IjpudWxsLCJsb2dpbl90aW1lIjoxNTY0ODE2MjI2fX0.G_J58Zvgo__XYC-FxnxJO69hUw6l-1eZexu9FEIJGjg'}
+        payload = {'token': '1321'}
+        r = requests.post(url, headers=headers, data=json.dumps(payload))
         print(r.text)

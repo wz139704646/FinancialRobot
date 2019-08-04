@@ -231,6 +231,3 @@ def bindUserWx():
         return json.dumps(return_success(""))
     except Exception as e:
         return json.dumps(return_unsuccess("Bind Failed " + str(e)))
-
-
-
