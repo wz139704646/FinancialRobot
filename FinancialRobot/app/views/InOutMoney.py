@@ -89,16 +89,6 @@ def addCashRecord():
         return json.dumps(return_unsuccess('Error: Add failed'))
 
 
-# 查询所有现金流动记录
-@inout_Money.route("/queryAllCashRecord", methods=["GET"])
-def queryAllCashRecord():
-    query = COHDao()
-    result = query.queryAll()
-    size = len(result)
-    if size == 0:
-        return json.dumps(return_unsuccess('Error: No data'))
-    else:
-        return json.dumps(return_success(COHDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
 
 
 # 录入银行存/取款记录

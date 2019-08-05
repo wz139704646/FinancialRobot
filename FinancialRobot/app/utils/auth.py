@@ -13,11 +13,13 @@ logger = logging.getLogger(__name__)
 # 检查权限
 def check_permission(account):
     pre_endpoint = str(request.endpoint)
-    pre_feature = UserDao().query_permission(account)
+    print(pre_endpoint)
+    pre_feature = list(UserDao().query_permission(account))  # 转list
     allow_feature = get_permission()
     flag = False
     for feature in allow_feature['features']:
-        if pre_feature is feature['name'] and pre_endpoint in feature['api']:
+        # feature 转tuple
+        if pre_endpoint in feature['api'] and (feature['name'],) in pre_feature:
             flag = True
     return flag
 
