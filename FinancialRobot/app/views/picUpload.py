@@ -1,7 +1,7 @@
 # encoding:utf-8
 # !/usr/bin/env python
 from werkzeug.utils import secure_filename
-from flask import Blueprint, render_template, request, make_response, send_from_directory, abort
+from flask import Blueprint, render_template, request, make_response, send_from_directory
 import os
 from app.dao.GoodsDao import GoodsDao
 from app.utils.pic_str import *
@@ -30,8 +30,8 @@ def api_upload():
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)
     f, = request.files.values()
-    id = request.form.get("id")
-    print(id)
+    _id = request.form.get("id")
+    print(_id)
     size = len(f.read())
     print(size)
     f.seek(0)
@@ -46,10 +46,11 @@ def api_upload():
             # 更新photo
             try:
                 goods_dao = GoodsDao()
-                goods_dao.update_photo(id, new_filename)
+                goods_dao.update_photo(_id, new_filename)
                 return json.dumps(return_success({"new_filename": new_filename}), ensure_ascii=False)
             except Exception as e:
-                return json.dumps(return_success({"new_filename": new_filename, 'Error': str(e)}), ensure_ascii=False)
+                return json.dumps(return_unsuccess({"new_filename": new_filename, 'Update Error': str(e)}),
+                                  ensure_ascii=False)
         else:
             return json.dumps(return_unsuccess("文件大小超出5MB"), ensure_ascii=False)
     else:

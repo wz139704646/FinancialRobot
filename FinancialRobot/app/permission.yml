@@ -1,0 +1,22 @@
+features:
+  - name: Financial Processing #财务处理
+    api:
+      - /financial
+  - name: Sell Management # 销售管理
+    api:
+      - /addSell
+      - /querySell
+      - /querySellById
+      - /addCustomer
+      - /queryAllCustomer
+      - /queryCustomer
+      - /queryCustomerById
+  - name: Purchase Management # 进货管理
+    api:
+      - /addPurchase
+      - /queryPurchaseById
+      - /queryPurchase
+      - /addSupplier
+      - /queryAllSupplier
+      - /querySupplierByCompanyId
+      - /querySupplierById

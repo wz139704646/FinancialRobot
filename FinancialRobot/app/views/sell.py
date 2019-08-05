@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
 import time
 import uuid
 from flask import Blueprint, render_template, request, session, jsonify
