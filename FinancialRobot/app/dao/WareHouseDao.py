@@ -35,7 +35,6 @@ class WareHouseDao:
          values (%s,%s,%s,%s)', [id, name, site, companyId])
         return row
 
-
     def storage(self, companyId, purchaseId, wareHouseId):
         connection = MyHelper()
         try:

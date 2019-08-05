@@ -1,5 +1,6 @@
 from app.utils.DBHelper import MyHelper
 
+
 class CompanyDao:
     @classmethod
     def to_dict(cls, data):
@@ -11,6 +12,7 @@ class CompanyDao:
             res['address'] = row[2]
             result.append(res)
         return result
+
     def queryAll(self):
         conn = MyHelper()
         return conn.executeQuery("select * from Company")
@@ -18,13 +20,12 @@ class CompanyDao:
     def query_cname_cplace(self):
         conn = MyHelper()
         return conn.executeQuery("select name,place from Company")
-    def queryNameById(self,id):
+
+    def queryNameById(self, id):
         conn = MyHelper()
-        return conn.executeQuery("select name from Company where id=%s",[id])
+        return conn.executeQuery("select name from Company where id=%s", [id])
+
     def add(self, id, name, place):
         conn = MyHelper()
-        row=conn.executeUpdate("insert into Company (id, name, place) VALUES (%s,%s,%s)", [id, name, place])
+        row = conn.executeUpdate("insert into Company (id, name, place) VALUES (%s,%s,%s)", [id, name, place])
         return row
-
-
-

@@ -79,6 +79,7 @@ def addBankRecord():
             sumBalance = balance
         else:
             sumBalance = sumResult[0][8] + amount
+        print(voucher, bankName, companyName, clearForm, amount, date, status, balance, sumBalance)
         row = query.add(voucher, bankName, companyName, clearForm, amount, date, status, balance, sumBalance)
         changeDescription = "在 " + bankName + clearForm + str(abs(amount)) + "元  "
         insertDailyRow = InsertDailyfund(date, changeDescription, amount)

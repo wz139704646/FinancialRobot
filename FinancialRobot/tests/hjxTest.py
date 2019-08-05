@@ -23,6 +23,7 @@ from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
 from app.utils.json_util import *
 
+
 # -*- encoding: utf-8 -*-
 
 class Test1(unittest.TestCase):
@@ -30,41 +31,49 @@ class Test1(unittest.TestCase):
         date = datetime.datetime.now()
         print(date)
 
+
 class Test2(unittest.TestCase):
     def test2(self):
         query = CompanyDao()
         result = query.queryAll()
-        result_json = json.dumps(CompanyDao.to_dict(result),ensure_ascii=False)
+        result_json = json.dumps(CompanyDao.to_dict(result), ensure_ascii=False)
         print(result)
         print(result_json)
+
 
 class Test3(unittest.TestCase):
     def test3(self):
         supquery = SupplierDao()
         supname = '街道口职业技术学院1'
         supcid = "1"
-        supid = str(uuid.uuid3(uuid.NAMESPACE_OID,supname))
+        supid = str(uuid.uuid3(uuid.NAMESPACE_OID, supname))
         supphone = "12306"
         site = "信村"
         taxpayerNumber = "4000"
         bankname = "花旗银行"
         bankaccount = "1125"
         supquery.add(supid, supname, supphone, site, taxpayerNumber, bankaccount, bankname, supcid)
+
+
 class Test4(unittest.TestCase):
     def test4(self):
         queryAllsup = CustomerDao()
         supresult = queryAllsup.queryAll()
-        print(json.dumps(return_success(CustomerDao.to_dict(supresult)),ensure_ascii = False))
+        print(json.dumps(return_success(CustomerDao.to_dict(supresult)), ensure_ascii=False))
+
+
 class Test5(unittest.TestCase):
     def test5(self):
         queryAllsup = SupplierDao()
         supresult = queryAllsup.query_byCompanyId("1")
-        size=len(supresult)
+        size = len(supresult)
         print(supresult)
         supresu_json = json.dumps(SupplierDao.to_dict(supresult), ensure_ascii=False)
         print(size)
         print(supresu_json)
         print(json.dumps(return_success(SupplierDao.to_dict(supresult)), ensure_ascii=False))
+
+
 class Test6(unittest.TestCase):
     def test6(self):
         companyId = "4"
@@ -72,11 +81,13 @@ class Test6(unittest.TestCase):
         ID = str(uuid.uuid3(uuid.NAMESPACE_OID, name))
         phone = "173"
         bankAccount = "411"
-        bankname ="珞珈山银行"
+        bankname = "珞珈山银行"
         credit = "优秀"
         addCustomer = CustomerDao()
         row = addCustomer.add(ID, name, phone, credit, companyId, bankname, bankAccount)
         print(row)
+
+
 class Test7(unittest.TestCase):
     def test7(self):
         queryAllsup = CustomerDao()
@@ -85,17 +96,21 @@ class Test7(unittest.TestCase):
         print(supresult)
         supresu_json = json.dumps(CustomerDao.to_dict(supresult), ensure_ascii=False)
         print(supresu_json)
+
+
 class Test8(unittest.TestCase):
     def test8(self):
         conn = MyHelper()
-        name="嘉"
-        companyId="5"
-        input = '%'+name+'%'
-        #and name like / % " + name + " / % "
-        result = conn.executeQuery("select * from Customer where companyId = %s and name LIKE %s ",[companyId,input])
+        name = "嘉"
+        companyId = "5"
+        input = '%' + name + '%'
+        # and name like / % " + name + " / % "
+        result = conn.executeQuery("select * from Customer where companyId = %s and name LIKE %s ", [companyId, input])
         size = len(result)
         print(size)
         print(result)
+
+
 class Test9(unittest.TestCase):
     def test9(self):
         jsonranklist = [{"xlid": "cxh", "xldigitid": 123456, "topscore": 2000, "topplaytime": "2009-08-20"},
@@ -105,6 +120,8 @@ class Test9(unittest.TestCase):
         phone = jsonranklist['xldigitid']
         print(name)
         print(phone)
+
+
 class Test10(unittest.TestCase):
     def test10(self):
         KEYWORDS_URL = 'http://api.bosonnlp.com/keywords/analysis'
@@ -118,6 +135,8 @@ class Test10(unittest.TestCase):
         resp = requests.post(KEYWORDS_URL, headers=headers, params=params, data=data.encode('utf-8'))
         for weight, word in resp.json():
             print(weight, word)
+
+
 class Test11(unittest.TestCase):
     def test13(self):
 
@@ -137,38 +156,39 @@ class Test11(unittest.TestCase):
         start = datetime.datetime.strptime(date, '%Y-%m-%d')
         delta = datetime.timedelta(days=1)
         n_days = start + delta
-        end=n_days.strftime('%Y-%m-%d %H:%M:%S')
+        end = n_days.strftime('%Y-%m-%d %H:%M:%S')
         print(start)
         print(n_days.strftime('%Y-%m-%d %H:%M:%S'))
-        result = query.query_byDate("5",start,end)
+        result = query.query_byDate("5", start, end)
         print(result)
-
-
 
         # row = query.add(goodsNo, provideNo, companyId, number, purchasePrice, date, "未入库")
         # if row == 1:
         #     return json.dumps(return_success("Yes!"))
         # else:
         #     return json.dumps(return_unsuccess('Error: Add failed'))
+
     def test11(self):
         addUser = UserDao()
-        #row = addUser.add("123211","111","1","1")
+        # row = addUser.add("123211","111","1","1")
         supresult = addUser.query_all()
-        size=len(supresult)
+        size = len(supresult)
         print(supresult)
         supresu_json = json.dumps(UserDao.to_dict(supresult), ensure_ascii=False)
         print(size)
         print(supresu_json)
         print(json.dumps(return_success(UserDao.to_dict(supresult)), ensure_ascii=False))
+
     def test13(self):
         queryCustomer = CustomerDao()
         result = queryCustomer.query_byId("031f50f8-7691-33b0-9281-cafeba075c90")
         print(len(result))
         print(result[0][1])
         print(result)
+
     def test14(self):
         query = SellDao()
-        companyId ="5"
+        companyId = "5"
         date = "2019-7-11"
         if date == None:
             result = query.query_byCid(companyId)
@@ -178,7 +198,7 @@ class Test11(unittest.TestCase):
             else:
                 print(json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False))
         else:
-           # date = "2019-7-12"
+            # date = "2019-7-12"
             start = datetime.datetime.strptime(date, '%Y-%m-%d')
             delta = datetime.timedelta(days=1)
             n_days = start + delta
@@ -189,11 +209,12 @@ class Test11(unittest.TestCase):
                 return json.dumps(return_unsuccess('Error: No data'))
             else:
                 print(json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False))
+
     def test15(self):
         query = SellDao()
         queryCustomer = CustomerDao()
         queryGoods = GoodsDao()
-        companyId ="5"
+        companyId = "5"
         customerId = "201353eb-4f3b-3992-bdae-347841dc304d"
         result = queryCustomer.query_byId(customerId)
         if len(result) == 1:
@@ -215,10 +236,11 @@ class Test11(unittest.TestCase):
             return json.dumps(return_success("Yes!"))
         else:
             return json.dumps(return_unsuccess('Error: Add failed'))
+
     def test16(self):
         date = "2019-7-12"
         start = datetime.datetime.strptime(date, '%Y-%m-%d')
-        monday=timeProcess.get_current_week(start)
+        monday = timeProcess.get_current_week(start)
         print(monday)
         delta = datetime.timedelta(days=7)
         n_days = monday + delta
@@ -227,6 +249,7 @@ class Test11(unittest.TestCase):
         last = datetime.date(start.year, start.month, 1) - datetime.timedelta(1)
         print(fist)
         print(last)
+
     def test17(self):
         query = PurchaseDao()
         date = "2019-7-10"
@@ -235,63 +258,67 @@ class Test11(unittest.TestCase):
         n_days = inputTime + delta
         end = n_days.strftime('%Y-%m-%d %H:%M:%S')
         start = inputTime
-        result = query.query_byDate("5",start,end)
-        finalresult=[]
+        result = query.query_byDate("5", start, end)
+        finalresult = []
         print(result[0])
-        outMoneyarray=[]
+        outMoneyarray = []
         outMoney = 0
         for buy in result:
-            mid="购入 "+buy[2]+" "+str(buy[5])+"个"+"，单价"+str(buy[6])+"元"
-            outMoney+=float(buy[4])*float(buy[5])
+            mid = "购入 " + buy[2] + " " + str(buy[5]) + "个" + "，单价" + str(buy[6]) + "元"
+            outMoney += float(buy[4]) * float(buy[5])
             finalresult.append(mid)
-        outString="进货支出"+str(outMoney)+"元"
+        outString = "进货支出" + str(outMoney) + "元"
         outMoneyarray.append(outString)
         print(outMoneyarray)
         print(finalresult)
+
     def test20(self):
         id = str(uuid.uuid3(uuid.NAMESPACE_OID, "1"))
         id2 = str(uuid.uuid3(uuid.NAMESPACE_OID, "1"))
         print(id)
         print(id2)
+
     def test21(self):
-        ad=BankStatementDao()
-        result=ad.queryByName('花旗银行')
-        a=len(result)
+        ad = BankStatementDao()
+        result = ad.queryByName('花旗银行')
+        a = len(result)
         print(a)
         print(result[0][7])
+
     def test22(self):
-        a="2019-07-24 19:11:03"
+        a = "2019-07-24 19:11:03"
         d = datetime.datetime.strptime(a, '%Y-%m-%d %H:%M:%S')
-        b="2019-07-25 19:11:03"
-        db=datetime.datetime.strptime(b,'%Y-%m-%d %H:%M:%S')
-        date_zero = d.replace(year=d.year, month=d.month,day=d.day, hour=0, minute=0, second=0)
-        date_tomorrow = d.replace(year=d.year, month=d.month,day=d.day+1, hour=0, minute=0, second=0)
-        if db>=date_zero and db<date_tomorrow:
+        b = "2019-07-25 19:11:03"
+        db = datetime.datetime.strptime(b, '%Y-%m-%d %H:%M:%S')
+        date_zero = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
+        date_tomorrow = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
+        if db >= date_zero and db < date_tomorrow:
             print("I love you")
-        dateZero=date_zero.strftime('%Y-%m-%d %H:%M:%S')
+        dateZero = date_zero.strftime('%Y-%m-%d %H:%M:%S')
         print(dateZero)
         print(date_tomorrow.strftime('%Y-%m-%d %H:%M:%S'))
+
     def test23(self):
-        query=DailyfundDao()
-        result=query.queryAll()
+        query = DailyfundDao()
+        result = query.queryAll()
         print(result)
 
     def test12(self):
-        companyId="5"
-        date="2019-7-14"
-        language=""
+        companyId = "5"
+        date = "2019-7-14"
+        language = ""
         jieba.load_userdict("../app/utils/dict.txt")
-        #去除停用词
-        stopwords = {}.fromkeys(['的', '包括', '等', '是','多少'])
+        # 去除停用词
+        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少'])
         time1 = ['今天', '这一天']
-        time2 = ['昨天','上一天']
-        time3 = ['这周','这一周']
-        time4 = ['上周','上一周']
+        time2 = ['昨天', '上一天']
+        time3 = ['这周', '这一周']
+        time4 = ['上周', '上一周']
         time5 = ['这个月']
 
         action1 = ['赚', '挣', '卖', '收入', '盈利', '进账']
-        action2 = ['进','买']
-        action3 = ['查','看','查看']
+        action2 = ['进', '买']
+        action3 = ['查', '看', '查看']
         action4 = ['花', '消费', '支出']
 
         nouns1 = ['东西', '商品', '货']
@@ -340,17 +367,17 @@ class Test11(unittest.TestCase):
         querySell = SellDao()
         queryPurchase = PurchaseDao()
         inputTime = datetime.datetime.strptime(date, '%Y-%m-%d')
-        #对时间进行判断
+        # 对时间进行判断
         if time == 1:
             delta = datetime.timedelta(days=1)
             n_days = inputTime + delta
             end = n_days.strftime('%Y-%m-%d %H:%M:%S')
-            start=inputTime
+            start = inputTime
         if time == 2:
             delta = datetime.timedelta(days=1)
             n_days = inputTime - delta
             start = n_days.strftime('%Y-%m-%d %H:%M:%S')
-            end=inputTime
+            end = inputTime
         if time == 3:
             start = timeProcess.get_current_week(inputTime)
             delta = datetime.timedelta(days=7)
@@ -364,12 +391,12 @@ class Test11(unittest.TestCase):
             end = datetime.date(inputTime.year, inputTime.month, 1) - datetime.timedelta(1)
         print(start)
         print(end)
-        #对行为进行判断
+        # 对行为进行判断
         if action == 1:
-            resultInfo=[]
-            resultString=""
-            inMoney=0
-            outMoney=0
+            resultInfo = []
+            resultString = ""
+            inMoney = 0
+            outMoney = 0
             result = querySell.query_byDate(companyId, start, end)
             size = len(result)
             if size >= 1:
@@ -381,12 +408,13 @@ class Test11(unittest.TestCase):
                     resultInfo.append(midstr)
             else:
                 print("未查询到数据")
-            resultString="卖出了"+str(inMoney)+"元"+";"+"成本"+str(outMoney)+"元"+";"+"利润"+str(inMoney-outMoney)+"元"
-            if nouns==1:
+            resultString = "卖出了" + str(inMoney) + "元" + ";" + "成本" + str(outMoney) + "元" + ";" + "利润" + str(
+                inMoney - outMoney) + "元"
+            if nouns == 1:
                 print(resultInfo)
-            if nouns==2:
-                print (resultString)
-        if action ==2 and nouns ==1:
+            if nouns == 2:
+                print(resultString)
+        if action == 2 and nouns == 1:
             result = queryPurchase.query_byDate(companyId, start, end)
             finalresult = []
             outMoneyarray = []
@@ -402,7 +430,7 @@ class Test11(unittest.TestCase):
             outString = "进货支出" + str(outMoney) + "元"
             outMoneyarray.append(outString)
             print(finalresult)
-        if action == 3 and (nouns == 1 or nouns ==3):
+        if action == 3 and (nouns == 1 or nouns == 3):
             print("仓库还剩的货")
         if action == 4 and nouns == 2:
             result = queryPurchase.query_byDate(companyId, start, end)
@@ -417,6 +445,3 @@ class Test11(unittest.TestCase):
             outString = "进货支出" + str(outMoney) + "元"
             outMoneyarray.append(outString)
             print(outMoneyarray)
-
-
-

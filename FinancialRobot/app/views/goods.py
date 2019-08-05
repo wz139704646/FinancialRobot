@@ -5,6 +5,7 @@ from app.dao.GoodsDao import GoodsDao
 goods = Blueprint("goods", __name__)
 goods.secret_key = 'secret_key_goods'
 
+
 # 添加商品
 @goods.route("/addGoods", methods=['POST'])
 def addGoods():
@@ -18,6 +19,7 @@ def addGoods():
     except Exception as e:
         print(e)
         return json.dumps(return_unsuccess("添加商品失败"), ensure_ascii=False)
+
 
 # 查询商品
 @goods.route("/queryGoods", methods=['POST'])

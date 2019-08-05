@@ -38,7 +38,7 @@ def query_AllSupplier():
 
 
 # 根据公司id查询供应商
-@supplier.route("/queryByCompanyId", methods=["POST"])
+@supplier.route("/querySupplierByCompanyId", methods=["POST"])
 def query_Supplier_Bycid():
     supqueryBycid = SupplierDao()
     _sjson = request.json

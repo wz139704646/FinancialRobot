@@ -34,6 +34,8 @@ def query_Company():
     query = CompanyDao()
     result = query.queryAll()
     return json.dumps(return_success(CompanyDao.to_dict(result)), ensure_ascii=False)
+
+
 # 查询公司名称
 @company.route("/query_CompanyName", methods=["GET"])
 def query_CompanyName():

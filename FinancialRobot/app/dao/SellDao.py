@@ -51,9 +51,9 @@ class SellDao:
         return connection.executeQuery("select * from Sell where companyId=%s and date >= %s and date <%s",
                                        [companyId, start, end])
 
-    def add(self, id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName,unitInfo):
+    def add(self, id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, unitInfo):
         connection = MyHelper()
         row = connection.executeUpdate(
             "insert into Sell (id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName,unitInfo) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            [id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName,unitInfo])
+            [id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, unitInfo])
         return row
