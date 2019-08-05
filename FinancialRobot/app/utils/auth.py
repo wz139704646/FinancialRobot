@@ -1,12 +1,25 @@
-import functools
 from flask import jsonify, request
 import logging
 import datetime, time
 from app import config
 import jwt
-import json
+from app.dao.UserDao import UserDao
+from app.features import get_permission
+from app.utils.json_util import *
 
 logger = logging.getLogger(__name__)
+
+
+# 检查权限
+def check_permission(account):
+    pre_endpoint = str(request.endpoint)
+    pre_feature = UserDao().query_permission(account)
+    allow_feature = get_permission()
+    flag = False
+    for feature in allow_feature['features']:
+        if pre_feature is feature['name'] and pre_endpoint in feature['api']:
+            flag = True
+    return flag
 
 
 def check_token(func):
@@ -16,11 +29,18 @@ def check_token(func):
     :return:
     """
 
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         res = Auth.identify(request)
-        if res['auth']:
-            return func(*args, **kwargs)
+        if res.get('auth'):
+            data = res.get('data')
+            account = data.get('data').get('account')
+            try:
+                if check_permission(account):
+                    return func(*args, **kwargs)
+                else:
+                    return json.dumps(return_unsuccess('Permission Denied'))
+            except Exception as e:
+                return json.dumps((return_unsuccess("Error: " + str(e))))
         else:
             # raise Exception(res['errMsg'])
             return json.dumps(res, ensure_ascii=False), 555
@@ -74,7 +94,6 @@ class Auth:
                             }
         """
         auth_header = _request.headers.get('Authorization')
-        print(auth_header)
         if auth_header:
             # 请求头中携带Authorization格式为：JWT jwtstr
             token_arr = auth_header.split(' ')

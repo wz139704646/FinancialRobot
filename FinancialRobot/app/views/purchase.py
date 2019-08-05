@@ -10,7 +10,7 @@ purchase.secret_key = 'secret_key_purchase'
 
 # 登记进货
 @purchase.route("/addPurchase", methods=["POST"])
-def RegisterPurchase():
+def addPurchase():
     query = PurchaseDao()
     rows = []
     _json = request.json

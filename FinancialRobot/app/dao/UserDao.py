@@ -18,6 +18,10 @@ class UserDao:
         result = connection.executeQuery('select * from User')
         return result
 
+    def query_permission(self, account):
+        connection = MyHelper()
+        return connection.executeQuery("select feature from Permission where account = %s", [account])
+
     def add(self, account, password, companyid):
         connection = MyHelper()
         row = connection.executeUpdate('insert into User(account, \

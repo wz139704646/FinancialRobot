@@ -25,7 +25,7 @@ def upload_test():
 
 # 上传文件
 @up.route('/upload', methods=['POST'], strict_slashes=False)
-def api_upload():
+def upload():
     file_dir = os.path.join(basedir, UPLOAD_FOLDER)
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)

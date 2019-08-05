@@ -11,7 +11,7 @@ supplier = Blueprint("supplier", __name__)
 
 # 增加供应商
 @supplier.route("/addSupplier", methods=["POST"])
-def add_Supplier():
+def addSupplier():
     supquery = SupplierDao()
     _json = request.json
     supname = _json['name']
@@ -31,7 +31,7 @@ def add_Supplier():
 
 # 查询所有供应商
 @supplier.route("/queryAllSupplier", methods=["POST"])
-def query_AllSupplier():
+def queryAllSupplier():
     queryAllsup = SupplierDao()
     supresult = queryAllsup.queryAll()
     return json.dumps(return_success(SupplierDao.to_dict(supresult)), ensure_ascii=False)
@@ -39,7 +39,7 @@ def query_AllSupplier():
 
 # 根据公司id查询供应商
 @supplier.route("/querySupplierByCompanyId", methods=["POST"])
-def query_Supplier_Bycid():
+def query_supplier_by_cid():
     supqueryBycid = SupplierDao()
     _sjson = request.json
     supCid = _sjson['companyId']

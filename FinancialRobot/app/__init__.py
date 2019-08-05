@@ -36,7 +36,7 @@ def create_app():
     # mongo = PyMongo(app)
 
     @app.before_request
-    # @check_token
+    @check_token
     def res():
         print(request.path)
         print(request.endpoint)

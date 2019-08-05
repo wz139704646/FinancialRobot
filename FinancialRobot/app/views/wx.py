@@ -22,7 +22,6 @@ def hello():
 
 
 @wx.route("/decodeToken", methods=["POST"])
-@check_token
 def decode_token():
     _json = request.json
     token = _json.get('token')

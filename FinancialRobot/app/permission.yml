@@ -4,19 +4,27 @@ features:
       -
   - name: Sell Management # 销售管理
     api:
-      - /addSell
-      - /querySell
-      - /querySellById
-      - /addCustomer
-      - /queryAllCustomer
-      - /queryCustomer
-      - /queryCustomerById
+      - sell.addSell
+      - sell.querySell
+      - sell.querySellById
+      - customer.addCustomer
+      - customer.queryAllCustomer
+      - customer.queryCustomer
+      - customer.queryCustomerById
+      - goods.addGoods
+      - goods.queryGoods
+      - goods.update_goods_info
+      - up.upload
+      - up.download
+      - up.show_photo
+      - up.delete_file
   - name: Purchase Management # 进货管理
     api:
-      - /addPurchase
-      - /queryPurchaseById
-      - /queryPurchase
-      - /addSupplier
-      - /queryAllSupplier
-      - /querySupplierByCompanyId
-      - /querySupplierById
+      - purchase.addPurchase
+      - purchase.queryPurchaseById
+      - purchase.queryPurchase
+      - supplier.addSupplier
+      - supplier.queryAllSupplier
+      - supplier.query_supplier_by_cid
+      - supplier.querySupplierById
+      - goods.queryGoods
