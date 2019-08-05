@@ -33,10 +33,8 @@ def decode_token():
         auth_token = token_arr[1]
         try:
             data = Auth.decode_jwt(auth_token).get('data')
-            print(data)
         except Exception as e:
-            print(e)
-            return json.dumps(return_unsuccess('token解码失败'), ensure_ascii=False)
+            return json.dumps(return_unsuccess('token解码失败: ' + str(e)), ensure_ascii=False)
         else:
             account = data.get('account')
             user_dao = UserDao()

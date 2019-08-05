@@ -41,12 +41,13 @@ def api_upload():
             print(fname)
             ext = fname.rsplit('.', 1)[1]
             new_filename = Pic_str().create_uuid() + '.' + ext
-            f.save(os.path.join(file_dir, new_filename))
-            f.close()
             # 更新photo
             try:
                 goods_dao = GoodsDao()
                 goods_dao.update_photo(_id, new_filename)
+                # 保存图片到本地
+                f.save(os.path.join(file_dir, new_filename))
+                f.close()
                 return json.dumps(return_success({"new_filename": new_filename}), ensure_ascii=False)
             except Exception as e:
                 return json.dumps(return_unsuccess({"new_filename": new_filename, 'Update Error': str(e)}),
@@ -84,12 +85,11 @@ def show_photo(filename):
         pass
 
 
-@up.route('delete/<string:filename>', methods=['POST'])
+@up.route('/delete/<string:filename>', methods=['POST'])
 def delete_file(filename):
     file_dir = os.path.join(basedir, UPLOAD_FOLDER)
     try:
         os.remove(os.path.join(file_dir, '%s' % filename))
     except Exception as e:
-        print(e)
-        return json.dumps(return_unsuccess(e))
-    return json.dumps(return_success("删除成功"))
+        return json.dumps(return_unsuccess(str(e)))
+    return json.dumps(return_success("删除成功"), ensure_ascii=False)

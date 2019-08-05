@@ -39,6 +39,7 @@ def create_app():
     # @check_token
     def res():
         print(request.path)
+        print(request.endpoint)
 
     @app.after_request
     def after_request(response):

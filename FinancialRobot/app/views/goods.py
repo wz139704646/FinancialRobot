@@ -36,3 +36,21 @@ def queryGoods():
                           cls=DecimalEncoder, ensure_ascii=False)
     else:
         return json.dumps(return_unsuccess("查询失败"), ensure_ascii=False)
+
+
+# 修改商品信息
+@goods.route('/updateGoodsInfo', methods=['POST'])
+def update_goods_info():
+    _json = request.json
+    print(_json)
+    goods_dao = GoodsDao()
+    res = goods_dao.query_byId(_json.get('id'))
+    if len(res) is not 1:
+        return json.dumps(return_unsuccess("未找到该商品"), ensure_ascii=False)
+    try:
+        goods_dao.update_info(_json.get('id'), _json.get('name'), _json.get('sellprice'),
+                              _json.get('type'), _json.get('unitInfo'))
+        return json.dumps(return_success("更新商品信息成功"), ensure_ascii=False)
+    except Exception as e:
+        print(e)
+        return json.dumps(return_unsuccess("添加商品失败"), ensure_ascii=False)

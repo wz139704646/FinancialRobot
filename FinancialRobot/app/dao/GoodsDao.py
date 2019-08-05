@@ -39,9 +39,15 @@ class GoodsDao:
         res = {"row": row, "id": id.__str__()}
         return res
 
-    def update_photo(self, id, photo):
+    def update_photo(self, _id, photo):
         connection = MyHelper()
-        row = connection.executeUpdate("update Goods set photo = %s where id = %s", [photo, id])
+        row = connection.executeUpdate("update Goods set photo = %s where id = %s", [photo, _id])
+        return row
+
+    def update_info(self, _id, name, sellprice, _type, unitInfo):
+        connection = MyHelper()
+        row = connection.executeUpdate("update Goods set name = %s, sellprice=%s,type=%s,unitInfo=%s "
+                                       "where id = %s", [name, sellprice, _type, unitInfo, _id])
         return row
 
     @classmethod
