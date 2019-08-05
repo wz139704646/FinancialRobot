@@ -27,9 +27,18 @@ class DailyfundDao:
         conn = MyHelper()
         return conn.executeQuery("select * from Dailyfund order by date desc ")
 
+    def queryAllDaily(self):
+        conn = MyHelper()
+        return conn.executeQuery("select * from Dailyfund order by date ")
+
     def query_by_date(self, date):
         connection = MyHelper()
         return connection.executeQuery("select * from Dailyfund where date = %s", [date])
+
+    def query_by_SD(self, start, end):
+        connection = MyHelper()
+        return connection.executeQuery("select * from Dailyfund where date >= %s and date <%s order by date ",
+                                       [start, end])
 
     def add(self, yesterMoney, changeExplain, nowMoney, changeAmount, date):
         conn = MyHelper()

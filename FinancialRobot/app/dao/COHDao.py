@@ -29,7 +29,7 @@ class COHDao:
 
     def query_by_date(self, start, end):
         connection = MyHelper()
-        return connection.executeQuery("select * from CashOnHand where date >= %s and date <%s",
+        return connection.executeQuery("select * from CashOnHand where date >= %s and date <%s order by date ",
                                        [start, end])
 
     def add(self, id, date, balance, originValue, variation, changeDescription):

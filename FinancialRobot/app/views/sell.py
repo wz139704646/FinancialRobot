@@ -27,12 +27,12 @@ def addSell():
         customerName = result[0][1]
     else:
         customerName = ""
-    sumprice = _json.get('sumprice')
     date = _json.get('date')
     goodsList = _json.get('goodsList')
     id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(time.time())))
     print(goodsList)
     for puchase in goodsList:
+        sumprice = puchase['sumprice']
         goodsId = puchase['goodsId']
         number = puchase['number']
         goodsResult = queryGoods.query_byId(goodsId)
