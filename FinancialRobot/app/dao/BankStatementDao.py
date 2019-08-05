@@ -35,7 +35,7 @@ class BankStatementDao:
 
     def query_by_date(self, start, end):
         connection = MyHelper()
-        return connection.executeQuery("select * from BankStatement where date >= %s and date <%s",
+        return connection.executeQuery("select * from BankStatement where date >= %s and date <%s order by date ",
                                        [start, end])
 
     def add(self, voucher, bankName, companyName, clearForm, amount, date, status, balance, sumBalance):
