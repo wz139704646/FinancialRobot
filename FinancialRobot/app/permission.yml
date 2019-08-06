@@ -94,3 +94,15 @@ roles:
       - *Purchase_Management
       - *Financial_Management
       - *Cashing_Management
+  - name: seller
+    allow_feature:
+      - *Common
+      - *Sell_Management
+  - name: purchase
+    allow_feature:
+      - *Common
+      - *Purchase_Management
+  - name: cashier
+    allow_feature:
+      - *Common
+      - *Cashing_Management

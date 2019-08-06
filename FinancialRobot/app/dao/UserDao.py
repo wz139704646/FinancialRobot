@@ -1,6 +1,5 @@
-from app.models.User import User
+from app.utils.features import get_permission
 from app.utils.DBHelper import MyHelper
-import json
 
 
 class UserDao:
@@ -52,20 +51,45 @@ class UserDao:
                                     [openid, account])
 
     # 权限管理
+    @classmethod
+    def to_permission_dict(cls, data):
+        res = []
+        result = {'feature': res}
+        for row in data:
+            result['feature'].append(row[0])
+        return result
+
     def query_permission(self, account):
         connection = MyHelper()
         return connection.executeQuery("select feature from Permission where account = %s", [account])
 
-    def add_permission(self, account, features):
+    def add_permission_by_features(self, account, features):
         connection = MyHelper()
         # 已有的权限
         _features = self.query_permission(account)
-        print(_features)
-        for f in _features:
-            if f[0] in features:
-                features.remove(f[0])
-        if features is not None:
-            for feature in features:
+        # print(_features)
+        for feature in features:
+            # print(features)
+            if (feature,) not in _features:
                 connection.executeUpdate("insert into Permission (feature, account) VALUES (%s,%s)",
                                          [feature, account])
+        return
+
+    def del_permission_by_features(self, account, features):
+        connection = MyHelper()
+        # 已有的权限
+        _features = self.query_permission(account)
+        for feature in features:
+            if (feature,) in _features:
+                connection.executeUpdate("delete from Permission where feature=%s and account = %s",
+                                         [feature, account])
+        return
+
+    def add_permission_by_role(self, account, role):
+        roles = get_permission()['roles']
+        # print(roles)
+        for r in roles:
+            if role == r['name']:
+                self.add_permission_by_features(account, r['allow_feature'])
+                return
         pass

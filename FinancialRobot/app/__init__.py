@@ -1,6 +1,4 @@
 from flask import Flask, request
-from app.views.bigdb import big_db
-from app.views.wx import wx
 from app.config import MONGO_URI
 from app.views.InOutMoney import inout_Money
 from app.views.picUpload import up
@@ -11,6 +9,9 @@ from app.views.company import company
 from app.views.warehouse import warehouse
 from app.views.sell import sell
 from app.views.purchase import purchase
+from app.views.permission import permission
+from app.views.bigdb import big_db
+from app.views.wx import wx
 from app.utils.languageProcess import lanprocess
 from app.utils.auth import *
 
@@ -19,6 +20,7 @@ def create_app():
     app = Flask(__name__)
 
     app.register_blueprint(wx)
+    app.register_blueprint(permission)
     app.register_blueprint(goods)
     app.register_blueprint(warehouse)
     app.register_blueprint(sell)

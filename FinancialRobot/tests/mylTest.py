@@ -82,5 +82,9 @@ class MylTest(unittest.TestCase):
         print(r.text)
 
     def test10(self):
-        res = UserDao().add_permission('15771000587', ['Common'])
+        res = UserDao().add_permission_by_role('15771000587', 'admin')
+        print(res)
+
+    def test11(self):
+        res = UserDao().del_permission_by_features('15771000587', ['Common'])
         print(res)
