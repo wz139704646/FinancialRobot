@@ -11,7 +11,7 @@ customer = Blueprint("customer", __name__)
 
 # 增加客户
 @customer.route("/addCustomer", methods=["POST"])
-def AddCustomer():
+def addCustomer():
     _json = request.json
     companyId = _json['companyId']
     name = _json['name']
@@ -30,7 +30,7 @@ def AddCustomer():
 
 # 客户列表
 @customer.route("/queryAllCustomer", methods=["POST"])
-def query_AllCustomer():
+def queryAllCustomer():
     queryAllCus = CustomerDao()
     _json = request.json
     companyId = _json['companyId']

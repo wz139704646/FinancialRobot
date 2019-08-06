@@ -30,7 +30,7 @@ def CompanyRegister():
 
 # 查询公司列表
 @company.route("/query_Company", methods=["GET"])
-def query_Company():
+def queryCompany():
     query = CompanyDao()
     result = query.queryAll()
     return json.dumps(return_success(CompanyDao.to_dict(result)), ensure_ascii=False)
@@ -38,7 +38,7 @@ def query_Company():
 
 # 查询公司名称
 @company.route("/query_CompanyName", methods=["GET"])
-def query_CompanyName():
+def queryCompanyName():
     query = CompanyDao()
     _json = request.json
     id = _json.get('id')

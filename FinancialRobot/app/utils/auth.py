@@ -1,12 +1,31 @@
-import functools
 from flask import jsonify, request
 import logging
 import datetime, time
 from app import config
 import jwt
-import json
+from app.dao.UserDao import UserDao
+from app.features import get_permission
+from app.utils.json_util import *
 
 logger = logging.getLogger(__name__)
+
+
+# 检查权限
+def check_permission(account):
+    # 当前请求端点
+    pre_endpoint = str(request.endpoint)
+    print(pre_endpoint)
+    # 允许的功能
+    allow_feature = list(UserDao().query_permission(account))  # 转list
+    # 全部的功能
+    all_feature = get_permission()
+    flag = False
+    for feature in all_feature['features']:
+        for api in feature['api']:
+            # feature 转tuple
+            if api and pre_endpoint in api and (feature['name'],) in allow_feature:
+                flag = True
+    return flag
 
 
 def check_token(func):
@@ -16,14 +35,24 @@ def check_token(func):
     :return:
     """
 
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        # 请求的endpoint
+        if request.endpoint is None:
+            return json.dumps(return_unsuccess("No such endpoint"), ensure_ascii=False), 404
+        # 解析auth
         res = Auth.identify(request)
-        if res['auth']:
-            return func(*args, **kwargs)
-        else:
-            # raise Exception(res['errMsg'])
-            return json.dumps(res, ensure_ascii=False), 555
+        if not res.get('auth'):
+            return json.dumps(res, ensure_ascii=False), 403
+        data = res.get('data')
+        account = data.get('data').get('account')
+        try:
+            # 检查权限
+            if check_permission(account):
+                return func(*args, **kwargs)
+            else:
+                return json.dumps(return_unsuccess('Permission Denied')), 403
+        except Exception as e:
+            return json.dumps((return_unsuccess("Error: " + str(e)))), 500
 
     return wrapper
 
@@ -74,7 +103,6 @@ class Auth:
                             }
         """
         auth_header = _request.headers.get('Authorization')
-        print(auth_header)
         if auth_header:
             # 请求头中携带Authorization格式为：JWT jwtstr
             token_arr = auth_header.split(' ')

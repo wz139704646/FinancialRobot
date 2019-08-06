@@ -6,41 +6,41 @@ big_db = Blueprint("big_db", __name__)
 big_db.secret_key = 'bigChainDB'
 
 
-@big_db.route('/addKeys/<string:id>', methods=['POST'])
-def addKeys(id):
+@big_db.route('/addKeys/<string:account>', methods=['POST'])
+def addKeys(account):
     keys_dao = KeyDao()
     try:
-        keys_dao.addKeys(id)
+        keys_dao.addKeys(account)
         return json.dumps(return_success('ok'))
     except Exception as e:
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
 
-@big_db.route('/queryKeys/<string:id>', methods=['POST'])
-def queryKeys(id):
+@big_db.route('/queryKeys/<string:account>', methods=['POST'])
+def queryKeys(account):
     keys_dao = KeyDao()
     try:
-        res = keys_dao.queryKeys(id)
+        res = keys_dao.queryKeys(account)
         return json.dumps(return_success(KeyDao.to_dict(res)))
     except Exception as e:
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
 
-@big_db.route('/queryPublicKey/<string:id>', methods=['POST'])
-def queryPubKeys(id):
+@big_db.route('/queryPublicKey/<string:account>', methods=['POST'])
+def queryPubKey(account):
     keys_dao = KeyDao()
     try:
-        res = keys_dao.query_public_key(id)
+        res = keys_dao.query_public_key(account)
         return json.dumps(return_success({'publicKey': res[0][0]}))
     except Exception as e:
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
 
-@big_db.route('/queryPrivateKey/<string:id>', methods=['POST'])
-def queryPriKeys(id):
+@big_db.route('/queryPrivateKey/<string:account>', methods=['POST'])
+def queryPriKey(account):
     keys_dao = KeyDao()
     try:
-        res = keys_dao.query_private_key(id)
+        res = keys_dao.query_private_key(account)
         return json.dumps(return_success({'privateKey': res[0][0]}))
     except Exception as e:
         return json.dumps(return_unsuccess('Error ' + str(e)))
