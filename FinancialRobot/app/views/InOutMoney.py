@@ -89,8 +89,6 @@ def addCashRecord():
         return json.dumps(return_unsuccess('Error: Add failed'))
 
 
-
-
 # 录入银行存/取款记录
 @inout_Money.route("/addBankRecord", methods=["GET", "POST"])
 def addBankRecord():
@@ -131,15 +129,17 @@ def addBankRecord():
     else:
         return json.dumps(return_unsuccess('Error: CompanyId error!'))
 
+
 # 查询所有现金记录
 @inout_Money.route("/queryAllCashRecord", methods=["GET", "POST"])
 def queryAllCashRecord():
-    query=COHDao()
+    query = COHDao()
     result = query.queryAll()
     if len(result) >= 1:
         return json.dumps(return_success(COHDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_success('Sorry,no data'))
+
 
 # 根据日期查询现金记录
 @inout_Money.route("/queryCashRecordByDate", methods=["GET", "POST"])
@@ -182,15 +182,18 @@ def queryCashRecordByOption():
     else:
         return json.dumps(return_unsuccess('Error!'))
 
+
 # 查询所有银行记录
 @inout_Money.route("/queryAllBankRecord", methods=["GET", "POST"])
 def queryAllBankRecord():
-    query=BankStatementDao()
+    query = BankStatementDao()
     result = query.queryAll()
     if len(result) >= 1:
         return json.dumps(return_success(BankStatementDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_success('Sorry,no data'))
+
+
 # 根据日期查询银行记录
 @inout_Money.route("/queryBankRecordByDate", methods=["GET", "POST"])
 def queryBankRecordByDate():
@@ -232,15 +235,17 @@ def queryBankRecordByOption():
     else:
         return json.dumps(return_unsuccess('Error!'))
 
+
 # 查询日报表所有记录
 @inout_Money.route("/queryAllDailyfund", methods=["GET", "POST"])
 def queryAllDailyfund():
-    query=DailyfundDao()
+    query = DailyfundDao()
     result = query.queryAllDaily()
     if len(result) >= 1:
         return json.dumps(return_success(DailyfundDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_success('Sorry,no data'))
+
 
 # 根据日期查询日报表
 @inout_Money.route("/queryDailyByDate", methods=["GET", "POST"])
