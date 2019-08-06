@@ -1,30 +1,81 @@
+parts:
+  goods: &goods
+    - goods.addGoods
+    - goods.queryGoods
+    - goods.update_goods_info
+
+  sell: &sell
+    - sell.addSell
+    - sell.querySell
+    - sell.querySellById
+  customer: &customer
+    - customer.addCustomer
+    - customer.queryAllCustomer
+    - customer.queryCustomer
+    - customer.queryCustomerById
+  upload: &upload
+    - up.upload
+    - up.download
+    - up.show_photo
+    - up.delete_file
+  purchase: &purchase
+    - purchase.addPurchase
+    - purchase.queryPurchaseById
+    - purchase.queryPurchase
+  supplier: &supplier
+    - supplier.addSupplier
+    - supplier.queryAllSupplier
+    - supplier.query_supplier_by_cid
+    - supplier.querySupplierById
+  user: &user
+    - wx.hello
+    - wx.decode_token
+    - wx.userRegister
+    - wx.check_account
+    - wx.login
+    - wx.getVerification
+    - wx.queryUser
+    - wx.bindUserWx
+  warehouse: &warehouse
+    - warehouse.store_in_warehouse
+    - warehouse.query_by_warehouse
+    - warehouse.addWarehouse
+    - warehouse.queryWarehouse
+  company: &company
+    - company.CompanyRegister
+    - company.queryCompany
+    - company.queryCompanyName
+
 features:
-  - name: Financial Processing #财务处理
+  - name: &Common Common # 通用接口
+    api:
+      - *user
+      - *company
+  - name: &Sell_Management Sell Management # 销售管理
+    api:
+      - *goods
+      - *customer
+      - *sell
+      - *upload
+  - name: &Purchase_Management Purchase Management # 进货管理
+    api:
+      - *purchase
+      - *supplier
+      - goods.queryGoods
+  - name: &Warehouse_Management Warehouse Mangement # 仓库管理
+    api:
+      - *warehouse
+      - *goods
+      - *upload
+  - name: &Financial_Management Financial Management #财务处理
     api:
       -
-  - name: Sell Management # 销售管理
-    api:
-      - sell.addSell
-      - sell.querySell
-      - sell.querySellById
-      - customer.addCustomer
-      - customer.queryAllCustomer
-      - customer.queryCustomer
-      - customer.queryCustomerById
-      - goods.addGoods
-      - goods.queryGoods
-      - goods.update_goods_info
-      - up.upload
-      - up.download
-      - up.show_photo
-      - up.delete_file
-  - name: Purchase Management # 进货管理
-    api:
-      - purchase.addPurchase
-      - purchase.queryPurchaseById
-      - purchase.queryPurchase
-      - supplier.addSupplier
-      - supplier.queryAllSupplier
-      - supplier.query_supplier_by_cid
-      - supplier.querySupplierById
-      - goods.queryGoods
+
+roles:
+  - name: admin
+    allow_api:
+      - *Common
+      - *Sell_Management
+      - *Warehouse_Management
+      - *Purchase_Management
+      - *Financial_Management

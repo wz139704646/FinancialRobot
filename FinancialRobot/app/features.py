@@ -29,4 +29,9 @@ def get_permission():
     file = open(yaml_path, 'r', encoding='utf-8')
     # 用load方法转字典
     permission = yaml.load(file.read(), Loader=yaml.FullLoader)
+    print(permission['features'])
+    print(permission['roles'])
     return permission
+
+
+get_permission()
