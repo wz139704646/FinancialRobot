@@ -3,7 +3,6 @@ parts:
     - goods.addGoods
     - goods.queryGoods
     - goods.update_goods_info
-
   sell: &sell
     - sell.addSell
     - sell.querySell
@@ -45,6 +44,18 @@ parts:
     - company.CompanyRegister
     - company.queryCompany
     - company.queryCompanyName
+  inout_money: &inout_money
+    - inout_Money.addCashRecord
+    - inout_Money.addBankRecord
+    - inout_Money.queryAllCashRecord
+    - inout_Money.queryCashRecordByDate
+    - inout_Money.queryCashRecordByOption
+    - inout_Money.queryAllBankRecord
+    - inout_Money.queryBankRecordByDate
+    - inout_Money.queryBankRecordByOption
+    - inout_Money.queryAllDailyfund
+    - inout_Money.queryDailyByDate
+    - inout_Money.queryDailyByOption
 
 features:
   - name: &Common Common # 通用接口
@@ -67,15 +78,19 @@ features:
       - *warehouse
       - *goods
       - *upload
+  - name: &Cashing_Management Cashing Management # 出纳管理
+    api:
+      - *inout_money
   - name: &Financial_Management Financial Management #财务处理
     api:
       -
 
 roles:
   - name: admin
-    allow_api:
+    allow_feature:
       - *Common
       - *Sell_Management
       - *Warehouse_Management
       - *Purchase_Management
       - *Financial_Management
+      - *Cashing_Management

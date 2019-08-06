@@ -18,10 +18,6 @@ class UserDao:
         result = connection.executeQuery('select * from User')
         return result
 
-    def query_permission(self, account):
-        connection = MyHelper()
-        return connection.executeQuery("select feature from Permission where account = %s", [account])
-
     def add(self, account, password, companyid):
         connection = MyHelper()
         row = connection.executeUpdate('insert into User(account, \
@@ -54,3 +50,22 @@ class UserDao:
         helper = MyHelper()
         return helper.executeUpdate("update User set openid = %s where account = %s",
                                     [openid, account])
+
+    # 权限管理
+    def query_permission(self, account):
+        connection = MyHelper()
+        return connection.executeQuery("select feature from Permission where account = %s", [account])
+
+    def add_permission(self, account, features):
+        connection = MyHelper()
+        # 已有的权限
+        _features = self.query_permission(account)
+        print(_features)
+        for f in _features:
+            if f[0] in features:
+                features.remove(f[0])
+        if features is not None:
+            for feature in features:
+                connection.executeUpdate("insert into Permission (feature, account) VALUES (%s,%s)",
+                                         [feature, account])
+        pass

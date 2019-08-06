@@ -80,3 +80,7 @@ class MylTest(unittest.TestCase):
         }
         r = requests.post(url, headers=headers, data=json.dumps(payload))
         print(r.text)
+
+    def test10(self):
+        res = UserDao().add_permission('15771000587', ['Common'])
+        print(res)
