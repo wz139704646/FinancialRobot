@@ -138,7 +138,7 @@ def queryAllCashRecord():
     if len(result) >= 1:
         return json.dumps(return_success(COHDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_success('Sorry,no data'))
+        return json.dumps(return_unsuccess('Sorry,no data'))
 
 
 # 根据日期查询现金记录
@@ -151,7 +151,7 @@ def queryCashRecordByDate():
     if len(result) >= 1:
         return json.dumps(return_success(COHDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_success('Sorry,no data'))
+        return json.dumps(return_unsuccess('Sorry,no data'))
 
 
 # 根据选项查询现金记录
@@ -178,7 +178,7 @@ def queryCashRecordByOption():
         if len(result) >= 1:
             return json.dumps(return_success(COHDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
         else:
-            return json.dumps(return_success('Sorry,no data'))
+            return json.dumps(return_unsuccess('Sorry,no data'))
     else:
         return json.dumps(return_unsuccess('Error!'))
 
@@ -191,7 +191,7 @@ def queryAllBankRecord():
     if len(result) >= 1:
         return json.dumps(return_success(BankStatementDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_success('Sorry,no data'))
+        return json.dumps(return_unsuccess('Sorry,no data'))
 
 
 # 根据日期查询银行记录
@@ -204,7 +204,7 @@ def queryBankRecordByDate():
     if len(result) >= 1:
         return json.dumps(return_success(BankStatementDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_success('Sorry,no data'))
+        return json.dumps(return_unsuccess('Sorry,no data'))
 
 
 # 根据选项查询银行记录
@@ -231,7 +231,7 @@ def queryBankRecordByOption():
         if len(result) >= 1:
             return json.dumps(return_success(BankStatementDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
         else:
-            return json.dumps(return_success('Sorry,no data'))
+            return json.dumps(return_unsuccess('Sorry,no data'))
     else:
         return json.dumps(return_unsuccess('Error!'))
 
@@ -244,7 +244,7 @@ def queryAllDailyfund():
     if len(result) >= 1:
         return json.dumps(return_success(DailyfundDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_success('Sorry,no data'))
+        return json.dumps(return_unsuccess('Sorry,no data'))
 
 
 # 根据日期查询日报表
@@ -257,7 +257,7 @@ def queryDailyByDate():
     if len(result) >= 1:
         return json.dumps(return_success(DailyfundDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_success('Sorry,no data'))
+        return json.dumps(return_unsuccess('Sorry,no data'))
 
 
 # 根据选项查询日报表
@@ -284,7 +284,7 @@ def queryDailyByOption():
         if len(result) >= 1:
             return json.dumps(return_success(DailyfundDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
         else:
-            return json.dumps(return_success('Sorry,no data'))
+            return json.dumps(return_unsuccess('Sorry,no data'))
     else:
         return json.dumps(return_unsuccess('Error!'))
 
@@ -299,4 +299,4 @@ def checkBankStatus():
     if row== 1:
         return json.dumps(return_success("修改成功"))
     else:
-        return json.dumps(return_success('修改失败'))
+        return json.dumps(return_unsuccess('修改失败'))
