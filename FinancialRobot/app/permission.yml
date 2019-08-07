@@ -56,6 +56,7 @@ parts:
     - inout_Money.queryAllDailyfund
     - inout_Money.queryDailyByDate
     - inout_Money.queryDailyByOption
+    - inout_Money.checkBankStatus
 
 features:
   - name: &Common Common # 通用接口

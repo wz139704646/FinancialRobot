@@ -44,6 +44,7 @@ class BankStatementDao:
             "insert into BankStatement (voucher, bankName, companyName,clearForm,amount,date,status,balance,sumBalance) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
             [voucher, bankName, companyName, clearForm, amount, date, status, balance, sumBalance])
         return row
-    def update(self,voucher):
-        conn=MyHelper()
-        row=conn.executeUpdate("Update BankStatement Set status ='已核对' Where voucher =%s",[voucher])
+
+    def update(self, voucher):
+        conn = MyHelper()
+        row = conn.executeUpdate("Update BankStatement Set status ='已核对' Where voucher =%s", [voucher])
