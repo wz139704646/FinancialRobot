@@ -265,7 +265,7 @@ def queryDailyByDate():
 def queryDailyByOption():
     _json = request.json
     date = _json.get('date')
-    option = int(_json.get('option'))
+    option = _json.get('option')
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
     if option == 1 or option == 2 or option == 3:
         if option == 1:
@@ -287,3 +287,16 @@ def queryDailyByOption():
             return json.dumps(return_success('Sorry,no data'))
     else:
         return json.dumps(return_unsuccess('Error!'))
+
+
+# 审核银行记录
+@inout_Money.route("/checkBankStatus", methods=["GET", "POST"])
+def checkBankStatus():
+    query=BankStatementDao()
+    _json = request.json
+    voucher = _json.get('voucher')
+    row=query.update(voucher)
+    if row== 1:
+        return json.dumps(return_success("修改成功"))
+    else:
+        return json.dumps(return_success('修改失败'))
