@@ -104,7 +104,7 @@ def check_account():
         return json.dumps(return_unsuccess("Error Account Duplicate"))
 
 
-@wx.route("/login", methods=['POST'])
+@wx.route("/login", methods=['POST', 'GET'])
 def login():
     _json = request.json
     login_type = _json.get('type')

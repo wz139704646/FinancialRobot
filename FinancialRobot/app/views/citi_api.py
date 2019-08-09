@@ -13,9 +13,8 @@ citi_api.secret_key = 'secret_key_citi_api'
 
 CLIENT_ID = "31b2b8c1-8449-4828-8147-c98799373f2d"
 CLIENT_SECRET = "C7jW0pM0tJ5cF7eO0gR6gT7cO8wY2jI5sG8qL0iW7hC4cK4lM3"
-SCOPE = "pay_with_points accounts_details_transactions customers_profiles payees personal_domestic_transfers " \
-        "internal_domestic_transfers external_domestic_transfers bill_payments cards onboarding reference_data " \
-        "meta_data insurance_purchase"
+SCOPE = "accounts_details_transactions customers_profiles payees personal_domestic_transfers " \
+        "internal_domestic_transfers external_domestic_transfers bill_payments cards onboarding reference_data "
 STATE = "12321"
 REDIRECT_URI = "http://127.0.0.1:5000/getAccToken"
 INDEX = "http://47.100.244.29"
@@ -138,7 +137,7 @@ def getAccountsInfo(access_token=None):
     }
     # r = requests.get(url, headers=headers)
     conn = http.client.HTTPSConnection("sandbox.apihub.citi.com")
-    conn.request("GET", "/gcb/api/v1/cards?cardFunction=ALL", headers=headers)
+    conn.request("GET", "/gcb/api/v1/accounts", headers=headers)
 
     res = conn.getresponse()
     data = res.read()
