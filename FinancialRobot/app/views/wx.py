@@ -106,6 +106,15 @@ def check_account():
 
 @wx.route("/login", methods=['POST', 'GET'])
 def login():
+    # token登陆
+    print(request.method)
+    if request.method == 'GET':
+        res = Auth.identify(request)
+        if res['auth']:
+            return json.dumps(return_success(res['payload']), ensure_ascii=False)
+        else:
+            return json.dumps(return_unsuccess(res['errMsg']), ensure_ascii=False)
+
     _json = request.json
     login_type = _json.get('type')
     account = _json.get('account')
@@ -114,13 +123,6 @@ def login():
     # 生成token
     login_time = int(time.time())
     token = Auth.create_jwt({'account': account, 'login_time': login_time})
-    # token登陆
-    if request.method == 'GET':
-        res = Auth.identify(request)
-        if res['auth']:
-            return json.dumps(return_success(res['payload']))
-        else:
-            return json.dumps(return_unsuccess(res['errMsg']))
     # 账号密码登陆
     if login_type == 0:
         store_in = base64.b64decode(password)
