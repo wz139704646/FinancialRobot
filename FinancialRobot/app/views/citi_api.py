@@ -1,5 +1,7 @@
 import base64
 import http.client
+import uuid
+
 from flask import Blueprint, render_template, request, session, jsonify, redirect
 import requests
 from urllib import parse
@@ -11,7 +13,9 @@ citi_api.secret_key = 'secret_key_citi_api'
 
 CLIENT_ID = "31b2b8c1-8449-4828-8147-c98799373f2d"
 CLIENT_SECRET = "C7jW0pM0tJ5cF7eO0gR6gT7cO8wY2jI5sG8qL0iW7hC4cK4lM3"
-SCOPE = "customers_profiles accounts_details_transactions"
+SCOPE = "pay_with_points accounts_details_transactions customers_profiles payees personal_domestic_transfers " \
+        "internal_domestic_transfers external_domestic_transfers bill_payments cards onboarding reference_data " \
+        "meta_data insurance_purchase"
 STATE = "12321"
 REDIRECT_URI = "http://127.0.0.1:5000/getAccToken"
 INDEX = "http://47.100.244.29"
@@ -31,9 +35,11 @@ def get_url(url, parameters):
 def get_authorization():
     secret = CLIENT_ID + ":" + CLIENT_SECRET
     b64secret = base64.b64encode(secret.encode())
-    authorization = 'Basic ' + b64secret.decode()
-    print(authorization)
-    return authorization
+    return 'Basic ' + b64secret.decode()
+
+
+def get_token_auth(acc_token):
+    return "Bearer " + acc_token
 
 
 @citi_api.route("/getAuthCode", methods=["GET"])
@@ -80,28 +86,63 @@ def getAccToken():
 
     headers = {
         'authorization': get_authorization(),
-        'content-type': "application/x-www-form-urlencoded",
-        'accept': "application/json"
+        'Content-Type': "application/x-www-form-urlencoded",
+        'Accept': "application/json"
     }
 
     r = requests.post(url, data=payload, headers=headers)
     # print(r.text)
     # print(r.status_code)
-    dic = json.loads(r)
-    redis_store.set()
+    dic = json.loads(r.text)
+    print(dic)
+    # redis_store.set()
     access_token = dic['access_token']
+    print(access_token)
     refresh_token = dic['refresh_token']
-    scope = dic['scope']
-    token_type = dic['token_type']
+    getAccountsInfo(access_token)
+    return redirect(INDEX)
+
+
+@citi_api.route('/getCardsInfo', methods=["POST", "GET"])
+def getCardsInfo(access_token=None):
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/cards"
+    if not access_token:
+        access_token = redis_store.get('account')
+
+    payload = "cardFunction=ALL"
+    headers = {
+        'Authorization': get_token_auth(access_token),
+        'client_id': CLIENT_ID,
+        'uuid': str(uuid.uuid4()),
+        'Accept': "application/json",
+        'Content-Type': "application/json"
+    }
+    r = requests.get(url, data=payload, headers=headers)
+    print(r.text)
     return r.text
 
-@citi_api.route('/getCardsInfo',methods=["POST,GET"])
-def getCardsInfo(access_token):
-    url = "https://sandbox.apihub.citi.com/gcb/api/v1/cards?callFunction=ALL"
+
+@citi_api.route('/getAccountsInfo', methods=["POST", "GET"])
+def getAccountsInfo(access_token=None):
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts"
+    if not access_token:
+        access_token = request.json.get('access_token')
+        # access_token = redis_store.get('account')
 
     headers = {
-        'authorization': "REPLACE_THIS_VALUE",
-        'client_id': "REPLACE_THIS_VALUE",
-        'uuid': "REPLACE_THIS_VALUE",
-        'accept': "application/json"
+        'Authorization': get_token_auth(access_token),
+        'client_id': CLIENT_ID,
+        'uuid': str(uuid.uuid4()),
+        'Accept': "application/json",
+        'content-type': 'application/json'
     }
+    # r = requests.get(url, headers=headers)
+    conn = http.client.HTTPSConnection("sandbox.apihub.citi.com")
+    conn.request("GET", "/gcb/api/v1/cards?cardFunction=ALL", headers=headers)
+
+    res = conn.getresponse()
+    data = res.read()
+
+    print(data.decode("utf-8"))
+    # print(r.text)
+    return data

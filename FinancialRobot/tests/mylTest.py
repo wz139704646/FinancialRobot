@@ -3,6 +3,8 @@ import unittest
 import base64
 import binascii
 import json
+import uuid
+
 import jieba
 from hashlib import sha1
 
@@ -88,3 +90,11 @@ class MylTest(unittest.TestCase):
     def test11(self):
         res = UserDao().del_permission_by_features('15771000587', ['Common'])
         print(res)
+
+    def test12(self):
+        store = base64.b64decode("MCwwLDAsNywwLDAsMCwwLDAsMCwwLDQsMCwwLDAsMCwwLDAsMC…wLDgsMCwwLDAsOSwwLDAsMCw0LDAsMCwwLDEsMCwwLDAsMA==")
+        print(store)
+        store_in = binascii.hexlify(store)
+        print(store_in)
+        strpass = str(store_in, 'utf-8')
+        print(strpass)

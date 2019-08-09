@@ -110,13 +110,15 @@ def login():
     login_type = _json.get('type')
     account = _json.get('account')
     password = _json.get('passwd')
+    web = _json.get('web')
     # 生成token
     login_time = int(time.time())
     token = Auth.create_jwt({'account': account, 'login_time': login_time})
     # 账号密码登陆
     if login_type == 0:
-        store = base64.b64decode(password)
-        store_in = binascii.hexlify(store)
+        store_in = base64.b64decode(password)
+        if not web:
+            store_in = binascii.hexlify(store_in)
         strpass = str(store_in, 'utf-8')
         print(strpass)
 
@@ -128,7 +130,7 @@ def login():
             resp['token'] = token
             return jsonify(resp)
         else:
-            return jsonify(return_unsuccess('Error: No such user'))
+            return jsonify(return_unsuccess('账号或密码错误'))
     # 验证码登陆
     elif login_type == 1:
         true_veri = redis_store.get('veri' + account)
