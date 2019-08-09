@@ -72,15 +72,13 @@ class MylTest(unittest.TestCase):
         print(json.dumps(GoodsDao.to_ware_dict(res), cls=DecimalEncoder, ensure_ascii=False))
 
     def test9(self):
-        url = 'http://127.0.0.1:5000/decodeToken'
+        url = 'http://127.0.0.1:5000/login'
         headers = {
             'Content-Type': 'application/json',
-            'Authorization': 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzAxODExODAsImlhdCI6MTU2NDk5NzE4MCwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY0OTk3MTgwfX0.4tLyLrPOFK32uByDRaSLE4VmUv_9h6LTI1sVLnu81zc'
+            'Authorization': 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzA1NDA0MjYsImlhdCI6MTU2NTM1NjQyNiwiZGF0YSI6eyJhY2NvdW50IjoiMTczNzE0NDkwMjUiLCJsb2dpbl90aW1lIjoxNTY1MzU2NDI2fX0.AyaskCtQXXmbj4TPkrn4KORESEKf532FSgEnsWU11Zs'
         }
-        payload = {
-            'token': 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzAxODExODAsImlhdCI6MTU2NDk5NzE4MCwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY0OTk3MTgwfX0.4tLyLrPOFK32uByDRaSLE4VmUv_9h6LTI1sVLnu81zc'
-        }
-        r = requests.post(url, headers=headers, data=json.dumps(payload))
+
+        r = requests.get(url, headers=headers)
         print(r.text)
 
     def test10(self):

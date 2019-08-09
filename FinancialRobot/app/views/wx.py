@@ -24,8 +24,10 @@ def hello():
 
 @wx.route("/decodeToken", methods=["POST"])
 def decode_token():
-    _json = request.json
-    token = _json.get('token')
+    token = request.headers.get('Authorization')
+    if not token:
+        _json = request.json
+        token = _json.get('token')
     token_arr = token.split(' ')
     if (not token_arr) or (token_arr[0] != "JWT") or (len(token_arr) != 2):
         return json.dumps(return_unsuccess('验证头信息不正确'), ensure_ascii=False)
@@ -109,11 +111,7 @@ def login():
     # token登陆
     print(request.method)
     if request.method == 'GET':
-        res = Auth.identify(request)
-        if res['auth']:
-            return json.dumps(return_success(res['data']), ensure_ascii=False)
-        else:
-            return json.dumps(return_unsuccess(res['errMsg']), ensure_ascii=False)
+        return decode_token()
 
     _json = request.json
     login_type = _json.get('type')
