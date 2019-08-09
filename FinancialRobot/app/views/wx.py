@@ -111,7 +111,7 @@ def login():
     if request.method == 'GET':
         res = Auth.identify(request)
         if res['auth']:
-            return json.dumps(return_success(res['payload']), ensure_ascii=False)
+            return json.dumps(return_success(res['data']), ensure_ascii=False)
         else:
             return json.dumps(return_unsuccess(res['errMsg']), ensure_ascii=False)
 
