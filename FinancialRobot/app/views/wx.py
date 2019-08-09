@@ -42,7 +42,10 @@ def decode_token():
             user_dao = UserDao()
             try:
                 res = user_dao.query_by_account(account)
-                return json.dumps(return_success(UserDao.to_dict(res)), ensure_ascii=False)
+                if len(res)==1:
+                    return json.dumps(return_success(UserDao.to_dict(res)), ensure_ascii=False)
+                else:
+                    return json.dumps((return_unsuccess("Error: No such user")))
             except Exception as e:
                 return json.dumps((return_unsuccess("Error: " + str(e))))
 

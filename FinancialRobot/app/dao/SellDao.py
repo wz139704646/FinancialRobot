@@ -36,7 +36,7 @@ class SellDao:
 
     def query_all(self):
         connection = MyHelper()
-        return connection.executeQuery("select * from Sell")
+        return connection.executeQuery("select * from Sell order by date desc")
 
     def query_byId(self, id):
         connection = MyHelper()
@@ -44,11 +44,11 @@ class SellDao:
 
     def query_byCid(self, companyId):
         connection = MyHelper()
-        return connection.executeQuery("select * from Sell where companyId=%s", [companyId])
+        return connection.executeQuery("select * from Sell where companyId=%s  order by date desc", [companyId])
 
     def query_byDate(self, companyId, start, end):
         connection = MyHelper()
-        return connection.executeQuery("select * from Sell where companyId=%s and date >= %s and date <%s",
+        return connection.executeQuery("select * from Sell where companyId=%s and date >= %s and date <%s  order by date desc",
                                        [companyId, start, end])
 
     def add(self, id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, unitInfo):
