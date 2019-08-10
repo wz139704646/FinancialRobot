@@ -95,7 +95,4 @@ class ZjjTesst(unittest.TestCase):
         }))
 
     def test7(self):
-        dao = AccountingSubjectDao()
-        print(dao.query_all_types())
-
-        print(dao.accounting_subject_to_dict(dao.query_subject()))
+        print('1'.zfill(2))

@@ -22,7 +22,8 @@ class AccountingSubjectDao:
                 'subject_code': row[0],
                 'name': row[1],
                 'superior_subject_code': row[2],
-                'type': row[3]
+                'type': row[3],
+                'type_detail': row[4]
             })
         return result
 
@@ -72,13 +73,13 @@ class AccountingSubjectDao:
             param=[subject_code]
         )
         if len(rows):
-            type = rows[0][0]
+            _type = rows[0][0]
             type_detail = rows[0][1]
-            rate = AccountingSubjectDao.rate_for_subjects_of_types.get(type)
+            rate = AccountingSubjectDao.rate_for_subjects_of_types.get(_type)
             if all([rate, rate.get(type_detail)]):
-                result = {'type': type, 'rate': rate.get(type_detail)}
+                result = {'type': _type, 'rate': rate.get(type_detail)}
             elif rate:
-                result = {'type': type, 'rate': rate}
+                result = {'type': _type, 'rate': rate}
             return result
 
     def insert_detail_subject(self, data):
@@ -110,6 +111,7 @@ class AccountingSubjectDao:
         else:
             return False, '上级科目不存在'
 
+    # TODO 递归查询有问题，不确定是否为mysql版本原因
     def query_sub_subject(self, subject_code):
         """
         查询某一科目的所有子科目
@@ -138,7 +140,8 @@ class AccountingSubjectDao:
         conn = MyHelper()
         return conn.executeQuery(
             sql="select * from accounting_subjects "
-                "where superior_subject_code = %s",
+                "where superior_subject_code = %s "
+                "order by subject_code asc",
             param=[subject_code]
         )
 
