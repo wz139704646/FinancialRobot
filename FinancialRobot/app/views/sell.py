@@ -30,7 +30,7 @@ def addSell():
     date = _json.get('date')
     goodsList = _json.get('goodsList')
     id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(time.time())))
-    print(goodsList)
+    # print(goodsList)
     for puchase in goodsList:
         sumprice = puchase['sumprice']
         goodsId = puchase['goodsId']
@@ -149,7 +149,7 @@ def querySell():
                 result.append(goodslist)
                 results.append(result)
     size = len(results)
-    print(results)
+    # print(results)
     if size == 0:
         return json.dumps(return_unsuccess('Error: No data'))
     else:
