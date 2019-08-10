@@ -2,6 +2,11 @@ import unittest
 import asyncio
 import jwt, datetime, time
 import app.config as config
+import os
+import yaml
+from app.utils.DBHelper import MyHelper
+from app.dao.AccountingSubjectDao import AccountingSubjectDao
+from app.utils.features import get_permission
 
 
 async def main():
@@ -46,3 +51,51 @@ class ZjjTesst(unittest.TestCase):
 
             print('token expired!')
 
+    def test3(self):
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        relative_dir = '../app/static/sql/finance_tbls.sql'
+        targetdir = os.path.join(basedir, relative_dir)
+        with open(targetdir) as fr:
+            for a in fr.read().split(';'):
+                print(a)
+                print('----------------------------------------------')
+        pass
+
+    def test4(self):
+        conn = MyHelper()
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        relative_url = '../app/static/sql/finance_tbls.sql'
+        target_url = os.path.join(basedir, relative_url)
+        conn.executeCreate(filename=target_url)
+
+    def test5(self):
+        # AccountingSubjectDao Test
+        self.test4()
+        conn = MyHelper()
+        # conn.executeUpdate('insert into accounting_subjects(subject_code, name, type)'
+        #                    'values("1002", "银行存款", "资产类")')
+        rows = conn.executeQuery(
+            sql="select type, type_detail from accounting_subjects "
+                "where subject_code = %s",
+            param=['1002']
+        )
+        print(list(rows))
+
+    def test6(self):
+        test = ['100106']
+        dict = {}
+        dict['type'] = None
+        print(dict)
+        dao = AccountingSubjectDao()
+        print(dao.query_subject({'subject_code':'1002'}))
+        print(dao.insert_detail_subject({
+            'subject_code': '1002002',
+            'name': '银行存款-花旗银行',
+            'superior_subject_code': '1002'
+        }))
+
+    def test7(self):
+        dao = AccountingSubjectDao()
+        print(dao.query_all_types())
+
+        print(dao.accounting_subject_to_dict(dao.query_subject()))

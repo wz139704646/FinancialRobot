@@ -1,0 +1,146 @@
+- type: 资产类
+  subjects:
+    - code: !!str 1001
+      name: 库存现金
+    - code: !!str 1002
+      name: 银行存款
+    - code: !!str 1012
+      name: 其他货币资金
+    - code: !!str 1101
+      name: 短期投资
+    - code: !!str 1121
+      name: 应收票据
+    - code: !!str 1122
+      name: 应收账款
+    - code: !!str 1123
+      name: 预付账款
+    - code: !!str 1131
+      name: 应收股利
+    - code: !!str 1132
+      name: 应收利息
+    - code: !!str 1221
+      name: 其他应收款
+    - code: !!str 1401
+      name: 材料采购
+    - code: !!str 1402
+      name: 在途物资
+    - code: !!str 1403
+      name: 原材料
+    - code: !!str 1404
+      name: 材料成本差异
+    - code: !!str 1405
+      name: 库存商品
+    - code: !!str 1407
+      name: 商品进销差价
+    - code: !!str 1408
+      name: 委托加工物资
+    - code: !!str 1411
+      name: 周转材料
+    - code: !!str 1421
+      name: 消耗性生物资产
+    - code: !!str 1501
+      name: 长期债券投资
+    - code: !!str 1511
+      name: 长期股权投资
+    - code: !!str 1601
+      name: 固定资产
+    - code: !!str 1602
+      name: 累计折旧
+    - code: !!str 1604
+      name: 在建工程
+    - code: !!str 1605
+      name: 工程物资
+    - code: !!str 1606
+      name: 固定资产清理
+    - code: !!str 1621
+      name: 生产性生物资产
+    - code: !!str 1622
+      name: 生产性生物资产累计折旧
+    - code: !!str 1701
+      name: 无形资产
+    - code: !!str 1702
+      name: 累计摊销
+    - code: !!str 1801
+      name: 长期待摊费用
+    - code: !!str 1901
+      name: 待处理财产损溢
+
+- type: 负债类
+  subjects:
+    - code: !!str 2001
+      name: 短期借款
+    - code: !!str 2201
+      name: 应付票据
+    - code: !!str 2202
+      name: 应付账款
+    - code: !!str 2203
+      name: 预收账款
+    - code: !!str 2211
+      name: 应付职工薪酬
+    - code: !!str 2221
+      name: 应交税费
+    - code: !!str 2231
+      name: 应付利息
+    - code: !!str 2232
+      name: 应付利润
+    - code: !!str 2241
+      name: 其他应付款
+    - code: !!str 2401
+      name: 递延收益
+    - code: !!str 2501
+      name: 长期借款
+    - code: !!str 2701
+      name: 长期应付款
+
+- type: 权益类
+  subjects:
+    - code: !!str 3001
+      name: 实收资本
+    - code: !!str 3002
+      name: 资本公积
+    - code: !!str 3101
+      name: 盈余公积
+    - code: !!str 3103
+      name: 本年利润
+    - code: !!str 3104
+      name: 利润分配
+
+- type: 成本类
+  subjects:
+    - code: !!str 4001
+      name: 生产成本
+    - code: !!str 4101
+      name: 制造费用
+    - code: !!str 4301
+      name: 研发支出
+    - code: !!str 4401
+      name: 工程施工
+    - code: !!str 4403
+      name: 机械作业
+
+- type: 损益类
+  subjects:
+    收入类:
+      - code: !!str 5001
+        name: 主营业务收入
+      - code: !!str 5051
+        name: 其他业务收入
+      - code: !!str 5111
+        name: 投资收益
+      - code: !!str 5301
+        name: 营业外收入
+      - code: !!str 5401
+        name: 主营业务成本
+    费用类:
+      - code: !!str 5402
+        name: 其他业务成本
+      - code: !!str 5403
+        name: 营业税金及附加
+      - code: !!str 5601
+        name: 销售费用
+      - code: !!str 5602
+        name: 管理费用
+      - code: !!str 5603
+        name: 财务费用
+      - code: !!str 5711
+        name: 营业外支出

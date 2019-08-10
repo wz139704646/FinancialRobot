@@ -38,20 +38,39 @@ class MyHelper(object):
             self.connection()
             row = self.cls.execute(sql, param)
             self.conn.commit()
+            return row
         except Exception as e:
             print(e)
             self.conn.rollback()
         finally:
             self.free()
-        return row
 
     def executeQuery(self, sql, param=[]):
         try:
             self.connection()
             self.cls.execute(sql, param)
             result = self.cls.fetchall()
+            return result
         except Exception as e:
             print(e)
         finally:
             self.free()
-        return result
+
+    def executeCreate(self, sql='', filename='', param=[]):
+        try:
+            self.connection()
+            if sql:
+                self.cls.execute(sql, param)
+            elif filename:
+                with open(filename) as fr:
+                    sql_file = fr.read()
+                commands = sql_file.split(';')
+                for command in commands:
+                    try:
+                        self.cls.execute(command)
+                    except Exception as e1:
+                        print(e1)
+        except Exception as e2:
+            print(e2)
+        finally:
+            self.free()
