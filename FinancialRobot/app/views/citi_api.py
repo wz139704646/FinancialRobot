@@ -14,8 +14,9 @@ citi_api.secret_key = 'secret_key_citi_api'
 
 CLIENT_ID = "31b2b8c1-8449-4828-8147-c98799373f2d"
 CLIENT_SECRET = "C7jW0pM0tJ5cF7eO0gR6gT7cO8wY2jI5sG8qL0iW7hC4cK4lM3"
-SCOPE = "accounts_details_transactions customers_profiles payees personal_domestic_transfers " \
-        "internal_domestic_transfers external_domestic_transfers bill_payments cards onboarding reference_data "
+SCOPE = "pay_with_points accounts_details_transactions customers_profiles payees personal_domestic_transfers " \
+        "internal_domestic_transfers external_domestic_transfers bill_payments Drawees Card_Payments Auto_Debit cards " \
+        "onboarding reference_data reset_atm_pin statements_and_advices meta_data "
 STATE = "12321"
 REDIRECT_URI = "http://47.100.244.29/getAccToken"
 INDEX = "http://47.100.244.29"
@@ -198,9 +199,10 @@ def getAccountById(account_id):
 
 
 # 获取account交易信息
-@citi_api.route('/getAccounts/<string:account_id>/transactions', methods=["POST", "GET"])
+@citi_api.route('/getAccounts/transactions/<string:account_id>', methods=["POST", "GET"])
 def getAccountTransactions(account_id):
-    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/" + account_id + "/transactions"
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/{0}/transactions".format(account_id)
+    print(url)
     r = requests.get(url, headers=get_headers())
     dic = json.loads(r.text)
     # print(dic)
