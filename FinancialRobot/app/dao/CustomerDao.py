@@ -23,9 +23,10 @@ class CustomerDao:
         conn = MyHelper()
         return conn.executeQuery("select * from Customer")
 
-    def query_by_name(self, companyId, name):
+    def queryCustomerByName(self, companyId, name):
         conn = MyHelper()
         return conn.executeQuery("select * from Customer where companyId = %s and name like %s", [companyId, name])
+
 
     def query_by_phone(self, companyId, phone):
         conn = MyHelper()

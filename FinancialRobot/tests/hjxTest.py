@@ -6,6 +6,7 @@ import uuid
 import json
 import jieba
 import string
+import flask
 import datetime
 from flask import Blueprint, render_template, request
 from app.dao.WareHouseDao import WareHouseDao
@@ -20,7 +21,7 @@ from app.dao.SellDao import SellDao
 from app.dao.CustomerDao import CustomerDao
 from app.dao.SupplierDao import SupplierDao
 from app.dao.GoodsDao import GoodsDao
-from app.dao.UserDao import UserDao
+
 from app.utils.json_util import *
 
 
@@ -168,16 +169,16 @@ class Test11(unittest.TestCase):
         # else:
         #     return json.dumps(return_unsuccess('Error: Add failed'))
 
-    def test11(self):
-        addUser = UserDao()
-        # row = addUser.add("123211","111","1","1")
-        supresult = addUser.query_all()
-        size = len(supresult)
-        print(supresult)
-        supresu_json = json.dumps(UserDao.to_dict(supresult), ensure_ascii=False)
-        print(size)
-        print(supresu_json)
-        print(json.dumps(return_success(UserDao.to_dict(supresult)), ensure_ascii=False))
+    # def test11(self):
+    #     addUser = UserDao()
+    #     # row = addUser.add("123211","111","1","1")
+    #     supresult = addUser.query_all()
+    #     size = len(supresult)
+    #     print(supresult)
+    #     supresu_json = json.dumps(UserDao.to_dict(supresult), ensure_ascii=False)
+    #     print(size)
+    #     print(supresu_json)
+    #     print(json.dumps(return_success(UserDao.to_dict(supresult)), ensure_ascii=False))
 
     def test13(self):
         queryCustomer = CustomerDao()
@@ -299,10 +300,50 @@ class Test11(unittest.TestCase):
         print(date_tomorrow.strftime('%Y-%m-%d %H:%M:%S'))
 
     def test23(self):
-        query = DailyfundDao()
-        result = query.queryAll()
+
+        query = SellDao()
+        result = query.query_all()
         print(result)
 
+    def test24(self):
+        data={"companyId":"5",
+              "name":"zqr",}
+        _resp = requests.post(url='http://127.0.0.1:5000/queryCustomerByName', json=data)
+        resp_json = _resp.content
+        print(resp_json)
+    def test25(self):
+        query=SellDao()
+        results=[]
+        idresult = query.queryAllId()
+        print(idresult)
+        print(len(idresult))
+        if len(idresult) != 0:
+            for j in range(0, len(idresult)):
+                result = []
+                id = idresult[j][0]
+                customerName = ""
+                customerId = ""
+                date = ""
+                goodslist = []
+                goodsResult = query.query_byId(id)
+                for i in range(0, len(goodsResult)):
+                    customerName = goodsResult[i][7]
+                    customerId = goodsResult[i][1]
+                    date = goodsResult[i][6]
+                    goods = []
+                    goods.append(goodsResult[i][2])
+                    goods.append(goodsResult[i][5])
+                    goods.append(goodsResult[i][4])
+                    goods.append(goodsResult[i][8])
+                    goodslist.append(goods)
+                result.append(id)
+                result.append(customerId)
+                result.append(customerName)
+                result.append(date)
+                result.append(goodslist)
+                results.append(result)
+        print(results)
+        print(len(results))
     def test12(self):
         companyId = "5"
         date = "2019-7-14"

@@ -89,3 +89,21 @@ def queryCustomerById():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(CustomerDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+
+
+# 根据名称查询客户
+@customer.route("/queryCustomerByName", methods=["POST"])
+def queryCustomerByName():
+    _json = request.json
+    query = CustomerDao()
+    name = _json.get('name')
+    companyId = _json.get('companyId')
+    print(name, companyId)
+    result = query.queryCustomerByName(companyId, name)
+    print(result)
+
+    size = len(result)
+    if size == 0:
+        return json.dumps(return_unsuccess('Error: No data'))
+    else:
+        return json.dumps(return_success(CustomerDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
