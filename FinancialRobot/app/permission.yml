@@ -12,6 +12,7 @@ parts:
     - customer.queryAllCustomer
     - customer.queryCustomer
     - customer.queryCustomerById
+    - customer.queryCustomerByName
   upload: &upload
     - up.upload
     - up.download

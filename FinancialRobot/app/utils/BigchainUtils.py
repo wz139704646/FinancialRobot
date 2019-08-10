@@ -17,8 +17,6 @@ class BigchainUtils(object):
         pair = namedtuple('CryptoKeypair', ('private_key', 'public_key'))
         return pair(private_key=private_key, public_key=public_key)
 
-
-
     def __init__(self):
         self.conn = BigchainDB(BIGCHAINDB_URL)
 
