@@ -17,7 +17,7 @@ CLIENT_SECRET = "C7jW0pM0tJ5cF7eO0gR6gT7cO8wY2jI5sG8qL0iW7hC4cK4lM3"
 SCOPE = "accounts_details_transactions customers_profiles payees personal_domestic_transfers " \
         "internal_domestic_transfers external_domestic_transfers bill_payments cards onboarding reference_data "
 STATE = "12321"
-REDIRECT_URI = "http://127.0.0.1:5000/getAccToken"
+REDIRECT_URI = "http://47.100.244.29/getAccToken"
 INDEX = "http://47.100.244.29"
 
 
@@ -32,12 +32,14 @@ def get_url(url, parameters):
     return url + "?" + data
 
 
+# 获取auth 的code
 def get_basic_auth():
     secret = CLIENT_ID + ":" + CLIENT_SECRET
     b64secret = base64.b64encode(secret.encode())
     return 'Basic ' + b64secret.decode()
 
 
+# 获取auth的access token
 def get_token_auth():
     access_token = redis_store.get('access_token')
     if access_token:
@@ -49,7 +51,7 @@ def get_token_auth():
         else:
             return json.dumps(return_unsuccess('Refresh token expire'))
 
-
+# 获取授权码
 @citi_api.route("/getAuthCode", methods=["GET"])
 def getAuthCode():
     url = "https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/authorize"
@@ -71,17 +73,17 @@ def getAuthCode():
     return redirect(auth)
 
 
-@citi_api.route("/oauth/redirect", methods=["POST", "GET"])
-def oauth():
-    code = request.args.get('code')
-    state = request.args.get('state')
-    if code and state == STATE:
-        print(code)
-        return "<h1>Authorization code grant success !!</h1>"
-    else:
-        return "<h1>Authorization code grant failed !!</h1>"
+# @citi_api.route("/oauth/redirect", methods=["POST", "GET"])
+# def oauth():
+#     code = request.args.get('code')
+#     state = request.args.get('state')
+#     if code and state == STATE:
+#         print(code)
+#         return "<h1>Authorization code grant success !!</h1>"
+#     else:
+#         return "<h1>Authorization code grant failed !!</h1>"
 
-
+# 获取access token
 @citi_api.route("/getAccToken", methods=["POST", "GET"])
 def getAccToken():
     code = request.args.get('code')
@@ -101,14 +103,14 @@ def getAccToken():
     r = requests.post(url, data=payload, headers=headers)
 
     dic = json.loads(r.text)
-    print(dic)
-
+    # print(dic)
     redis_store.set('access_token', dic['access_token'], ex=dic['expires_in'])
     redis_store.set('refresh_token', dic['refresh_token'], ex=dic['refresh_token_expires_in'])
-    getAccountsInfo()
+
     return redirect(INDEX)
 
 
+# 更新access token
 @citi_api.route('/refreshAccToken', methods=['POST', 'GET'])
 def refreshAccToken():
     url = "https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/refresh"
@@ -133,6 +135,25 @@ def refreshAccToken():
         return json.dumps(return_unsuccess('Failed to refresh'))
 
 
+# 取消授权
+@citi_api.route('/revokeAcc', methods=['POST', 'GET'])
+def revokeAcc():
+    url = 'https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/revoke'
+
+    payload = "token={0}&token_type_hint={1}".format(redis_store.get('refresh_token'), 'refresh_token')
+
+    headers = {
+        'authorization': get_basic_auth(),
+        'content-type': 'application/x-www-form-urlencoded',
+        'accept': "application/json"
+    }
+
+    r = requests.post(url, data=payload, headers=headers)
+
+    return r.text
+
+
+# 获取卡的信息
 @citi_api.route('/getCardsInfo', methods=["POST", "GET"])
 def getCardsInfo():
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/cards?cardFunction=ALL"
@@ -149,6 +170,7 @@ def getCardsInfo():
     return r.text
 
 
+# 获取账号信息
 @citi_api.route('/getAccountsInfo', methods=["POST", "GET"])
 def getAccountsInfo():
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts?nextStartIndex=1"
