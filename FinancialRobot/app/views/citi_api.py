@@ -1,11 +1,12 @@
 import base64
 import http.client
 import uuid
-
-from flask import Blueprint, render_template, request, session, jsonify, redirect
 import requests
-from urllib import parse
 import json
+
+from app.utils.json_util import *
+from flask import Blueprint, render_template, request, session, jsonify, redirect
+from urllib import parse
 from app.config import redis_store
 
 citi_api = Blueprint("citi_api", __name__)
@@ -31,14 +32,22 @@ def get_url(url, parameters):
     return url + "?" + data
 
 
-def get_authorization():
+def get_basic_auth():
     secret = CLIENT_ID + ":" + CLIENT_SECRET
     b64secret = base64.b64encode(secret.encode())
     return 'Basic ' + b64secret.decode()
 
 
-def get_token_auth(acc_token):
-    return "Bearer " + acc_token
+def get_token_auth():
+    access_token = redis_store.get('access_token')
+    if access_token:
+        return "Bearer " + access_token
+    else:
+        if json.loads(refreshAccToken())['success']:
+            access_token = redis_store.get('access_token')
+            return "Bearer " + access_token
+        else:
+            return json.dumps(return_unsuccess('Refresh token expire'))
 
 
 @citi_api.route("/getAuthCode", methods=["GET"])
@@ -51,7 +60,7 @@ def getAuthCode():
         'response_type': 'code',
         'client_id': CLIENT_ID,
         'scope': SCOPE,
-        'countryCode': 'US',
+        'countryCode': 'AU',
         'businessCode': 'GCB',
         'locale': 'en_US',
         'state': STATE,
@@ -79,69 +88,79 @@ def getAccToken():
     state = request.args.get('state')
     if not (code and state == STATE):
         return "<h1>Authorization code grant failed !!</h1>"
-    url = "https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/token/hk/gcb"
+    url = "https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/token/au/gcb"
 
     payload = "grant_type=authorization_code&code={0}&redirect_uri={1}".format(code, REDIRECT_URI)
 
     headers = {
-        'authorization': get_authorization(),
+        'authorization': get_basic_auth(),
         'Content-Type': "application/x-www-form-urlencoded",
         'Accept': "application/json"
     }
 
     r = requests.post(url, data=payload, headers=headers)
-    # print(r.text)
-    # print(r.status_code)
+
     dic = json.loads(r.text)
     print(dic)
-    # redis_store.set()
-    access_token = dic['access_token']
-    print(access_token)
-    refresh_token = dic['refresh_token']
-    getAccountsInfo(access_token)
+
+    redis_store.set('access_token', dic['access_token'], ex=dic['expires_in'])
+    redis_store.set('refresh_token', dic['refresh_token'], ex=dic['refresh_token_expires_in'])
+    getAccountsInfo()
     return redirect(INDEX)
 
 
-@citi_api.route('/getCardsInfo', methods=["POST", "GET"])
-def getCardsInfo(access_token=None):
-    url = "https://sandbox.apihub.citi.com/gcb/api/v1/cards"
-    if not access_token:
-        access_token = redis_store.get('account')
+@citi_api.route('/refreshAccToken', methods=['POST', 'GET'])
+def refreshAccToken():
+    url = "https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/refresh"
 
+    payload = "grant_type=refresh_token&refresh_token={0}".format(redis_store.get('refresh_token'))
+
+    headers = {
+        'authorization': get_basic_auth(),
+        'content-type': "application/x-www-form-urlencoded",
+        'accept': "application/json"
+    }
+
+    r = requests.post(url, data=payload, headers=headers)
+    dic = json.loads(r.text)
+    # print(dic)
+    redis_store.set('access_token', dic['access_token'], ex=dic['expires_in'])
+    redis_store.set('refresh_token', dic['refresh_token'], ex=dic['refresh_token_expires_in'])
+
+    if r.status_code == 200:
+        return json.dumps(return_success('ok'))
+    else:
+        return json.dumps(return_unsuccess('Failed to refresh'))
+
+
+@citi_api.route('/getCardsInfo', methods=["POST", "GET"])
+def getCardsInfo():
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/cards?cardFunction=ALL"
     payload = "cardFunction=ALL"
     headers = {
-        'Authorization': get_token_auth(access_token),
+        'Authorization': get_token_auth(),
         'client_id': CLIENT_ID,
         'uuid': str(uuid.uuid4()),
         'Accept': "application/json",
         'Content-Type': "application/json"
     }
-    r = requests.get(url, data=payload, headers=headers)
-    print(r.text)
+    r = requests.get(url, headers=headers)
+    # print(r.text)
     return r.text
 
 
 @citi_api.route('/getAccountsInfo', methods=["POST", "GET"])
-def getAccountsInfo(access_token=None):
-    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts"
-    if not access_token:
-        access_token = request.json.get('access_token')
-        # access_token = redis_store.get('account')
+def getAccountsInfo():
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts?nextStartIndex=1"
 
     headers = {
-        'Authorization': get_token_auth(access_token),
+        'Authorization': get_token_auth(),
         'client_id': CLIENT_ID,
         'uuid': str(uuid.uuid4()),
-        'Accept': "application/json",
+        'accept': "application/json",
         'content-type': 'application/json'
     }
-    # r = requests.get(url, headers=headers)
-    conn = http.client.HTTPSConnection("sandbox.apihub.citi.com")
-    conn.request("GET", "/gcb/api/v1/accounts", headers=headers)
-
-    res = conn.getresponse()
-    data = res.read()
-
-    print(data.decode("utf-8"))
-    # print(r.text)
-    return data
+    r = requests.get(url, headers=headers)
+    dic = json.loads(r.text)
+    # print(dic)
+    return r.text

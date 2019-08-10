@@ -4,10 +4,11 @@ import base64
 import binascii
 import json
 import uuid
-
+import http.client
 import jieba
 from hashlib import sha1
 
+from app.config import redis_store
 from app.dao.CompanyDao import CompanyDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
@@ -90,9 +91,14 @@ class MylTest(unittest.TestCase):
         print(res)
 
     def test12(self):
-        store = base64.b64decode("MCwwLDAsNywwLDAsMCwwLDAsMCwwLDQsMCwwLDAsMCwwLDAsMC…wLDgsMCwwLDAsOSwwLDAsMCw0LDAsMCwwLDEsMCwwLDAsMA==")
+        store = base64.b64decode(
+            "MCwwLDAsNywwLDAsMCwwLDAsMCwwLDQsMCwwLDAsMCwwLDAsMC…wLDgsMCwwLDAsOSwwLDAsMCw0LDAsMCwwLDEsMCwwLDAsMA==")
         print(store)
         store_in = binascii.hexlify(store)
         print(store_in)
         strpass = str(store_in, 'utf-8')
         print(strpass)
+
+    def test13(self):
+        redis_store.delete('access_token')
+        print(redis_store.get('access_token'))
