@@ -61,31 +61,65 @@ def queryPurchase():
     query = PurchaseDao()
     _json = request.json
     companyId = _json.get('companyId')
-    if _json.get('date') is None:
-        if _json.get('id') == None:
-            result = query.query_byCid(companyId)
-            size = len(result)
-            if size == 0:
-                return json.dumps(return_unsuccess('Error: No data'))
-            else:
-                return json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+    results = []
+    if _json.get('id') == None:
+        if _json.get('date') == None:
+            idResult = query.queryAllId(companyId)
         else:
-            id = _json.get('id')
-            result = query.query_byId(id)
-            size = len(result)
-            if size == 0:
-                return json.dumps(return_unsuccess('Error: No data'))
-            else:
-                return json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
-    else:
-        date = _json.get('date')
-        start = datetime.datetime.strptime(date, '%Y-%m-%d')
-        delta = datetime.timedelta(days=1)
-        n_days = start + delta
-        end = n_days.strftime('%Y-%m-%d %H:%M:%S')
-        result = query.query_byDate(companyId, start, end)
-        size = len(result)
+            date = _json.get('date')
+            start = datetime.datetime.strptime(date, '%Y-%m-%d')
+            delta = datetime.timedelta(days=1)
+            n_days = start + delta
+            end = n_days.strftime('%Y-%m-%d %H:%M:%S')
+            idResult = query.query_byDate(companyId, start, end)
+        size = len(idResult)
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
         else:
-            return json.dumps(return_success(PurchaseDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+            for j in range(0, len(idResult)):
+                result = []
+                id = idResult[j][0]
+                goodsList = []
+                goodsResult = query.query_byId(id)
+                for i in range(0, len(goodsResult)):
+                    status = goodsResult[i][8]
+                    supplierId = goodsResult[i][3]
+                    date = goodsResult[i][7]
+                    goods = []
+                    goods.append(goodsResult[i][6])
+                    goods.append(goodsResult[i][1])
+                    goods.append(goodsResult[i][2])
+                    goods.append(goodsResult[i][5])
+                    goodsList.append(goods)
+                result.append(id)
+                result.append(status)
+                result.append(supplierId)
+                result.append(date)
+                result.append(goodsList)
+                results.append(result)
+    else:
+        id = _json.get('id')
+        result = []
+        goodsList = []
+        goodsResult = query.query_byId(id)
+        for i in range(0, len(goodsResult)):
+            status = goodsResult[i][8]
+            supplierId = goodsResult[i][3]
+            date = goodsResult[i][7]
+            goods = []
+            goods.append(goodsResult[i][6])
+            goods.append(goodsResult[i][1])
+            goods.append(goodsResult[i][2])
+            goods.append(goodsResult[i][5])
+            goodsList.append(goods)
+        result.append(id)
+        result.append(status)
+        result.append(supplierId)
+        result.append(date)
+        result.append(goodsList)
+        results.append(result)
+    size = len(results)
+    if size == 0:
+        return json.dumps(return_unsuccess('Error: No data'))
+    else:
+        return json.dumps(return_success(PurchaseDao.to_dict(results)), ensure_ascii=False, cls=DecimalEncoder)

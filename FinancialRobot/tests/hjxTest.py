@@ -306,14 +306,15 @@ class Test11(unittest.TestCase):
         print(result)
 
     def test24(self):
-        data={"companyId":"5",
-              "name":"zqr",}
+        data = {"companyId": "5",
+                "name": "zqr", }
         _resp = requests.post(url='http://127.0.0.1:5000/queryCustomerByName', json=data)
         resp_json = _resp.content
         print(resp_json)
+
     def test25(self):
-        query=SellDao()
-        results=[]
+        query = SellDao()
+        results = []
         idresult = query.queryAllId()
         print(idresult)
         print(len(idresult))
@@ -344,6 +345,37 @@ class Test11(unittest.TestCase):
                 results.append(result)
         print(results)
         print(len(results))
+
+    def test26(self):
+        query=PurchaseDao()
+        results=[]
+        idResult = query.queryAllId("5")
+        size = len(idResult)
+        if size == 0:
+            return json.dumps(return_unsuccess('Error: No data'))
+        else:
+            for j in range(0, len(idResult)):
+                result = []
+                id = idResult[j][0]
+                goodsList = []
+                goodsResult = query.query_byId(id)
+                for i in range(0, len(goodsResult)):
+                    status = goodsResult[i][8]
+                    supplierId = goodsResult[i][3]
+                    date = goodsResult[i][7]
+                    goods = []
+                    goods.append(goodsResult[i][6])
+                    goods.append(goodsResult[i][1])
+                    goods.append(goodsResult[i][2])
+                    goods.append(goodsResult[i][5])
+                    goodsList.append(goods)
+                result.append(id)
+                result.append(status)
+                result.append(supplierId)
+                result.append(date)
+                result.append(goodsList)
+                results.append(result)
+        print(results)
     def test12(self):
         companyId = "5"
         date = "2019-7-14"
