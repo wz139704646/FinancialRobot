@@ -69,7 +69,8 @@ def queryCustomer():
     else:
         name = _json['name']
         newname = '%' + name + '%'
-        Cusresult = query.query_by_phone(companyId, newname)
+        print(name)
+        Cusresult = query.queryCustomerByName(companyId, newname)
         size = len(Cusresult)
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
