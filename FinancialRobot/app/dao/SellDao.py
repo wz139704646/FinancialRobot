@@ -23,11 +23,11 @@ class SellDao:
             res = {}
             res['id'] = row[0]
             res['customerId'] = row[1]
-            res['companyName'] = row[2]
+            res['customerName'] = row[2]
             res['date'] = row[3]
             goodslist=[]
-            goods={}
             for good in row[4]:
+                goods = {}
                 goods['goodsId'] = good[0]
                 goods['sumprice'] = good[1]
                 goods['number'] = good[2]

@@ -14,8 +14,9 @@ citi_api.secret_key = 'secret_key_citi_api'
 
 CLIENT_ID = "31b2b8c1-8449-4828-8147-c98799373f2d"
 CLIENT_SECRET = "C7jW0pM0tJ5cF7eO0gR6gT7cO8wY2jI5sG8qL0iW7hC4cK4lM3"
-SCOPE = "accounts_details_transactions customers_profiles payees personal_domestic_transfers " \
-        "internal_domestic_transfers external_domestic_transfers bill_payments cards onboarding reference_data "
+SCOPE = "pay_with_points accounts_details_transactions customers_profiles payees personal_domestic_transfers " \
+        "internal_domestic_transfers external_domestic_transfers bill_payments Drawees Card_Payments Auto_Debit cards " \
+        "onboarding reference_data reset_atm_pin statements_and_advices meta_data "
 STATE = "12321"
 REDIRECT_URI = "http://47.100.244.29/getAccToken"
 INDEX = "http://47.100.244.29"
@@ -51,6 +52,18 @@ def get_token_auth():
         else:
             return json.dumps(return_unsuccess('Refresh token expire'))
 
+
+def get_headers():
+    headers = {
+        'Authorization': get_token_auth(),
+        'client_id': CLIENT_ID,
+        'uuid': str(uuid.uuid4()),
+        'accept': "application/json",
+        'content-type': 'application/json'
+    }
+    return headers
+
+
 # 获取授权码
 @citi_api.route("/getAuthCode", methods=["GET"])
 def getAuthCode():
@@ -72,16 +85,6 @@ def getAuthCode():
     auth = get_url(url, parameters)
     return redirect(auth)
 
-
-# @citi_api.route("/oauth/redirect", methods=["POST", "GET"])
-# def oauth():
-#     code = request.args.get('code')
-#     state = request.args.get('state')
-#     if code and state == STATE:
-#         print(code)
-#         return "<h1>Authorization code grant success !!</h1>"
-#     else:
-#         return "<h1>Authorization code grant failed !!</h1>"
 
 # 获取access token
 @citi_api.route("/getAccToken", methods=["POST", "GET"])
@@ -157,15 +160,8 @@ def revokeAcc():
 @citi_api.route('/getCardsInfo', methods=["POST", "GET"])
 def getCardsInfo():
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/cards?cardFunction=ALL"
-    payload = "cardFunction=ALL"
-    headers = {
-        'Authorization': get_token_auth(),
-        'client_id': CLIENT_ID,
-        'uuid': str(uuid.uuid4()),
-        'Accept': "application/json",
-        'Content-Type': "application/json"
-    }
-    r = requests.get(url, headers=headers)
+    # payload = "cardFunction=ALL"
+    r = requests.get(url, headers=get_headers())
     # print(r.text)
     return r.text
 
@@ -175,14 +171,39 @@ def getCardsInfo():
 def getAccountsInfo():
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts?nextStartIndex=1"
 
-    headers = {
-        'Authorization': get_token_auth(),
-        'client_id': CLIENT_ID,
-        'uuid': str(uuid.uuid4()),
-        'accept': "application/json",
-        'content-type': 'application/json'
-    }
-    r = requests.get(url, headers=headers)
+    r = requests.get(url, headers=get_headers())
+
+    dic = json.loads(r.text)
+    # print(dic)
+    return r.text
+
+
+# 获取客户信息
+@citi_api.route('/getCustomerProfile', methods=["POST", "GET"])
+def getCustomerProfile():
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/customers/profiles"
+    r = requests.get(url, headers=get_headers())
+    dic = json.loads(r.text)
+    # print(dic)
+    return r.text
+
+
+# 获取account详细信息
+@citi_api.route('/getAccounts/<string:account_id>', methods=["POST", "GET"])
+def getAccountById(account_id):
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/" + account_id
+    r = requests.get(url, headers=get_headers())
+    dic = json.loads(r.text)
+    # print(dic)
+    return r.text
+
+
+# 获取account交易信息
+@citi_api.route('/getAccounts/transactions/<string:account_id>', methods=["POST", "GET"])
+def getAccountTransactions(account_id):
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/{0}/transactions".format(account_id)
+    print(url)
+    r = requests.get(url, headers=get_headers())
     dic = json.loads(r.text)
     # print(dic)
     return r.text

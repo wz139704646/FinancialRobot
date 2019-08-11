@@ -22,24 +22,27 @@ class PurchaseDao:
         for row in data:
             res = {}
             res['id'] = row[0]
-            res['goodId'] = row[1]
-            res['goodName'] = row[2]
-            res['supplierId'] = row[3]
-            res['companyId'] = row[4]
-            res['number'] = row[5]
-            res['purchasePrice'] = row[6]
-            res['date'] = row[7]
-            res['status'] = row[8]
+            res['status'] = row[1]
+            res['supplierId'] = row[2]
+            res['date'] = row[3]
+            goodslist = []
+            for good in row[4]:
+                goods = {}
+                goods['price'] = good[0]
+                goods['goodsId'] = good[1]
+                goods['goodsName'] = good[2]
+                goods['number'] = good[3]
+                goodslist.append(goods)
+            res['goodsList'] = goodslist
             result.append(res)
         return result
-
     def query_all(self):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase")
 
     def query_byDate(self, companyId, start, end):
         connection = MyHelper()
-        return connection.executeQuery("select * from Purchase where companyId=%s and date >= %s and date <%s",
+        return connection.executeQuery("select distinct id ,date from Purchase where companyId=%s and date >= %s and date <%s order by date ",
                                        [companyId, start, end])
 
     def query_byCid(self, companyId):
@@ -49,6 +52,10 @@ class PurchaseDao:
     def query_byId(self, id):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where id = %s", [id])
+
+    def queryAllId(self, companyId):
+        connection = MyHelper()
+        return connection.executeQuery("select distinct id ,date from Purchase where companyId = %s order by date ", [companyId])
 
     def add(self, id, goodId, goodName, supplierId, companyId, number, purchasePrice, date, status):
         connection = MyHelper()

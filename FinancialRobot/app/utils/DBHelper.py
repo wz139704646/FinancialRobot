@@ -25,13 +25,19 @@ class MyHelper(object):
                                         passwd=config.password,
                                         db=config.dbname,
                                         charset=config.charset)
+            self.cls = self.conn.cursor()
         except Exception as e:
             print(e)
-        self.cls = self.conn.cursor()
 
     def free(self):
-        self.cls.close()
-        self.conn.close()
+        try:
+            self.cls.close()
+        except Exception as e:
+            print(e)
+        try:
+            self.conn.close()
+        except Exception as e:
+            print(e)
 
     def executeUpdate(self, sql, param=[]):
         try:
