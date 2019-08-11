@@ -95,4 +95,13 @@ class ZjjTesst(unittest.TestCase):
         }))
 
     def test7(self):
-        print('hhh')
+       print(MyHelper().executeUpdateTransaction(
+           sqls=["insert into accounting_subjects(subject_code, name, superior_subject_code, type, type_detail)"
+                 " values(%s, %s, %s, %s, %s)",
+                 "insert into accounting_subjects(subject_code, name, superior_subject_code, type, type_detail)"
+                 " values(%s, %s, %s, %s, %s)"],
+           params=[
+               ["1009", "???", None, "资产类", None],
+               ["100901", "??????", "1009", "资产类", None]
+           ]
+       ))
