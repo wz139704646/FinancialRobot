@@ -84,22 +84,23 @@ class GoodsDao:
             result.append(res)
         return result
 
-    def query_by_warehouse(self, companyId, wareHouseId):
+    def query_by_warehouse(self, companyId, wareHouseId=None, name=None, _type=None):
         connection = MyHelper()
-        # wareHouseId为空
+        _sql = "select Goods.id, Goods.name, Goods.type, Goods.sellprice," \
+               "Goods.unitInfo,GoodsStore.number,Goods.WarehouseId, Goods.photo " \
+               "from Goods, GoodsStore " \
+               "where Goods.id=GoodsStore.goodsId and Goods.companyId = %s"
+        _param = [companyId]
+        if name:
+            _sql += " and Goods.name like %s"
+            _param.append('%' + name + '%')
+        if _type:
+            _sql += " and Goods.type like %s"
+            _param.append('%' + _type + '%')
         if wareHouseId:
-            return connection.executeQuery("select Goods.id, Goods.name, Goods.type, "
-                                           "Goods.sellprice,Goods.unitInfo,GoodsStore.number,"
-                                           "Goods.WarehouseId, Goods.photo "
-                                           "from Goods, GoodsStore "
-                                           "where Goods.id=GoodsStore.goodsId and "
-                                           "GoodsStore.wareId = %s and Goods.companyId = %s",
-                                           [wareHouseId, companyId])
+            _sql += " and GoodsStore.wareId = %s"
+            _param.append(wareHouseId)
+            return connection.executeQuery(_sql, _param)
         else:
-            return connection.executeQuery("select Goods.id, Goods.name, Goods.type, "
-                                           "Goods.sellprice,Goods.unitInfo,GoodsStore.number,"
-                                           "Goods.WarehouseId, Goods.photo "
-                                           "from Goods, GoodsStore "
-                                           "where Goods.id=GoodsStore.goodsId and "
-                                           "Goods.companyId = %s order by GoodsStore.wareId",
-                                           [companyId])
+            _sql += " order by GoodsStore.wareId"
+            return connection.executeQuery(_sql, _param)

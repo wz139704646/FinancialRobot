@@ -75,7 +75,7 @@ def getAuthCode():
         'response_type': 'code',
         'client_id': CLIENT_ID,
         'scope': SCOPE,
-        'countryCode': 'hk',
+        'countryCode': 'HK',
         'businessCode': 'GCB',
         'locale': 'en_US',
         'state': STATE,
