@@ -376,14 +376,14 @@ class Test11(unittest.TestCase):
                 result.append(goodsList)
                 results.append(result)
         print(results)
-    def test12(self):
+    def test30(self):
         companyId = "5"
         date = "2019-7-14"
         language = ""
         jieba.load_userdict("../app/utils/dict.txt")
         # 去除停用词
         stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少'])
-        time1 = ['今天', '这一天']
+        today = ['今天', '这一天']
         time2 = ['昨天', '上一天']
         time3 = ['这周', '这一周']
         time4 = ['上周', '上一周']
@@ -403,6 +403,39 @@ class Test11(unittest.TestCase):
         text3 = "看一下库存"
         text4 = "今天花了多少钱"
         # 精确模式
+        segs = jieba.cut(text3, cut_all=False)
+        final = []
+        for seg in segs:
+            if seg not in stopwords:
+                final.append(seg)
+        print(final)
+    def test12(self):
+        companyId = "5"
+        date = "2019-7-14"
+        language = ""
+        jieba.load_userdict("../app/utils/dict.txt")
+        # 去除停用词
+        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少'])
+        today = ['今天', '这一天']
+        yesterday = ['昨天', '上一天']
+        thisWeek = ['这周', '这一周']
+        lastWeek = ['上周', '上一周']
+        thisMonth = ['这个月']
+
+        acInmoney = ['赚', '挣', '卖', '收入', '盈利', '进账']
+        acPurchase = ['进', '买']
+        acQuery = ['查', '看', '查看']
+        acOutmoney = ['花', '消费', '支出']
+
+        goods = ['东西', '商品', '货']
+        money = ['钱']
+        store = ['库存']
+
+        text1 = "上周进了多少货"
+        text2 = "今天卖了什么东西"
+        text3 = "看一下库存"
+        text4 = "今天花了多少钱"
+        # 精确模式
         segs = jieba.cut(text2, cut_all=False)
         final = []
         for seg in segs:
@@ -412,27 +445,27 @@ class Test11(unittest.TestCase):
         time = 1
         for item in final:
             if time == 1:
-                if item in time2:
+                if item in yesterday:
                     time = 2
-                if item in time3:
+                if item in thisWeek:
                     time = 3
-                if item in time4:
+                if item in lastWeek:
                     time = 4
-                if item in time5:
+                if item in thisMonth:
                     time = 5
-            if item in action1:
+            if item in acInmoney:
                 action = 1
-            if item in action2:
+            if item in acPurchase:
                 action = 2
-            if item in action3:
+            if item in acQuery:
                 action = 3
-            if item in action4:
+            if item in acOutmoney:
                 action = 4
-            if item in nouns1:
+            if item in goods:
                 nouns = 1
-            if item in nouns2:
+            if item in money:
                 nouns = 2
-            if item in nouns3:
+            if item in store:
                 nouns = 3
         print(time)
         print(action)
