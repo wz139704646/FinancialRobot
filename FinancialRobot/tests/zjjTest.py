@@ -95,4 +95,4 @@ class ZjjTesst(unittest.TestCase):
         }))
 
     def test7(self):
-        print('1'.zfill(2))
+        print('hhh')
