@@ -418,14 +418,14 @@ class Test11(unittest.TestCase):
         stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少'])
         today = ['今天', '这一天']
         yesterday = ['昨天', '上一天']
-        thisWeek = ['这周', '这一周']
-        lastWeek = ['上周', '上一周']
-        thisMonth = ['这个月']
+        this_week = ['这周', '这一周']
+        last_week = ['上周', '上一周']
+        this_month = ['这个月']
 
-        acInmoney = ['赚', '挣', '卖', '收入', '盈利', '进账']
-        acPurchase = ['进', '买']
-        acQuery = ['查', '看', '查看']
-        acOutmoney = ['花', '消费', '支出']
+        ac_in_money = ['赚', '挣', '卖', '收入', '盈利', '进账']
+        ac_purchase = ['进', '买']
+        ac_query = ['查', '看', '查看']
+        ac_out_money = ['花', '消费', '支出']
 
         goods = ['东西', '商品', '货']
         money = ['钱']
@@ -447,19 +447,19 @@ class Test11(unittest.TestCase):
             if time == 1:
                 if item in yesterday:
                     time = 2
-                if item in thisWeek:
+                if item in this_week:
                     time = 3
-                if item in lastWeek:
+                if item in last_week:
                     time = 4
-                if item in thisMonth:
+                if item in this_month:
                     time = 5
-            if item in acInmoney:
+            if item in ac_in_money:
                 action = 1
-            if item in acPurchase:
+            if item in ac_purchase:
                 action = 2
-            if item in acQuery:
+            if item in ac_query:
                 action = 3
-            if item in acOutmoney:
+            if item in ac_out_money:
                 action = 4
             if item in goods:
                 nouns = 1
