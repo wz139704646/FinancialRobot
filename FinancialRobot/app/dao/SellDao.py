@@ -30,6 +30,7 @@ class SellDao:
                 goods = {}
                 goods['goodsId'] = good[0]
                 goods['sumprice'] = good[1]
+                goods['price'] = good[1]
                 goods['number'] = good[2]
                 goods['goodsName'] = good[3]
                 goodslist.append(goods)
