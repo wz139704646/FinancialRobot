@@ -40,7 +40,6 @@ class WareHouseDao:
         try:
             in_goods = connection.executeQuery("select * from Purchase where companyId = %s and id = %s",
                                                [companyId, purchaseId])
-            print(list(in_goods))
             connection.executeUpdate("update Purchase set status = '到' where companyId = %s and id = %s",
                                      [companyId, purchaseId])
             for in_good in in_goods:

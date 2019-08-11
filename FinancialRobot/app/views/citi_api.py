@@ -55,7 +55,7 @@ def get_token_auth():
 
 def get_headers():
     headers = {
-        'Authorization': get_token_auth(),
+        'authorization': get_token_auth(),
         'client_id': CLIENT_ID,
         'uuid': str(uuid.uuid4()),
         'accept': "application/json",
@@ -75,7 +75,7 @@ def getAuthCode():
         'response_type': 'code',
         'client_id': CLIENT_ID,
         'scope': SCOPE,
-        'countryCode': 'AU',
+        'countryCode': 'HK',
         'businessCode': 'GCB',
         'locale': 'en_US',
         'state': STATE,
@@ -93,7 +93,7 @@ def getAccToken():
     state = request.args.get('state')
     if not (code and state == STATE):
         return "<h1>Authorization code grant failed !!</h1>"
-    url = "https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/token/au/gcb"
+    url = "https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/token/hk/gcb"
 
     payload = "grant_type=authorization_code&code={0}&redirect_uri={1}".format(code, REDIRECT_URI)
 

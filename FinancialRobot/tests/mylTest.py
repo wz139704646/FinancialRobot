@@ -102,3 +102,7 @@ class MylTest(unittest.TestCase):
     def test13(self):
         redis_store.delete('access_token')
         print(redis_store.get('access_token'))
+
+    def test14(self):
+        res = GoodsDao().query_by_warehouse("5", "71dc6236-e5f8-3a12-adc9-b63f8269762a", None,"食品")
+        print(res)

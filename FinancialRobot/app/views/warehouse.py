@@ -31,12 +31,14 @@ def query_by_warehouse():
     _json = request.json
     _companyId = _json.get("companyId")
     _wareHouseId = _json.get("wareHouseId")
+    _name = _json.get('name')
+    _type = _json.get('type')
     print(_json)
     goods_dao = GoodsDao()
-    res = goods_dao.query_by_warehouse(_companyId, _wareHouseId)
+    res = goods_dao.query_by_warehouse(_companyId, _wareHouseId, _name, _type)
     size = len(res)
     if size >= 0:
-        return json.dumps(return_success({'goodsList': GoodsDao.to_dict(res)}),
+        return json.dumps(return_success({'goodsList': GoodsDao.to_ware_dict(res)}),
                           cls=DecimalEncoder, ensure_ascii=False)
     else:
         return jsonify(return_unsuccess("查询失败"))
