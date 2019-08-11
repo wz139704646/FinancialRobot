@@ -86,3 +86,16 @@ def subject_get_new_code():
             return jsonify(return_success(new_code))
     else:
         return jsonify(return_unsuccess('参数信息不完整'))
+
+
+@accounting_subjects.route("/finance/subject/addSubject", methods=["POST"])
+def subject_add_subject():
+    _json = request.json
+    # TODO 检查该科目是否已用于凭证录制
+
+    # 直接使用json作为插入数据
+    res = dao.insert_subject(_json)
+    if res[0]:
+        return jsonify(return_success(res[1]))
+    else:
+        return jsonify(return_unsuccess(res[1]))

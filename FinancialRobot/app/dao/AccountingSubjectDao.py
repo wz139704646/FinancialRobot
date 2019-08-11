@@ -82,34 +82,39 @@ class AccountingSubjectDao:
                 result = {'type': _type, 'rate': rate}
             return result
 
-    def insert_detail_subject(self, data):
+    def insert_subject(self, data):
         """
         新增明细科目
-        :param data: 字典类型，明细科目的必需数据——subject_code, name, superior_subject_code
+        :param data: 字典类型，明细科目的必需数据——subject_code, name,
+        superior_subject_code, type（最后两个其中一个可为空），type_detail（可无）
         :return: True, ——插入成功
                 False, errMsg——插入失败，错误信息
         """
         conn = MyHelper()
-        if not all([data.get('subject_code'), data.get('name'), data.get('superior_subject_code')]):
+        if not all([data.get('subject_code'), data.get('name'), data.get('superior_subject_code')])\
+                and not all([data.get('subject_code'), data.get('name'), data.get('type')]):
             return False, '科目信息不完整'
 
-        # 根据上级科目的科目代码获取该明细科目的类别和具体类别
-        subject = self.query_subject({'subject_code': data.get('superior_subject_code')})
-        if subject and len(subject):
-            subject_dict = self.accounting_subject_to_dict(subject[:1])[0]
-            data['type'] = subject_dict.get('type')
-            data['type_detail'] = subject_dict.get('type_detail')
+        if data.get('superior_subject_code'):
+            # 若新增明细科目
+            # 根据上级科目的科目代码获取该明细科目的类别和具体类别
+            subject = self.query_subject({'subject_code': data.get('superior_subject_code')})
+            if subject and len(subject):
+                subject_dict = self.accounting_subject_to_dict(subject[:1])[0]
+                data['type'] = subject_dict.get('type')
+                data['type_detail'] = subject_dict.get('type_detail')
+            else:
+                return False, '上级科目不存在'
 
-            if conn.executeUpdate(
+        if conn.executeUpdate(
                 sql="insert into accounting_subjects(subject_code, name, superior_subject_code, type, type_detail)"
                     " values(%s, %s, %s, %s, %s)",
-                param=[data.get('subject_code'), data.get('name'), data.get('superior_subject_code'), data.get('type'), data.get('type_detail')]
-            ):
-                return True
-            else:
-                return False, '科目代码重复或信息不正确'
+                param=[data.get('subject_code'), data.get('name'), data.get('superior_subject_code'), data.get('type'),
+                       data.get('type_detail')]
+        ):
+            return True, data
         else:
-            return False, '上级科目不存在'
+            return False, '科目代码重复或其他信息不正确'
 
     # TODO 递归查询有问题，不确定是否为mysql版本原因
     def query_sub_subject(self, subject_code):
