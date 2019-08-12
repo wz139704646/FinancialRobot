@@ -117,8 +117,68 @@ class GeneralVoucherDao:
     def update_voucher(self, data):
         """
         更新凭证信息
-        :param data: 同insert_voucher的参数
-        :return: tuple类型，第一个元素表示是否插入成功，若成功，则第二、第三个元素分别代表更新后的信息和更新前的信息
+        :param data: 同insert_voucher的参数，要求voucher_no必填，general_voucher其他字段选填；entries字段若存在则表示
+                    更新后的凭证的所有分录
+        :return: tuple类型，第一个元素表示是否更新成功，若成功，则第二、第三个元素分别代表更新前的信息和更新后的信息
                                                         否则，第二个元素返回出错信息
         """
-        pass
+        if not data.get('voucher_no'):
+            return False, '未给出凭证编号'
+
+        conn = MyHelper()
+        voucher = self.query_voucher({'voucher_no': data.get('voucher_no')})
+        if voucher is None:
+            return False, '凭证号错误，找不到该凭证'
+        old_data = self.general_voucher_to_dict(voucher)[0]
+        new_data = old_data.copy()
+        entries = self.query_voucher_entries(data.get('voucher_no'))
+        if entries is None:
+            entries = []
+        old_data['entries'] = self.voucher_entry_to_dict(entries)
+
+        sqls = []
+        params = []
+        # 若数据中关于凭证的其他字段不为空，则更新凭证
+        if not (data.get('date') is None and data.get('record_date') is None \
+            and data.get('attachments_number') is None and data.get('checked') is None):
+            sql = "update general_voucher set "
+            param = []
+            if data.get('date') is not None:
+                sql += "date = %s "
+                param.append(data.get('date'))
+                new_data['date'] = data.get('date')
+            if data.get('record_date') is not None:
+                sql += "record_date = %s "
+                param.append(data.get('record_date'))
+                new_data["record_date"] = data.get('record_date')
+            if data.get('attachments_number') is not None:
+                sql += "attachments_number = %s "
+                param.append(data.get('attachments_number'))
+                new_data['attachments_number'] = data.get('attachments_number')
+            if data.get('checked') is not None:
+                sql += "checked = %s "
+                param.append(data.get('checked'))
+                new_data['checked'] = data.get('checked')
+            sql += "where voucher_no = %s"
+            param.append(data.get('voucher_no'))
+            sqls.append(sql)
+            params.append(param)
+        # 若数据中含有分录字段，则更新分录，采用先全部删除，后进行添加的方式
+        if data.get('entries') and len(data.get('entries')):
+            sqls.append("delete from voucher_entry where voucher_no = %s")
+            params.append([data.get('voucher_no')])
+            for entry in data.get('entries'):
+                if not all([entry.get('abstract'), entry.get('subject_code'), entry.get('credit_debit'),
+                            entry.get('total')]):
+                    return False, '分录信息不全'
+                sqls.append("insert into voucher_entry (voucher_no, abstract, subject_code, credit_debit, total) "
+                            "values (%s, %s, %s, %s, %s)")
+                params.append([data.get("voucher_no"), entry.get('abstract'), entry.get('subject_code'),
+                               entry.get('credit_debit'), entry.get('total')])
+            new_data['entries'] = data.get('entries')
+
+        rows = conn.executeUpdateTransaction(sqls=sqls, params=params)
+        if rows:
+            return True, old_data, new_data
+
+

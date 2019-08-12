@@ -105,3 +105,10 @@ class ZjjTesst(unittest.TestCase):
                ["100901", "??????", "1009", "资产类", None]
            ]
        ))
+
+    def test8(self):
+        dict1 = {}
+        dict2 = dict1.copy()
+        dict2['hhh'] = 123
+        print('dict1', dict1)
+        print('dict2', dict2)
