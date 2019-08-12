@@ -136,19 +136,19 @@ class AccountingSubjectDao:
             param=[subject_code]
         )
 
-    def query_lv_one_sub_subject(self, subject_code):
-        """
-        查询某一科目的所有一级子科目
-        :param subject_code: 该科目的科目代码
-        :return: str类型，可能为空，空则代表无子科目
-        """
-        conn = MyHelper()
-        return conn.executeQuery(
-            sql="select * from accounting_subjects "
-                "where superior_subject_code = %s "
-                "order by subject_code asc",
-            param=[subject_code]
-        )
+    # def query_lv_one_sub_subject(self, subject_code):
+    #     """
+    #     查询某一科目的所有一级子科目
+    #     :param subject_code: 该科目的科目代码
+    #     :return: str类型，可能为空，空则代表无子科目
+    #     """
+    #     conn = MyHelper()
+    #     return conn.executeQuery(
+    #         sql="select * from accounting_subjects "
+    #             "where superior_subject_code = %s "
+    #             "order by subject_code asc",
+    #         param=[subject_code]
+    #     )
 
     def query_all_types(self):
         """

@@ -80,3 +80,35 @@ class MyHelper(object):
             print(e2)
         finally:
             self.free()
+
+    # 执行事务，若其中一句出错，则整个事务撤销
+    def executeUpdateTransaction(self, sqls=[], filename='', params=[]):
+        try:
+            self.connection()
+            if len(sqls):
+                try:
+                    rows = 0
+                    for i in range(0, len(sqls)):
+                        rows += self.cls.execute(sqls[i], params[i])
+                    self.conn.commit()
+                    return rows
+                except Exception as e1:
+                    self.conn.rollback()
+                    print("事务出错", e1)
+            elif filename:
+                with open(filename) as fr:
+                    sql_file = fr.read()
+                commands = sql_file.split(';')
+                try:
+                    rows = 0
+                    for command in commands:
+                        rows += self.cls.execute(command)
+                    self.conn.commit()
+                    return rows
+                except Exception as e2:
+                    self.conn.rollback()
+                    print("事务出错", e2)
+        except Exception as e3:
+            print("其他错误", e3)
+        finally:
+            self.free()
