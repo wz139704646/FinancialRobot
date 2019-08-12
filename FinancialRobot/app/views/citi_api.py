@@ -18,8 +18,8 @@ SCOPE = "pay_with_points accounts_details_transactions customers_profiles payees
         "internal_domestic_transfers external_domestic_transfers bill_payments Drawees Card_Payments Auto_Debit cards " \
         "onboarding reference_data reset_atm_pin statements_and_advices meta_data "
 STATE = "12321"
-REDIRECT_URI = "http://47.100.244.29/getAccToken"
-INDEX = "http://47.100.244.29"
+REDIRECT_URI = "https://www.fibot.cn/getAccToken"
+INDEX = "https://www.fibot.cn"
 
 
 def get_url(url, parameters):
