@@ -7,6 +7,7 @@ import yaml
 from app.utils.DBHelper import MyHelper
 from app.dao.AccountingSubjectDao import AccountingSubjectDao
 from app.utils.features import get_permission
+from app.dao.GeneralVoucherDao import GeneralVoucherDao
 
 
 async def main():
@@ -107,8 +108,6 @@ class ZjjTesst(unittest.TestCase):
        ))
 
     def test8(self):
-        dict1 = {}
-        dict2 = dict1.copy()
-        dict2['hhh'] = 123
-        print('dict1', dict1)
-        print('dict2', dict2)
+        dao = GeneralVoucherDao()
+        if dao.query_voucher_entries({'voucher_no': '2'}):
+            print('hhh')

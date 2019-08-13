@@ -49,13 +49,13 @@ class GeneralVoucherDao:
         :return: tuple类型, 第一个元素表示是否插入成功, 若成功第二个元素则返回所有数据, 否则第二个元素返回错误信息
         """
         conn = MyHelper()
-        if not all([data.get('date'), data.get('voucher_no'), data.get('attachments_no'), data.get('entries')]) \
-                and len(data.get('entries')) == 0:
+        if (not all([data.get('date'), data.get('voucher_no'), data.get('attachments_number') is not None, data.get('entries')])) \
+                or (data.get('entries') and len(data.get('entries')) == 0):
             return False, '凭证信息不全'
 
         sqls = ["insert into general_voucher (date, voucher_no, attachments_number) "
                 "values (%s, %s, %s)"]
-        params = [[data.get('date'), data.get('voucher_no'), data.get('attachments_no')]]
+        params = [[data.get('date'), data.get('voucher_no'), data.get('attachments_number')]]
 
         for entry in data.get('entries'):
             if not all([entry.get('abstract'), entry.get('subject_code'), entry.get('credit_debit'), entry.get('total')]):
@@ -69,7 +69,7 @@ class GeneralVoucherDao:
         if rows:
             return True, data
         else:
-            return False, '凭证或分录信息有误'
+            return False, '凭证编号重复或凭证及分录信息有误'
 
     def query_voucher(self, cond={}):
         """
@@ -100,19 +100,34 @@ class GeneralVoucherDao:
         sql += ' order by voucher_no asc'
         return conn.executeQuery(sql=sql, param=params)
 
-    def query_voucher_entries(self, voucher_no):
+    def query_voucher_entries(self, cond={}):
         """
         查询凭证的分录信息
-        :param voucher_no: 凭证编号
+        :param cond: 查询条件，可以放入任意voucher_entry表中已有的字段
         :return: tuple类型, 查询voucher_entry表中直接返回的结果
         """
         conn = MyHelper()
-        return conn.executeQuery(
-            sql="select * from voucher_entry "
-                "where voucher_no = %s "
-                "order by subject_code",
-            param=[voucher_no]
-        )
+        params = []
+
+        sql = "select * from voucher_entry where 1 = 1"
+        if cond.get('voucher_no'):
+            sql += " and voucher_no = %s"
+            params.append(cond.get('voucher_no'))
+        if cond.get('abstract'):
+            sql += " and abstract = %s"
+            params.append(cond.get('abstract'))
+        if cond.get('subject_code'):
+            sql += " and subject_code = %s"
+            params.append(cond.get('subject_code'))
+        if cond.get('credit_debit'):
+            sql += " and credit_debit = %s"
+            params.append(cond.get('credit_debit'))
+        if cond.get('total'):
+            sql += " and total = %s"
+            params.append(cond.get('total'))
+
+        sql += ' order by voucher_no, subject_code asc'
+        return conn.executeQuery(sql=sql, param=params)
 
     def update_voucher(self, data):
         """
@@ -127,12 +142,12 @@ class GeneralVoucherDao:
 
         conn = MyHelper()
         voucher = self.query_voucher({'voucher_no': data.get('voucher_no')})
-        if voucher is None:
+        if not voucher:
             return False, '凭证号错误，找不到该凭证'
         old_data = self.general_voucher_to_dict(voucher)[0]
         new_data = old_data.copy()
-        entries = self.query_voucher_entries(data.get('voucher_no'))
-        if entries is None:
+        entries = self.query_voucher_entries({'voucher_no': data.get('voucher_no')})
+        if not entries:
             entries = []
         old_data['entries'] = self.voucher_entry_to_dict(entries)
 
@@ -181,4 +196,27 @@ class GeneralVoucherDao:
         if rows:
             return True, old_data, new_data
 
+    def delete_voucher(self, voucher_no):
+        """
+        删除凭证及其分录
+        :param voucher_no: 所删除的凭证的凭证编号
+        :return: tuple类型，第一个参数为操作是否正确，第二个参数在正确时表为所删除的数据，失败时为错误信息
+        """
+        voucher = self.query_voucher({'voucher_no': voucher_no})
+        if not voucher:
+            return False, '凭证号错误，找不到该凭证'
 
+        old_data = self.general_voucher_to_dict(voucher)[0]
+        entries = self.query_voucher_entries({'voucher_no': voucher_no})
+        if not entries:
+            entries = []
+        old_data['entries'] = self.voucher_entry_to_dict(entries)
+
+        conn = MyHelper()
+        if conn.executeUpdate(
+            sql='delete from general_voucher where voucher_no = %s',
+            param=[voucher_no]
+        ):
+            return True, old_data
+        else:
+            return False, '出现未知错误，找不到该凭证'
