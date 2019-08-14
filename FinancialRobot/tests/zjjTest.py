@@ -111,3 +111,5 @@ class ZjjTesst(unittest.TestCase):
         dao = GeneralVoucherDao()
         if dao.query_voucher_entries({'voucher_no': '2'}):
             print('hhh')
+        if not all([False, True]):
+            print('aaa')
