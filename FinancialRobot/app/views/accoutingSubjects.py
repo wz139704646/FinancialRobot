@@ -4,10 +4,12 @@ from app.dao.AccountingSubjectDao import AccountingSubjectDao
 from app.utils.json_util import *
 import json
 from app.dao.AccountingSubjectDao import AccountingSubjectDao
+from app.dao.GeneralVoucherDao import GeneralVoucherDao
 
 
 accounting_subjects = Blueprint('accounting_subjects', __name__)
-dao = AccountingSubjectDao()
+a_s_dao = AccountingSubjectDao()
+g_v_dao = GeneralVoucherDao()
 
 
 def get_top_subject_code(subject_code):
@@ -16,7 +18,7 @@ def get_top_subject_code(subject_code):
 
 # 获取科目种类
 @accounting_subjects.route("/finance/subject/getTypes", methods=["GET", "POST"])
-def subject_get_grouped():
+def subject_get_types():
     _method = request.method
     if _method == 'GET':
         cond = request.args
@@ -24,9 +26,9 @@ def subject_get_grouped():
         cond = request.json
 
     if cond and cond.get('subject_code'):
-        res = dao.query_subject_type_rate(cond.get('subject_code'))
+        res = a_s_dao.query_subject_type_rate(cond.get('subject_code'))
     else:
-        res = dao.query_all_types()
+        res = a_s_dao.query_all_types()
 
     if res:
         return jsonify(return_success(res))
@@ -43,9 +45,9 @@ def subject_get_with_options():
     else:
         options = request.json
 
-    subjects = dao.query_subject(options)
+    subjects = a_s_dao.query_subject(options)
     if subjects:
-        return jsonify(return_success(dao.accounting_subject_to_dict(subjects)))
+        return jsonify(return_success(a_s_dao.accounting_subject_to_dict(subjects)))
     else:
         return jsonify(return_unsuccess('无相关科目'))
 
@@ -59,9 +61,9 @@ def subject_get_new_code():
         cond = request.json
     if cond and cond.get('subject_code'):
         code = cond.get('subject_code')
-        rows = dao.query_lv_one_sub_subject(code)
+        rows = a_s_dao.query_lv_one_sub_subject(code)
         if rows:
-            lv1_subs = dao.accounting_subject_to_dict(rows)
+            lv1_subs = a_s_dao.accounting_subject_to_dict(rows)
             suffix = []
             nums = []
             for sub in lv1_subs:
@@ -91,10 +93,15 @@ def subject_get_new_code():
 @accounting_subjects.route("/finance/subject/addSubject", methods=["POST"])
 def subject_add_subject():
     _json = request.json
-    # TODO 检查该科目是否已用于凭证录制
+
+    # 检查该科目的上级科目是否已用于凭证录制
+    if _json.get('superior_subject_code') is not None:
+        entries = g_v_dao.query_voucher_entries({'subject_code': _json.get('superior_subject_code')})
+        if entries:
+            return jsonify(return_unsuccess('科目'+_json.get('superior_subject_code')+'已用于凭证录制，不能添加明细科目'))
 
     # 直接使用json作为插入数据
-    res = dao.insert_subject(_json)
+    res = a_s_dao.insert_subject(_json)
     if res[0]:
         return jsonify(return_success(res[1]))
     else:

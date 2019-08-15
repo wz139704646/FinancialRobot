@@ -165,3 +165,72 @@ class AccountingSubjectDao:
             for row in rows:
                 result.append(row[0])
             return result
+
+    def delete_subject(self, subject_code):
+        """
+        删除科目
+        :param subject_code: 索要删除科目的科目代码
+        :return: tuple类型，第一个结果返回是否删除成功。成功时第二个返回所删除的科目信息；失败时返回错误信息
+        """
+        row = self.query_subject({'subject_code': subject_code})
+        if row:
+            conn = MyHelper()
+            res = conn.executeUpdate(
+                sql="delete from accounting_subjects where subject_code = %s",
+                param=[subject_code]
+            )
+            if res:
+                return True, row
+            else:
+                return False, '科目已有明细科目，不能直接删除'
+        else:
+            return False, '找不到该科目'
+
+    def update_subject(self, subject_code, data):
+        """
+        更新科目信息
+        :param subject_code: 所更新的科目的科目代码
+        :param data: 用于更新的新数据，字段同accounting_subjects的字段（除superior_subject_code），均为选填
+        :return: tuple类型，第一个返回值为是否更新成功。若成功，则第二、三个返回值分别为更新前的数据和更新后的数据；
+                                                        若失败，第二个返回值返回错误信息
+        """
+        if not subject_code:
+            return "缺少科目代码参数"
+        conn = MyHelper()
+        subject = self.query_subject({'subject_code': subject_code})
+        if not subject:
+            return False, "科目代码出错，找不到该科目"
+        old_data = self.accounting_subject_to_dict(subject)[0]
+        new_data = old_data.copy()
+
+        if not all([data.get('subject_code') is None, data.get('name') is None, data.get('type') is None,
+                    data.get('type_detail') is None]):
+            sql = "update accounting_subjects set "
+            param = []
+            if data.get('subject_code') is not None:
+                sql += "subject_code = %s "
+                param.append(data.get('subject_code'))
+                new_data['subject_code'] = data.get('subject_code')
+            if data.get('name') is not None:
+                sql += "name = %s "
+                param.append(data.get('name'))
+                new_data['name'] = data.get('name')
+            if data.get('type') is not None:
+                sql += "type = %s "
+                param.append(data.get('type'))
+                new_data['type'] = data.get('type')
+            if data.get('type_detail') is not None:
+                sql += "type_detail = %s "
+                param.append(data.get('type_detail'))
+                new_data['type_detail'] = data.get('type_detail')
+            sql += "where subject_code = %s"
+            param.append(subject_code)
+            row = conn.executeUpdate(sql, param)
+            if row:
+                return True, old_data, new_data
+            else:
+                return False,'科目信息错误，更新失败'
+        else:
+            return False, '缺少科目更新后的数据'
+
+

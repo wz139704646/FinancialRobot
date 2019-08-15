@@ -7,6 +7,7 @@ import yaml
 from app.utils.DBHelper import MyHelper
 from app.dao.AccountingSubjectDao import AccountingSubjectDao
 from app.utils.features import get_permission
+from app.dao.GeneralVoucherDao import GeneralVoucherDao
 
 
 async def main():
@@ -105,3 +106,10 @@ class ZjjTesst(unittest.TestCase):
                ["100901", "??????", "1009", "资产类", None]
            ]
        ))
+
+    def test8(self):
+        dao = GeneralVoucherDao()
+        if dao.query_voucher_entries({'voucher_no': '2'}):
+            print('hhh')
+        if not all([False, True]):
+            print('aaa')
