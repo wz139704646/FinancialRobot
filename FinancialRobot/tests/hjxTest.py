@@ -347,8 +347,8 @@ class Test11(unittest.TestCase):
         print(len(results))
 
     def test26(self):
-        query=PurchaseDao()
-        results=[]
+        query = PurchaseDao()
+        results = []
         idResult = query.queryAllId("5")
         size = len(idResult)
         if size == 0:
@@ -376,13 +376,14 @@ class Test11(unittest.TestCase):
                 result.append(goodsList)
                 results.append(result)
         print(results)
+
     def test30(self):
         companyId = "5"
         date = "2019-7-14"
         language = ""
         jieba.load_userdict("../app/utils/dict.txt")
         # 去除停用词
-        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少'])
+        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有"])
         today = ['今天', '这一天']
         time2 = ['昨天', '上一天']
         time3 = ['这周', '这一周']
@@ -400,22 +401,34 @@ class Test11(unittest.TestCase):
 
         text1 = "上周进了多少货"
         text2 = "今天卖了什么东西"
-        text3 = "看一下库存"
+        text3 = "查询可口可乐的库存"
+        text5 = "查一下商品库存"
         text4 = "今天花了多少钱"
         # 精确模式
-        segs = jieba.cut(text3, cut_all=False)
+        segs = jieba.cut(text5, cut_all=False)
         final = []
         for seg in segs:
             if seg not in stopwords:
                 final.append(seg)
         print(final)
+        a = 0
+        for i in range(0, len(final)):
+            if final[i] == "库存":
+                a = i - 1
+        print(final[a])
+
+    def test31(self):
+        query=SupplierDao()
+        result=query.query_byId("1f8bd444-f2c0-3bdb-bb8f-7a7b4b3f7872")
+        print(result[0][1])
+
     def test12(self):
         companyId = "5"
         date = "2019-7-14"
         language = ""
         jieba.load_userdict("../app/utils/dict.txt")
         # 去除停用词
-        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少'])
+        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有","一下"])
         today = ['今天', '这一天']
         yesterday = ['昨天', '上一天']
         this_week = ['这周', '这一周']
@@ -424,49 +437,49 @@ class Test11(unittest.TestCase):
 
         ac_in_money = ['赚', '挣', '卖', '收入', '盈利', '进账']
         ac_purchase = ['进', '买']
-        ac_query = ['查', '看', '查看']
+        ac_query = ['查', '看', '查看', "查询"]
         ac_out_money = ['花', '消费', '支出']
 
-        goods = ['东西', '商品', '货']
+        goods = ['东西', '商品', '货', "货物"]
         money = ['钱']
         store = ['库存']
 
         text1 = "上周进了多少货"
         text2 = "今天卖了什么东西"
-        text3 = "看一下库存"
+        text3 = "查一下可口可乐的库存"
         text4 = "今天花了多少钱"
         # 精确模式
-        segs = jieba.cut(text2, cut_all=False)
+        segs = jieba.cut(text3, cut_all=False)
         final = []
         for seg in segs:
             if seg not in stopwords:
                 final.append(seg)
         print(final)
-        time = 1
+        time = "today"
         for item in final:
-            if time == 1:
+            if time == "today":
                 if item in yesterday:
-                    time = 2
+                    time = "yesterday"
                 if item in this_week:
-                    time = 3
+                    time = "this_week"
                 if item in last_week:
-                    time = 4
+                    time = "last_week"
                 if item in this_month:
-                    time = 5
+                    time = "this_month"
             if item in ac_in_money:
-                action = 1
+                action = "ac_in_money"
             if item in ac_purchase:
-                action = 2
+                action = "ac_purchase"
             if item in ac_query:
-                action = 3
+                action = "ac_query"
             if item in ac_out_money:
-                action = 4
+                action = "ac_out_money"
             if item in goods:
-                nouns = 1
+                nouns = "goods"
             if item in money:
-                nouns = 2
+                nouns = "money"
             if item in store:
-                nouns = 3
+                nouns = "store"
         print(time)
         print(action)
         print(nouns)
@@ -474,31 +487,31 @@ class Test11(unittest.TestCase):
         queryPurchase = PurchaseDao()
         inputTime = datetime.datetime.strptime(date, '%Y-%m-%d')
         # 对时间进行判断
-        if time == 1:
+        if time == "today":
             delta = datetime.timedelta(days=1)
             n_days = inputTime + delta
             end = n_days.strftime('%Y-%m-%d %H:%M:%S')
             start = inputTime
-        if time == 2:
+        if time == "yesterday":
             delta = datetime.timedelta(days=1)
             n_days = inputTime - delta
             start = n_days.strftime('%Y-%m-%d %H:%M:%S')
             end = inputTime
-        if time == 3:
+        if time == "this_week":
             start = timeProcess.get_current_week(inputTime)
             delta = datetime.timedelta(days=7)
             end = start + delta
-        if time == 4:
+        if time == "last_week":
             end = timeProcess.get_current_week(inputTime)
             delta = datetime.timedelta(days=7)
             start = end - delta
-        if time == 5:
+        if time == "this_month":
             start = datetime.date(inputTime.year, inputTime.month - 1, 1)
             end = datetime.date(inputTime.year, inputTime.month, 1) - datetime.timedelta(1)
         print(start)
         print(end)
         # 对行为进行判断
-        if action == 1:
+        if action == "ac_in_money":
             resultInfo = []
             resultString = ""
             inMoney = 0
@@ -516,11 +529,11 @@ class Test11(unittest.TestCase):
                 print("未查询到数据")
             resultString = "卖出了" + str(inMoney) + "元" + ";" + "成本" + str(outMoney) + "元" + ";" + "利润" + str(
                 inMoney - outMoney) + "元"
-            if nouns == 1:
+            if nouns == "goods":
                 print(resultInfo)
-            if nouns == 2:
+            if nouns == "money":
                 print(resultString)
-        if action == 2 and nouns == 1:
+        if action == "ac_purchase" and nouns == "goods":
             result = queryPurchase.query_byDate(companyId, start, end)
             finalresult = []
             outMoneyarray = []
@@ -536,9 +549,24 @@ class Test11(unittest.TestCase):
             outString = "进货支出" + str(outMoney) + "元"
             outMoneyarray.append(outString)
             print(finalresult)
-        if action == 3 and (nouns == 1 or nouns == 3):
-            print("仓库还剩的货")
-        if action == 4 and nouns == 2:
+        if action == "ac_query" and (nouns == "goods" or nouns == "store"):
+            for i in range(0, len(final)):
+                if final[i] == "库存":
+                    a = i - 1
+            print(final[a])
+            if final[a] in goods or final[a] in ac_query:
+                data = {"companyId": "5"}
+                _resp = requests.post(url='http://127.0.0.1:5000/queryStoreGoods', json=data)
+                resp_json = _resp.text
+                print(resp_json)
+            else:
+                data = {"companyId": "5",
+                        "name":final[a]}
+                _resp = requests.post(url='http://127.0.0.1:5000/queryStoreGoods', json=data)
+                resp_json = _resp.text
+                print(resp_json)
+
+        if action == "ac_out_money" and nouns == "money":
             result = queryPurchase.query_byDate(companyId, start, end)
             outMoneyarray = []
             outMoney = 0

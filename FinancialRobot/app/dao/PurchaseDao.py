@@ -25,8 +25,9 @@ class PurchaseDao:
             res['status'] = row[1]
             res['supplierId'] = row[2]
             res['date'] = row[3]
+            res['supplierName'] = row[4]
             goodslist = []
-            for good in row[4]:
+            for good in row[5]:
                 goods = {}
                 goods['price'] = good[0]
                 goods['goodsId'] = good[1]
