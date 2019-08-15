@@ -30,12 +30,12 @@ class GoodsDao:
         conn = MyHelper()
         return conn.executeQuery("select * from Goods where id = %s", [id])
 
-    def add(self, name, sellprice, companyId, type, unitInfo):
+    def add(self, name, sellprice, companyId, type, unitInfo, barcode):
         id = uuid.uuid3(uuid.NAMESPACE_OID, str(time()))
         connection = MyHelper()
         row = connection.executeUpdate(
-            "insert into Goods (id, name, sellprice, companyId, type, unitInfo) VALUES (%s,%s,%s,%s,%s,%s)",
-            [str(id), name, sellprice, companyId, type, unitInfo])
+            "insert into Goods (id, name, sellprice, companyId, type, unitInfo,barcode) VALUES (%s,%s,%s,%s,%s,%s,%s)",
+            [str(id), name, sellprice, companyId, type, unitInfo, barcode])
         res = {"row": row, "id": id.__str__()}
         return res
 
@@ -44,10 +44,10 @@ class GoodsDao:
         row = connection.executeUpdate("update Goods set photo = %s where id = %s", [photo, _id])
         return row
 
-    def update_info(self, _id, name, sellprice, _type, unitInfo):
+    def update_info(self, _id, name, sellprice, _type, unitInfo, barcode):
         connection = MyHelper()
-        row = connection.executeUpdate("update Goods set name = %s, sellprice=%s,type=%s,unitInfo=%s "
-                                       "where id = %s", [name, sellprice, _type, unitInfo, _id])
+        row = connection.executeUpdate("update Goods set name = %s, sellprice=%s,type=%s,unitInfo=%s,barcode=%s "
+                                       "where id = %s", [name, sellprice, _type, unitInfo, barcode, _id])
         return row
 
     @classmethod

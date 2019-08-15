@@ -14,7 +14,7 @@ def addGoods():
     goods_dao = GoodsDao()
     try:
         res = goods_dao.add(_json.get('name'), _json.get('sellprice'), _json.get('companyId'),
-                            _json.get('type'), _json.get('unitInfo'))
+                            _json.get('type'), _json.get('unitInfo'), _json.get('barcode'))
         return json.dumps(return_success({"id": res["id"]}))
     except Exception as e:
         print(e)
@@ -49,7 +49,7 @@ def update_goods_info():
         return json.dumps(return_unsuccess("未找到该商品"), ensure_ascii=False)
     try:
         goods_dao.update_info(_json.get('id'), _json.get('name'), _json.get('sellprice'),
-                              _json.get('type'), _json.get('unitInfo'))
+                              _json.get('type'), _json.get('unitInfo'), _json.get('barcode'))
         return json.dumps(return_success("更新商品信息成功"), ensure_ascii=False)
     except Exception as e:
         print(e)
