@@ -3,6 +3,7 @@ import uuid
 from flask import Blueprint, render_template, request, session, jsonify
 from app.dao.PurchaseDao import PurchaseDao
 from app.dao.SupplierDao import SupplierDao
+from app.dao.GoodsDao import GoodsDao
 from app.utils.json_util import *
 
 purchase = Blueprint("purchase", __name__)
@@ -60,7 +61,8 @@ def queryPurchaseById():
 @purchase.route("/queryPurchase", methods=["POST"])
 def queryPurchase():
     query = PurchaseDao()
-    querySupplierName=SupplierDao()
+    querySupplierName = SupplierDao()
+    queryGoodsPhoto = GoodsDao()
     _json = request.json
     companyId = _json.get('companyId')
     results = []
@@ -86,12 +88,15 @@ def queryPurchase():
                 for i in range(0, len(goodsResult)):
                     status = goodsResult[i][8]
                     supplierId = goodsResult[i][3]
+                    PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][1])
+                    goodsPhoto = PhothResult[0][7]
                     NameResult = querySupplierName.query_byId(supplierId)
-                    supplierName=NameResult[0][1]
+                    supplierName = NameResult[0][1]
                     date = goodsResult[i][7]
                     goods = []
                     goods.append(goodsResult[i][6])
                     goods.append(goodsResult[i][1])
+                    goods.append(goodsPhoto)
                     goods.append(goodsResult[i][2])
                     goods.append(goodsResult[i][5])
                     goodsList.append(goods)
@@ -110,12 +115,15 @@ def queryPurchase():
         for i in range(0, len(goodsResult)):
             status = goodsResult[i][8]
             supplierId = goodsResult[i][3]
+            PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][1])
+            goodsPhoto = PhothResult[0][7]
             NameResult = querySupplierName.query_byId(supplierId)
             supplierName = NameResult[0][1]
             date = goodsResult[i][7]
             goods = []
             goods.append(goodsResult[i][6])
             goods.append(goodsResult[i][1])
+            goods.append(goodsPhoto)
             goods.append(goodsResult[i][2])
             goods.append(goodsResult[i][5])
             goodsList.append(goods)

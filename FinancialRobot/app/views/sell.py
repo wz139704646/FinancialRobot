@@ -56,6 +56,7 @@ def addSell():
 @sell.route("/querySell", methods=["POST"])
 def querySell():
     query = SellDao()
+    queryGoodsPhoto = GoodsDao()
     _json = request.json
     companyId = _json.get('companyId')
     results = []
@@ -77,9 +78,12 @@ def querySell():
                         date = goodsResult[i][6]
                         goods = []
                         goods.append(goodsResult[i][2])
+                        PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][2])
+                        goodsPhoto = PhothResult[0][7]
                         goods.append(goodsResult[i][5])
                         goods.append(goodsResult[i][4])
                         goods.append(goodsResult[i][8])
+                        goods.append(goodsPhoto)
                         goodslist.append(goods)
                     result.append(id)
                     result.append(customerId)
@@ -87,7 +91,6 @@ def querySell():
                     result.append(date)
                     result.append(goodslist)
                     results.append(result)
-
         else:
             id = _json.get('id')
             result = []
@@ -98,6 +101,8 @@ def querySell():
             goodsResult = query.query_byId(id)
             for i in range(0, len(goodsResult)):
                 customerName = goodsResult[i][7]
+                PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][2])
+                goodsPhoto = PhothResult[0][7]
                 customerId = goodsResult[i][1]
                 date = goodsResult[i][6]
                 goods = []
@@ -105,6 +110,7 @@ def querySell():
                 goods.append(goodsResult[i][5])
                 goods.append(goodsResult[i][4])
                 goods.append(goodsResult[i][8])
+                goods.append(goodsPhoto)
                 goodslist.append(goods)
             result.append(id)
             result.append(customerId)
@@ -133,6 +139,8 @@ def querySell():
                 goodsResult = query.query_byId(id)
                 for i in range(0, len(goodsResult)):
                     customerName = goodsResult[i][7]
+                    PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][2])
+                    goodsPhoto = PhothResult[0][7]
                     customerId = goodsResult[i][1]
                     date = goodsResult[i][6]
                     goods = []
@@ -140,6 +148,7 @@ def querySell():
                     goods.append(goodsResult[i][5])
                     goods.append(goodsResult[i][4])
                     goods.append(goodsResult[i][8])
+                    goods.append(goodsPhoto)
                     goodslist.append(goods)
                 result.append(id)
                 result.append(customerId)
