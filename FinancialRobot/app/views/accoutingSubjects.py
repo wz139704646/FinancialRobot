@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from app.utils.DBHelper import MyHelper
-from app.dao.AccountingSubjectDao import AccountingSubjectDao
 from app.utils.json_util import *
 import json
 from app.dao.AccountingSubjectDao import AccountingSubjectDao
@@ -50,6 +49,26 @@ def subject_get_with_options():
         return jsonify(return_success(a_s_dao.accounting_subject_to_dict(subjects)))
     else:
         return jsonify(return_unsuccess('无相关科目'))
+
+
+def set_sub_recursive(header_nodes):
+    for i in range(len(header_nodes)):
+        subs = a_s_dao.query_subject({'superior_subject_code': header_nodes[i].get('subject_code')})
+        header_nodes[i]['subs'] = a_s_dao.accounting_subject_to_dict(subs or [])
+        if len(header_nodes[i]['subs']):
+            set_sub_recursive(header_nodes[i]['subs'])
+
+
+# 获取科目的树形展示数据
+@accounting_subjects.route("/finance/subject/getSubjectsTree", methods=["GET", "POST"])
+def subject_get_tree():
+    subjects = a_s_dao.query_subject({'superior_subject_code': None})
+    if subjects:
+        tree = a_s_dao.accounting_subject_to_dict(subjects)
+        set_sub_recursive(tree)
+        return jsonify(return_success(tree))
+    else:
+        return jsonify(return_unsuccess('获取到的科目信息为空'))
 
 
 @accounting_subjects.route("/finance/subject/getNewCode", methods=["GET", "POST"])
@@ -106,3 +125,9 @@ def subject_add_subject():
         return jsonify(return_success(res[1]))
     else:
         return jsonify(return_unsuccess(res[1]))
+
+
+@accounting_subjects.route("/finance/subject/getBalance", methods=["GET", "POST"])
+def subject_get_balance():
+
+    pass

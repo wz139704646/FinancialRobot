@@ -108,8 +108,7 @@ class ZjjTesst(unittest.TestCase):
        ))
 
     def test8(self):
-        dao = GeneralVoucherDao()
-        if dao.query_voucher_entries({'voucher_no': '2'}):
-            print('hhh')
-        if not all([False, True]):
-            print('aaa')
+        dic = ["123", "456"]
+        for i in range(len(dic)):
+            dic[i] += "000"
+        print(dic)
