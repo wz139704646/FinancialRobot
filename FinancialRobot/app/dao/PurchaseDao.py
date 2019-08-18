@@ -25,13 +25,15 @@ class PurchaseDao:
             res['status'] = row[1]
             res['supplierId'] = row[2]
             res['date'] = row[3]
+            res['supplierName'] = row[4]
             goodslist = []
-            for good in row[4]:
+            for good in row[5]:
                 goods = {}
                 goods['price'] = good[0]
                 goods['goodsId'] = good[1]
-                goods['goodsName'] = good[2]
-                goods['number'] = good[3]
+                goods['goodsPhoto'] = good[2]
+                goods['goodsName'] = good[3]
+                goods['number'] = good[4]
                 goodslist.append(goods)
             res['goodsList'] = goodslist
             result.append(res)
