@@ -16,7 +16,7 @@ def addKeys(account):
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
 
-@big_db.route('/queryKeys/<string:account>', methods=['POST'])
+@big_db.route('/queryKeys/<string:account>', methods=['POST', 'GET'])
 def queryKeys(account):
     keys_dao = KeyDao()
     try:
@@ -26,7 +26,7 @@ def queryKeys(account):
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
 
-@big_db.route('/queryPublicKey/<string:account>', methods=['POST'])
+@big_db.route('/queryPublicKey/<string:account>', methods=['POST', 'GET'])
 def queryPubKey(account):
     keys_dao = KeyDao()
     try:
@@ -36,7 +36,7 @@ def queryPubKey(account):
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
 
-@big_db.route('/queryPrivateKey/<string:account>', methods=['POST'])
+@big_db.route('/queryPrivateKey/<string:account>', methods=['POST', 'GET'])
 def queryPriKey(account):
     keys_dao = KeyDao()
     try:
