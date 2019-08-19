@@ -218,6 +218,7 @@ class GeneralVoucherDao:
             entries = []
         old_data['entries'] = self.voucher_entry_to_dict(entries)
 
+        # 数据库中已定义 on delete cascade，分录无需重复删除
         conn = MyHelper()
         if conn.executeUpdate(
             sql='delete from general_voucher where voucher_no = %s',

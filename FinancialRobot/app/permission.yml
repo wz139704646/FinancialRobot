@@ -7,6 +7,7 @@ parts:
     - sell.addSell
     - sell.querySell
     - sell.querySellById
+    - sell.querySellByDate
   customer: &customer
     - customer.addCustomer
     - customer.queryAllCustomer

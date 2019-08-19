@@ -33,8 +33,9 @@ class SellDao:
                 goods['price'] = good[1]
                 goods['number'] = good[2]
                 goods['goodsName'] = good[3]
+                goods['goodsPhoto'] = good[4]
                 goodslist.append(goods)
-            res['goodslist'] =goodslist
+            res['goodsList'] =goodslist
             result.append(res)
         return result
 

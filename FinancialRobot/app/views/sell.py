@@ -56,10 +56,10 @@ def addSell():
 @sell.route("/querySell", methods=["POST"])
 def querySell():
     query = SellDao()
+    queryGoodsPhoto = GoodsDao()
     _json = request.json
     companyId = _json.get('companyId')
     results = []
-
     if _json.get('date') == None:
         if _json.get('id') == None:
             idresult = query.queryAllId()
@@ -78,9 +78,12 @@ def querySell():
                         date = goodsResult[i][6]
                         goods = []
                         goods.append(goodsResult[i][2])
+                        PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][2])
+                        goodsPhoto = PhothResult[0][7]
                         goods.append(goodsResult[i][5])
                         goods.append(goodsResult[i][4])
                         goods.append(goodsResult[i][8])
+                        goods.append(goodsPhoto)
                         goodslist.append(goods)
                     result.append(id)
                     result.append(customerId)
@@ -88,7 +91,6 @@ def querySell():
                     result.append(date)
                     result.append(goodslist)
                     results.append(result)
-
         else:
             id = _json.get('id')
             result = []
@@ -99,6 +101,8 @@ def querySell():
             goodsResult = query.query_byId(id)
             for i in range(0, len(goodsResult)):
                 customerName = goodsResult[i][7]
+                PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][2])
+                goodsPhoto = PhothResult[0][7]
                 customerId = goodsResult[i][1]
                 date = goodsResult[i][6]
                 goods = []
@@ -106,6 +110,7 @@ def querySell():
                 goods.append(goodsResult[i][5])
                 goods.append(goodsResult[i][4])
                 goods.append(goodsResult[i][8])
+                goods.append(goodsPhoto)
                 goodslist.append(goods)
             result.append(id)
             result.append(customerId)
@@ -134,6 +139,8 @@ def querySell():
                 goodsResult = query.query_byId(id)
                 for i in range(0, len(goodsResult)):
                     customerName = goodsResult[i][7]
+                    PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][2])
+                    goodsPhoto = PhothResult[0][7]
                     customerId = goodsResult[i][1]
                     date = goodsResult[i][6]
                     goods = []
@@ -141,6 +148,7 @@ def querySell():
                     goods.append(goodsResult[i][5])
                     goods.append(goodsResult[i][4])
                     goods.append(goodsResult[i][8])
+                    goods.append(goodsPhoto)
                     goodslist.append(goods)
                 result.append(id)
                 result.append(customerId)
@@ -169,3 +177,49 @@ def querySellById():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(SellDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+
+
+# 查询销售记录
+@sell.route("/querySellByDate", methods=["POST"])
+def querySellByDate():
+    query = SellDao()
+    _json = request.json
+    companyId = _json.get('companyId')
+    start = _json.get('start')
+    end = _json.get('end')
+    results = []
+    idresult = query.query_byDate(companyId, start, end)
+    size = len(idresult)
+    if size == 0:
+        return json.dumps(return_unsuccess('Error: No data'))
+    else:
+        for j in range(0, len(idresult)):
+            result = []
+            id = idresult[j][0]
+            customerName = ""
+            customerId = ""
+            date = ""
+            goodslist = []
+            goodsResult = query.query_byId(id)
+            for i in range(0, len(goodsResult)):
+                customerName = goodsResult[i][7]
+                customerId = goodsResult[i][1]
+                date = goodsResult[i][6]
+                goods = []
+                goods.append(goodsResult[i][2])
+                goods.append(goodsResult[i][5])
+                goods.append(goodsResult[i][4])
+                goods.append(goodsResult[i][8])
+                goodslist.append(goods)
+            result.append(id)
+            result.append(customerId)
+            result.append(customerName)
+            result.append(date)
+            result.append(goodslist)
+            results.append(result)
+    size = len(results)
+    # print(results)
+    if size == 0:
+        return json.dumps(return_unsuccess('Error: No data'))
+    else:
+        return json.dumps(return_success(SellDao.to_dict(results)), ensure_ascii=False, cls=DecimalEncoder)
