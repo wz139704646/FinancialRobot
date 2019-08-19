@@ -11,7 +11,8 @@ def addKeys(account):
     keys_dao = KeyDao()
     try:
         user_id = request.args.get('user_id')
-        res = keys_dao.addKeys(account, user_id)
+        description = request.args.get('description')
+        res = keys_dao.addKeys(account, user_id, description)
         if res == 1:
             return json.dumps(return_success('Add success'))
         else:
