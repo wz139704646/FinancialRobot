@@ -1,6 +1,7 @@
 import time
 import uuid
 from flask import Blueprint, render_template, request, session, jsonify
+from app.utils.DBHelper import MyHelper
 from app.dao.PurchaseDao import PurchaseDao
 from app.dao.SupplierDao import SupplierDao
 from app.dao.GoodsDao import GoodsDao
@@ -13,9 +14,10 @@ purchase.secret_key = 'secret_key_purchase'
 # 登记进货
 @purchase.route("/addPurchase", methods=["POST"])
 def addPurchase():
-    query = PurchaseDao()
-    rows = []
+    conn=MyHelper()
     _json = request.json
+    params=[]
+    sqls=[]
     companyId = _json.get('companyId')
     purchases = _json.get('purchases')
     provideNo = _json.get('supplierId')
@@ -31,16 +33,14 @@ def addPurchase():
         print(number)
         purchasePrice = puchase['price']
         print(purchasePrice)
-        row = query.add(id, goodsId, goodsName, provideNo, companyId, number, purchasePrice, date, "运")
-        rows.append(row)
-    print(rows)
-    length = 0
-    for arow in rows:
-        length += arow
-    if length == len(rows):
+        params.append([id, goodsId, goodsName, provideNo, companyId, number, purchasePrice, date, "运"])
+        sqls.append("insert into Purchase (id,goodId, goodName, supplierId, companyId, number, purchasePrice, date,status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+    rows = conn.executeUpdateTransaction(sqls=sqls, params=params)
+    if rows:
         return json.dumps(return_success(id))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
+
 
 
 # 根据Id查询进货记录
