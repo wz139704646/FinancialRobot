@@ -37,6 +37,7 @@ parts:
     - wx.getVerification
     - wx.queryUser
     - wx.bindUserWx
+    - wx.set_position
   warehouse: &warehouse
     - warehouse.store_in_warehouse
     - warehouse.query_by_warehouse
