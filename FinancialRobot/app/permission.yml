@@ -42,6 +42,7 @@ parts:
     - warehouse.query_by_warehouse
     - warehouse.addWarehouse
     - warehouse.queryWarehouse
+    - warehouse.deliver_from_warehouse
   company: &company
     - company.CompanyRegister
     - company.queryCompany

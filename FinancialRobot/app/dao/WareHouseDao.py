@@ -44,9 +44,27 @@ class WareHouseDao:
                                      [companyId, purchaseId])
             for in_good in in_goods:
                 connection.executeUpdate(
-                    "insert into GoodsStore (goodsId, wareId, companyId, number) VALUES (%s,%s,%s,%s)",
-                    [in_good[1], wareHouseId, companyId, in_good[5]])
+                    "insert into GoodsStore (goodsId, wareId, companyId, number) VALUES (%s,%s,%s,%s) "
+                    "on duplicate key update "
+                    "number = number + %s",
+                    [in_good[1], wareHouseId, companyId, in_good[5], in_goods[5]])
             return True
         except Exception as e:
             print(e)
             return False
+
+    # 入库
+    def out(self, company_id, sell_id, out_list):
+        connection = MyHelper()
+        _sql = []
+        _params = []
+        for goods in out_list:
+            goods_id = goods.get('goodsId')
+            warehouse_id = goods.get('wareHouseId')
+            number = goods.get('number')
+            _sql.append('update GoodsStore set number = number - %s where companyId = %s '
+                        'and wareId = %s and goodsId=%s')
+            _params.append([number, company_id, warehouse_id, goods_id])
+        _sql.append('update Sell set status = 1 where id = %s')
+        _params.append([sell_id])
+        return connection.executeUpdateTransaction(_sql, params=_params)

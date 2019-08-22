@@ -7,8 +7,7 @@ class UserDao:
     def to_dict(cls, data):
         result = []
         for row in data:
-            res = {'account': row[0], 'password': row[1], 'companyId': row[2], 'ID': row[3], 'position': row[4],
-                   'openid': row[5]}
+            res = {'account': row[0], 'companyId': row[2], 'ID': row[3], 'position': row[4]}
             result.append(res)
         return result
 
