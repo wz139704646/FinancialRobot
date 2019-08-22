@@ -3,6 +3,7 @@
 import time
 import uuid
 from flask import Blueprint, render_template, request, session, jsonify
+from app.utils.DBHelper import MyHelper
 from app.dao.CustomerDao import CustomerDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.SellDao import SellDao
@@ -15,11 +16,12 @@ sell.secret_key = 'secret_key_sell'
 # 插入销售记录
 @sell.route("/addSell", methods=["POST"])
 def addSell():
-    query = SellDao()
+    conn=MyHelper()
     queryCustomer = CustomerDao()
     queryGoods = GoodsDao()
     _json = request.json
-    rows = []
+    params=[]
+    sqls=[]
     companyId = _json.get('companyId')
     customerId = _json.get('customerId')
     result = queryCustomer.query_byId(customerId)
@@ -41,15 +43,16 @@ def addSell():
             goodsUnit = goodsResult[0][5]
         else:
             goodsName = ""
-        row = query.add(id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, goodsUnit)
-        rows.append(row)
-    length = 0
-    for arow in rows:
-        length += arow
-    if length == len(goodsList):
+        params.append([id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, goodsUnit])
+        sqls.append("insert into Sell (id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName,unitInfo) "
+                    "values (%s, %s, %s, %s, %s,%s, %s, %s, %s, %s)")
+
+    rows = conn.executeUpdateTransaction(sqls=sqls, params=params)
+    if rows:
         return json.dumps(return_success(id))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
+
 
 
 # 查询销售记录
