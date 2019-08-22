@@ -38,6 +38,7 @@ parts:
     - wx.queryUser
     - wx.bindUserWx
     - wx.set_position
+    - wx.get_position
   warehouse: &warehouse
     - warehouse.store_in_warehouse
     - warehouse.query_by_warehouse

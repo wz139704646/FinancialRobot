@@ -16,3 +16,15 @@ def get_permission():
     # print(permission['features'])
     # print(permission['roles'])
     return _permission
+
+
+def get_roles():
+    _all = get_permission()
+    # print(_all['roles'])
+    names = []
+    for role in _all['roles']:
+        names.append(role['name'])
+    return names
+
+
+

@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, session, jsonify
 import json
 import base64
 from app.dao.UserDao import UserDao
+from app.utils.features import get_roles
 from app.utils.json_util import *
 from qcloudsms_py import SmsSingleSender
 from qcloudsms_py.httpclient import HTTPError
@@ -60,6 +61,11 @@ def set_position():
         return json.dumps(return_success('Set position success'))
     except Exception as e:
         return json.dumps(return_unsuccess('Failed to set position ' + str(e)))
+
+
+@wx.route('/getPosition', methods=['POST', 'GET'])
+def get_position():
+    return json.dumps(return_success(get_roles()))
 
 
 @wx.route("/userRegister", methods=["POST"])
