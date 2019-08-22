@@ -27,6 +27,36 @@ class AccountingSubjectDao:
             })
         return result
 
+    @classmethod
+    def subject_balance_to_dict(cls, data):
+        """
+        将accounting_subjects natural join accounting_subject_balance中查询的结果转换为字典类型
+        :param data: 查询accounting_subjects natural join accounting_subject_balance产生的元组
+        :return: dict类型，字段名为 accounting_subjects natural join accounting_subject_balance 产生临时表的字段
+        """
+        result = []
+        rate_dict = AccountingSubjectDao.rate_for_subjects_of_types
+        for row in data:
+            stype = row[3]
+            stype_detail = row[4]
+            if stype:
+                cd_dict = rate_dict[stype]
+                if stype_detail and not cd_dict.get('credit'):
+                    cd_dict = cd_dict[stype_detail]
+                result.append({
+                    'subject_code': row[0],
+                    'name': row[1],
+                    'superior_subject_code': row[2],
+                    'type': row[3],
+                    'type_detail': row[4],
+                    'time': row[5],
+                    'opening_balance': row[6],
+                    'credit': row[7],
+                    'debit': row[8],
+                    'closing_balance': row[2] + row[3] * cd_dict['credit'] + row[4] * cd_dict['debit']
+                })
+        return result
+
     def query_subject(self, cond={}):
         """
         查询科目信息，使用条件严格查询
@@ -37,6 +67,7 @@ class AccountingSubjectDao:
         params = []
 
         sql = "select * from accounting_subjects where 1 = 1"
+        cond = cond or {}
         if cond.get('subject_code'):
             sql += " and subject_code = %s"
             params.append(cond.get('subject_code'))
@@ -233,4 +264,109 @@ class AccountingSubjectDao:
         else:
             return False, '缺少科目更新后的数据'
 
+    def query_subject_balance(self, cond):
+        """
+        查询科目余额
+        :param cond: dict类型. 字段time——查询某一期的余额，subject_code——查询科目代码指定的特定科目的余额
+        :return: dict类型. 字段time——期（时间段），subject_code——科目代码，opening_balance——期初余额，
+                            credit——期间借方发生金额，debit——期间贷方发生金额，closing_balance——期末余额
+        """
+        conn = MyHelper()
+        cond = cond or {}
+        sql = "select * from accounting_subjects natural join accounting_subjects_balance where 1 = 1"
+        params = []
+        if cond.get('time'):
+            sql += " and time = %s"
+            params.append(cond.get('time'))
+        if cond.get('subject_code'):
+            sql += " and subject_code = %s"
+            params.append(cond.get('subject_code'))
 
+        return conn.executeQuery(sql, params)
+
+    def update_subject_balance(self, data):
+        """
+        更新科目余额信息
+        :param data: 查询条件以及更新的数据，字段组成：
+        time: 期, subject_code: 科目代码, opening_balance: 期初余额,
+        credit: 借方金额变动{ way, value }, debit: 贷方金额变动{  way, value }, way: set / update，表示设定或更新
+        :return: tuple, 第一个元素表示是否成功，第二个元素是成功时的更新前数据或失败时的信息，第三个元素是新数据
+        """
+        if not all([data.get('time'), data.get('subject_code')]):
+            return False, "缺少必要参数：期数和科目代码"
+        conn = MyHelper()
+        old = self.query_subject_balance(cond={'subject_code': data.get('subject_code'), 'time': data.get('time')})
+        if not old:
+            return False, "找不到该科目余额信息"
+        old_data = self.subject_balance_to_dict(old)[0]
+        sql = "update accounting_subjects_balance set "
+        params = []
+
+        credit = data.get('credit')
+        debit = data.debit('debit')
+        if credit:
+            if credit.get('way') == 'set':
+                sql += "credit = %s, "
+                params.append(credit.get('value'))
+            elif credit.get('value') > 0:
+                sql += "credit = credit + %s, "
+                params.append(abs(credit.get('value')))
+            else:
+                sql += "credit = credit - %s, "
+                params.append(abs(credit.get('value')))
+        if debit:
+            if debit.get('way') == 'set':
+                sql += "debit = %s, "
+                params.append(debit.get('value'))
+            elif debit.get('value') > 0:
+                sql += "debit = debit + %s, "
+                params.append(abs(debit.get('value')))
+            else:
+                sql += "debit = debit - %s, "
+                params.append(abs(debit.get('value')))
+
+        sql += "time = time where time = %s and subject_code = %s"
+        params.append(data.get('time'))
+        params.append(data.get('subject_code'))
+
+        rows = conn.executeUpdate(sql, params)
+        if rows:
+            new_data = self.subject_balance_to_dict(self.query_subject_balance(
+                cond={'subject_code': data.get('subject_code'), 'time': data.get('time')}))[0]
+            return True, old_data, new_data
+        else:
+            return False, '信息出错或重复，更新无效'
+
+    def insert_subject_balance(self, data):
+        """
+        插入科目余额记录
+        :param data: dict类型，time subject_code必填, opening_balance credit debit选填
+        opening_balance不填默认为上一期期末余额或0, credit debit 不填默认0
+        :return:
+        """
+        if not all([data.get('time'), data.get('subject_code')]):
+            return False, "缺少必要参数：期数和科目代码"
+
+        conn = MyHelper()
+        sql = "insert into accounting_subjects_balance(time, subject_code, opening_balance, credit, debit) " \
+              "values(%s, %s, %s, %s, %s)"
+        params = []
+        if data.get('opening_balance') is None:
+            last = int(data.get('time')) - 1
+            if last % 100 == 0:
+                last = last - 100 + 12
+            last_balance = self.query_subject_balance({'time': str(last)})
+            if not last_balance:
+                data['opening_balance'] = 0
+            else:
+                last_balance = self.subject_balance_to_dict(last_balance)[0]
+                data['opening_balance'] = last_balance.get('closing_balance')
+        params.append(data.get('time'))
+        params.append(data.get('subject_code'))
+        params.append(data.get('opening_balance'))
+        params.append(data.get('credit') or 0)
+        params.append(data.get('debit') or 0)
+
+        rows = conn.executeUpdate(sql, params)
+        if rows:
+            return True, self.query_subject_balance({'time': data.get('time'), 'subject_code': data.get('subject_code')})

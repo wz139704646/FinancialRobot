@@ -81,6 +81,7 @@ class GeneralVoucherDao:
         params = []
 
         sql = "select * from general_voucher where 1 = 1"
+        cond = cond or {}
         if cond.get('date'):
             sql += " and date = %s"
             params.append(cond.get('date'))
@@ -159,26 +160,26 @@ class GeneralVoucherDao:
             sql = "update general_voucher set "
             param = []
             if data.get('voucher_no') is not None:
-                sql += "voucher_no = %s "
+                sql += "voucher_no = %s, "
                 param.append(data.get('voucher_no'))
                 new_data['voucher_no'] = data.get('voucher_no')
             if data.get('date') is not None:
-                sql += "date = %s "
+                sql += "date = %s, "
                 param.append(data.get('date'))
                 new_data['date'] = data.get('date')
             if data.get('record_date') is not None:
-                sql += "record_date = %s "
+                sql += "record_date = %s, "
                 param.append(data.get('record_date'))
                 new_data["record_date"] = data.get('record_date')
             if data.get('attachments_number') is not None:
-                sql += "attachments_number = %s "
+                sql += "attachments_number = %s, "
                 param.append(data.get('attachments_number'))
                 new_data['attachments_number'] = data.get('attachments_number')
             if data.get('checked') is not None:
-                sql += "checked = %s "
+                sql += "checked = %s, "
                 param.append(data.get('checked'))
                 new_data['checked'] = data.get('checked')
-            sql += "where voucher_no = %s"
+            sql += "voucher_no = voucher_no where voucher_no = %s"
             param.append(voucher_no)
             sqls.append(sql)
             params.append(param)
@@ -200,7 +201,7 @@ class GeneralVoucherDao:
         if rows:
             return True, old_data, new_data
         else:
-            return False, '凭证信息错误，更新失败'
+            return False, '凭证信息错误或重复，更新无效'
 
     def delete_voucher(self, voucher_no):
         """

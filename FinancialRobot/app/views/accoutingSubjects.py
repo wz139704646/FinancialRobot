@@ -15,6 +15,9 @@ def get_top_subject_code(subject_code):
     return subject_code[:4]
 
 
+# def
+
+
 # 获取科目种类
 @accounting_subjects.route("/finance/subject/getTypes", methods=["GET", "POST"])
 def subject_get_types():
@@ -127,7 +130,12 @@ def subject_add_subject():
         return jsonify(return_unsuccess(res[1]))
 
 
+# TODO
 @accounting_subjects.route("/finance/subject/getBalance", methods=["GET", "POST"])
 def subject_get_balance():
+    _method = request.method
+    if _method == 'GET':
+        cond = request.args
+    else:
+        cond = request.json
 
-    pass

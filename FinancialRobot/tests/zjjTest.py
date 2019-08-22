@@ -89,7 +89,7 @@ class ZjjTesst(unittest.TestCase):
         print(dict)
         dao = AccountingSubjectDao()
         print(dao.query_subject({'subject_code':'1002'}))
-        print(dao.insert_detail_subject({
+        print(dao.insert_subject({
             'subject_code': '1002002',
             'name': '银行存款-花旗银行',
             'superior_subject_code': '1002'
@@ -108,7 +108,9 @@ class ZjjTesst(unittest.TestCase):
        ))
 
     def test8(self):
-        dic = ["123", "456"]
-        for i in range(len(dic)):
-            dic[i] += "000"
-        print(dic)
+        conn = MyHelper()
+        print(conn.executeQuery('SELECT * FROM accounting_subjects WHERE FIND_IN_SET(subject_code,get_sub_subjects("1002"));'))
+
+    def test9(self):
+        conn = MyHelper()
+        print(conn.executeQuery(sql="select * from Diet01"))

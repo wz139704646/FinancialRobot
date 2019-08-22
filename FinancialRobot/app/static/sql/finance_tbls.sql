@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS general_voucher (
 
 
 CREATE TABLE IF NOT EXISTS accounting_subjects_balance(
-	time VARCHAR(7) NOT NULL,
+	time VARCHAR(6) NOT NULL,
 	subject_code VARCHAR(15) NOT NULL,
 	opening_balance DECIMAL(19, 4) NOT NULL,
 	credit DECIMAL(19, 4) NOT NULL,

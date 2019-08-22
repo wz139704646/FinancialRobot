@@ -68,7 +68,7 @@ class MyHelper(object):
             if sql:
                 self.cls.execute(sql, param)
             elif filename:
-                with open(filename) as fr:
+                with open(filename, encoding='UTF-8') as fr:
                     sql_file = fr.read()
                 commands = sql_file.split(';')
                 for command in commands:
