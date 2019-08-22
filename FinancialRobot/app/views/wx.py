@@ -42,7 +42,7 @@ def decode_token():
             user_dao = UserDao()
             try:
                 res = user_dao.query_by_account(account)
-                if len(res)==1:
+                if len(res) == 1:
                     return json.dumps(return_success(UserDao.to_dict(res)), ensure_ascii=False)
                 else:
                     return json.dumps((return_unsuccess("Error: No such user")))
@@ -50,11 +50,21 @@ def decode_token():
                 return json.dumps((return_unsuccess("Error: " + str(e))))
 
 
+@wx.route('/setPosition', methods=["POST"])
+def set_position():
+    _json = request.json
+    account = _json.get("account")
+    position = _json.get('position')
+    try:
+        UserDao().set_position(account, position)
+        return json.dumps(return_success('Set position success'))
+    except Exception as e:
+        return json.dumps(return_unsuccess('Failed to set position ' + str(e)))
+
+
 @wx.route("/userRegister", methods=["POST"])
 def userRegister():
     _json = request.json
-    print(_json)
-
     account = _json.get("account")
     res = json.loads(check_account())
     suc = res.get("success")

@@ -49,6 +49,10 @@ class UserDao:
         return helper.executeUpdate("update User set openid = %s where account = %s",
                                     [openid, account])
 
+    def set_position(self, account, position):
+        connection = MyHelper()
+        return connection.executeUpdate('update User set position = %s where account = %s', [position, account])
+
     # 权限管理
     @classmethod
     def to_permission_dict(cls, data):
