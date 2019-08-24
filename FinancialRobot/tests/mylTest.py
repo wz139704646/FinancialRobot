@@ -104,5 +104,9 @@ class MylTest(unittest.TestCase):
         print(redis_store.get('access_token'))
 
     def test14(self):
-        res = GoodsDao().query_by_warehouse("5", "71dc6236-e5f8-3a12-adc9-b63f8269762a", None,"食品")
+        res = GoodsDao().query_by_warehouse("5", None, None, None)
+        print(res)
+
+    def test15(self):
+        res = GoodsDao().query_store_by_goods_id('5','81e40a91-6554-3605-824b-d944634c1d71')
         print(res)

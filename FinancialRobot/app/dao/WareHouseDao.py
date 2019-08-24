@@ -53,7 +53,7 @@ class WareHouseDao:
             print(e)
             return False
 
-    # 入库
+    # 出库
     def out(self, company_id, sell_id, out_list):
         connection = MyHelper()
         _sql = []

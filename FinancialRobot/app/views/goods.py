@@ -18,7 +18,7 @@ def addGoods():
         return json.dumps(return_success({"id": res["id"]}))
     except Exception as e:
         print(e)
-        return json.dumps(return_unsuccess("添加商品失败"), ensure_ascii=False)
+        return json.dumps(return_unsuccess("添加商品失败 " + str(e)), ensure_ascii=False)
 
 
 # 查询商品
@@ -42,7 +42,6 @@ def queryGoods():
 @goods.route('/updateGoodsInfo', methods=['POST'])
 def update_goods_info():
     _json = request.json
-    print(_json)
     goods_dao = GoodsDao()
     res = goods_dao.query_byId(_json.get('id'))
     if len(res) is not 1:
@@ -54,3 +53,19 @@ def update_goods_info():
     except Exception as e:
         print(e)
         return json.dumps(return_unsuccess("添加商品失败"), ensure_ascii=False)
+
+
+@goods.route('/queryGoodsStoreByGoodsId', methods=['POST', 'GET'])
+def queryGoodsStoreByGoodsId():
+    _json = request.json
+    company_id = _json.get('companyId')
+    goods_id = _json.get('goodsId')
+    goods_dao = GoodsDao()
+    try:
+        res = goods_dao.query_store_by_goods_id(company_id, goods_id)
+        if len(res) > 0:
+            return json.dumps(return_success(GoodsDao.to_ware_goods_amount_dict(res)), ensure_ascii=False)
+        else:
+            return json.dumps(return_unsuccess("未找到该商品"), ensure_ascii=False)
+    except Exception as e:
+        return json.dumps(return_unsuccess("查询商品失败 "+str(e)), ensure_ascii=False)
