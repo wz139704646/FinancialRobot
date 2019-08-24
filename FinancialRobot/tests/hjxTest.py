@@ -418,9 +418,9 @@ class Test11(unittest.TestCase):
         print(final[a])
 
     def test31(self):
-        query=GoodsDao()
-        result=query.query_byId("49ac2ef6-6cd6-374c-a9f4-5d4577dd3991")
-        print(result[0][7])
+        query=SellDao()
+        result=query.query_byId("96277eb0-79a8-36b9-9b4a-f95d7b6055d0")
+        print(result)
 
     def test12(self):
         companyId = "5"
