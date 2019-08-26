@@ -74,6 +74,24 @@ def subject_get_tree():
         return jsonify(return_unsuccess('获取到的科目信息为空'))
 
 
+@accounting_subjects.route("/finance/subject/getSubSubjects", methods=["POST", "GET"])
+def subject_get_subs():
+    _method = request.method
+    if _method == 'GET':
+        cond = request.args
+    else:
+        cond = request.json
+    if cond and cond.get('subject_code'):
+        subs = a_s_dao.accounting_subject_to_dict(a_s_dao.query_sub_subject(cond.get('subject_code')))
+        if len(subs):
+            subs.sort(key=lambda item: item.get('subject_code'))
+            return jsonify(return_success(subs))
+        else:
+            return jsonify(return_unsuccess('该科目无子科目'))
+    else:
+        return jsonify(return_unsuccess('未提供科目代码'))
+
+
 @accounting_subjects.route("/finance/subject/getNewCode", methods=["GET", "POST"])
 def subject_get_new_code():
     _method = request.method
@@ -139,3 +157,6 @@ def subject_get_balance():
     else:
         cond = request.json
 
+    balance = a_s_dao.query_subject_balance(cond)
+    if len(balance):
+        return jsonify(return_success(balance))

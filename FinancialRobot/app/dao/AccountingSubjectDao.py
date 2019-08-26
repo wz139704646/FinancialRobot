@@ -32,7 +32,8 @@ class AccountingSubjectDao:
         """
         将accounting_subjects natural join accounting_subject_balance中查询的结果转换为字典类型
         :param data: 查询accounting_subjects natural join accounting_subject_balance产生的元组
-        :return: dict类型，字段名为 accounting_subjects natural join accounting_subject_balance 产生临时表的字段
+        :return: dict类型，字段名为 accounting_subjects natural join accounting_subject_balance 产生临时表的字段，
+                                加上 credit_debit（余额为借或贷方金额） 以及计算所得的期末余额
         """
         result = []
         rate_dict = AccountingSubjectDao.rate_for_subjects_of_types
@@ -53,7 +54,8 @@ class AccountingSubjectDao:
                     'opening_balance': row[6],
                     'credit': row[7],
                     'debit': row[8],
-                    'closing_balance': row[2] + row[3] * cd_dict['credit'] + row[4] * cd_dict['debit']
+                    'credit_debit': '借' if cd_dict['credit'] > 0 else '贷',
+                    'closing_balance': row[6] + row[7] * cd_dict['credit'] + row[8] * cd_dict['debit']
                 })
         return result
 
@@ -152,34 +154,30 @@ class AccountingSubjectDao:
         """
         查询某一科目的所有子科目
         :param subject_code: 该科目的科目代码
-        :return: tuple类型，该科目的所有子科目，按字符串方式进行排列
+        :return: list类型，每一个元素是该科目的所有子科目信息的tuple，按字符串方式进行排列，若返回值为空数组，则表明无子科目
         """
-        conn = MyHelper()
-        return conn.executeQuery(
-            sql="with recursive subs as "
-                "(select * from accounting_subjects where superior_subject_code = %s "
-                "union all "
-                "select * from accounting_subjects "
-                "where superior_subject_code in ("
-                "select subject_code from subs"
-                ")"
-                ")select * from subs order by subject_code asc",
-            param=[subject_code]
-        )
+        rows = self.query_subject(cond={'superior_subject_code': subject_code})
+        res = []
+        if rows:
+            res.extend(list(rows))
+        else:
+            return res
 
-    # def query_lv_one_sub_subject(self, subject_code):
-    #     """
-    #     查询某一科目的所有一级子科目
-    #     :param subject_code: 该科目的科目代码
-    #     :return: str类型，可能为空，空则代表无子科目
-    #     """
-    #     conn = MyHelper()
-    #     return conn.executeQuery(
-    #         sql="select * from accounting_subjects "
-    #             "where superior_subject_code = %s "
-    #             "order by subject_code asc",
-    #         param=[subject_code]
-    #     )
+        for row in rows:
+            res.extend(self.query_sub_subject(row[0]))
+        return res
+
+        # return conn.executeQuery(
+        #     sql="with recursive subs as "
+        #         "(select * from accounting_subjects where superior_subject_code = %s "
+        #         "union all "
+        #         "select * from accounting_subjects "
+        #         "where superior_subject_code in ("
+        #         "select subject_code from subs"
+        #         ")"
+        #         ")select * from subs order by subject_code asc",
+        #     param=[subject_code]
+        # )
 
     def query_all_types(self):
         """
@@ -267,28 +265,78 @@ class AccountingSubjectDao:
     def query_subject_balance(self, cond):
         """
         查询科目余额
-        :param cond: dict类型. 字段time——查询某一期的余额，subject_code——查询科目代码指定的特定科目的余额
-        :return: dict类型. 字段time——期（时间段），subject_code——科目代码，opening_balance——期初余额，
+        :param cond: dict类型. 字段time——查询某一期的余额，subject_code——查询科目代码指定的特定科目的余额，
+                        字段name——查询特定名称科目的余额，字段superior_subject_code——查询特定科目的下级科目的余额
+                        字段type——拆线呢特定类别的科目的余额，字段type_detail——查询特定详情类别科目的余额
+        :return: list of dict. 字段time——期（时间段），subject_code——科目代码，opening_balance——期初余额，
                             credit——期间借方发生金额，debit——期间贷方发生金额，closing_balance——期末余额
         """
-        conn = MyHelper()
-        cond = cond or {}
-        sql = "select * from accounting_subjects natural join accounting_subjects_balance where 1 = 1"
-        params = []
-        if cond.get('time'):
-            sql += " and time = %s"
-            params.append(cond.get('time'))
-        if cond.get('subject_code'):
-            sql += " and subject_code = %s"
-            params.append(cond.get('subject_code'))
+        print(cond)
+        rows = self.query_subject(cond)
+        if rows:
+            # 所查询科目存在
+            conn = MyHelper()
+            cond = cond or {}
+            subjects = self.accounting_subject_to_dict(rows)
+            res = []
+            for subject in subjects:
+                rows_sub = self.query_subject({'superior_subject_code': subject.get('subject_code')})
+                if rows_sub:
+                    # 科目有子科目
+                    # 将数额类值均初始化为0
+                    subject['opening_balance'] = 0
+                    subject['credit'] = 0
+                    subject['debit'] = 0
+                    subject['closing_balance'] = 0
+                    if cond.get('time'):
+                        # 限定了期数，则通过递归调用，将所有的子科目余额叠加作为上级科目的科目余额
+                        sub_balance = self.query_subject_balance({'time': cond.get('time'),
+                                                                  'superior_subject_code': subject.get('subject_code')})
+                        if len(sub_balance):
+                            subject['time'] = cond.get('time')
+                            subject['credit_debit'] = sub_balance[0].get('credit_debit')
+                            for bal in sub_balance:
+                                subject['opening_balance'] += bal.get('opening_balance')
+                                subject['credit'] += bal.get('credit')
+                                subject['debit'] += bal.get('debit')
+                                subject['closing_balance'] += sub_balance[0].get('closing_balance')
+                            res.append(subject)
+                    else:
+                        # 未限制期数，存在多期，需要复制多份
+                        sub_balance = self.query_subject_balance({'superior_subject_code': subject.get('subject_code')})
+                        # 时间字典
+                        time_dict = {}
+                        for bal in sub_balance:
+                            subject_time = time_dict.get(bal.get('time'))
+                            if subject_time is None:
+                                # 复制一份添加到字典中
+                                subject_time = time_dict[bal.get('time')] = subject.copy()
+                                subject_time['credit_debit'] = bal.get('credit_debit')
+                                subject_time['time'] = bal.get('time')
+                            subject_time['opening_balance'] += bal.get('opening_balance')
+                            subject_time['credit'] += bal.get('credit')
+                            subject_time['debit'] += bal.get('debit')
+                            subject_time['closing_balance'] += sub_balance[0].get('closing_balance')
+                        # 将字典的值加入返回数据
+                        res.extend(list(time_dict.values()))
+                else:
+                    # 科目无子科目
+                    sql = "select * from accounting_subjects natural join accounting_subjects_balance " \
+                          "where subject_code = %s"
+                    params = [subject.get('subject_code')]
+                    if cond.get('time'):
+                        sql += " and time = %s"
+                        params.append(cond.get('time'))
+                    sql += " order by time desc"
+                    res.extend(self.subject_balance_to_dict(list(conn.executeQuery(sql, params) or [])))
 
-        return conn.executeQuery(sql, params)
+            return res
 
     def update_subject_balance(self, data):
         """
         更新科目余额信息
         :param data: 查询条件以及更新的数据，字段组成：
-        time: 期, subject_code: 科目代码, opening_balance: 期初余额,
+        time: 期, subject_code: 科目代码, opening_balance: 期初余额, { way, value }
         credit: 借方金额变动{ way, value }, debit: 贷方金额变动{  way, value }, way: set / update，表示设定或更新
         :return: tuple, 第一个元素表示是否成功，第二个元素是成功时的更新前数据或失败时的信息，第三个元素是新数据
         """
@@ -296,44 +344,75 @@ class AccountingSubjectDao:
             return False, "缺少必要参数：期数和科目代码"
         conn = MyHelper()
         old = self.query_subject_balance(cond={'subject_code': data.get('subject_code'), 'time': data.get('time')})
-        if not old:
-            return False, "找不到该科目余额信息"
-        old_data = self.subject_balance_to_dict(old)[0]
-        sql = "update accounting_subjects_balance set "
-        params = []
+        if not len(old):
+            return False, "查不到该科目余额信息"
+        # 原科目余额的期末余额
+        closing_delta = 0
+
+        sql_update_cur = "update accounting_subjects_balance set "
+        params_cur = []
 
         credit = data.get('credit')
         debit = data.debit('debit')
+        opening_balance = data.get('opening_balance')
+
+        # 更新相应字段并重新计算期末余额
         if credit:
             if credit.get('way') == 'set':
-                sql += "credit = %s, "
-                params.append(credit.get('value'))
-            elif credit.get('value') > 0:
-                sql += "credit = credit + %s, "
-                params.append(abs(credit.get('value')))
+                sql_update_cur += "credit = %s, "
+                params_cur.append(credit.get('value'))
+                if old[0].get('credit_debit') == '借':
+                    closing_delta += credit.get('value') - old[0].get('credit')
+                else:
+                    closing_delta -= credit.get('value') - old[0].get('credit')
             else:
-                sql += "credit = credit - %s, "
-                params.append(abs(credit.get('value')))
+                sql_update_cur += "credit = credit + %s, "
+                params_cur.append(credit.get('value'))
+                if old[0].get('credit_debit') == '借':
+                    closing_delta += credit.get('value')
+                else:
+                    closing_delta -= credit.get('value')
+
         if debit:
             if debit.get('way') == 'set':
-                sql += "debit = %s, "
-                params.append(debit.get('value'))
-            elif debit.get('value') > 0:
-                sql += "debit = debit + %s, "
-                params.append(abs(debit.get('value')))
+                sql_update_cur += "debit = %s, "
+                params_cur.append(debit.get('value'))
+                if old[0].get('credit_debit') == '贷':
+                    closing_delta += debit.get('value') - old[0].get('debit')
+                else:
+                    closing_delta -= debit.get('value') - old[0].get('debit')
             else:
-                sql += "debit = debit - %s, "
-                params.append(abs(debit.get('value')))
+                sql_update_cur += "debit = debit + %s, "
+                params_cur.append(debit.get('value'))
+                if old[0].get('credit_debit') == '贷':
+                    closing_delta += debit.get('value')
+                else:
+                    closing_delta -= debit.get('value')
 
-        sql += "time = time where time = %s and subject_code = %s"
-        params.append(data.get('time'))
-        params.append(data.get('subject_code'))
+        if opening_balance:
+            if opening_balance.get('way') == 'set':
+                sql_update_cur += "opening_balance = %s, "
+                params_cur.append(opening_balance.get('value'))
+                closing_delta += opening_balance.get('value') - old[0].get('opening_balance')
+            else:
+                sql_update_cur += "opening_balance = opening_balance + %s, "
+                params_cur.append(opening_balance.get('value'))
+                closing_delta += opening_balance.get('value')
 
-        rows = conn.executeUpdate(sql, params)
+        sql_update_cur += "time = time where time = %s and subject_code = %s"
+        params_cur.append(data.get('time'))
+        params_cur.append(data.get('subject_code'))
+
+        # 用于更新当前期之后所有期的期初余额的sql语句
+        sql_update_later = "update accounting_subjects_balance set opening_balance = opening_balance + %s " \
+                           "where subject_code = %s and time > %s"
+        param_later = [closing_delta, data.get('subject_code'), data.get('time')]
+
+        rows = conn.executeUpdateTransaction(sqls=[sql_update_cur, sql_update_later], params=[params_cur, param_later])
         if rows:
             new_data = self.subject_balance_to_dict(self.query_subject_balance(
                 cond={'subject_code': data.get('subject_code'), 'time': data.get('time')}))[0]
-            return True, old_data, new_data
+            return True, old[0], new_data
         else:
             return False, '信息出错或重复，更新无效'
 
@@ -342,7 +421,7 @@ class AccountingSubjectDao:
         插入科目余额记录
         :param data: dict类型，time subject_code必填, opening_balance credit debit选填
         opening_balance不填默认为上一期期末余额或0, credit debit 不填默认0
-        :return:
+        :return: tuple类型，第一个元素为是否插入成功，第二个元素为错误时的错误信息或成功时插入的数据
         """
         if not all([data.get('time'), data.get('subject_code')]):
             return False, "缺少必要参数：期数和科目代码"
@@ -355,8 +434,8 @@ class AccountingSubjectDao:
             last = int(data.get('time')) - 1
             if last % 100 == 0:
                 last = last - 100 + 12
-            last_balance = self.query_subject_balance({'time': str(last)})
-            if not last_balance:
+            last_balance = self.query_subject_balance({'time': str(last), 'subject_code': data.get('subject_code')})
+            if not len(last_balance):
                 data['opening_balance'] = 0
             else:
                 last_balance = self.subject_balance_to_dict(last_balance)[0]
@@ -370,3 +449,5 @@ class AccountingSubjectDao:
         rows = conn.executeUpdate(sql, params)
         if rows:
             return True, self.query_subject_balance({'time': data.get('time'), 'subject_code': data.get('subject_code')})
+        else:
+            return False, '信息有误，科目余额更新失败'

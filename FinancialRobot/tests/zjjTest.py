@@ -108,9 +108,15 @@ class ZjjTesst(unittest.TestCase):
        ))
 
     def test8(self):
-        conn = MyHelper()
-        print(conn.executeQuery('SELECT * FROM accounting_subjects WHERE FIND_IN_SET(subject_code,get_sub_subjects("1002"));'))
+        dao = AccountingSubjectDao()
+        print(dao.update_subject_balance({
+            'time': '201908',
+            'subject_code': '1002002',
+            'credit': { 'way': 'update', 'value': -500}
+        }))
 
     def test9(self):
-        conn = MyHelper()
-        print(conn.executeQuery(sql="select * from Diet01"))
+        a = {'123': 'sdasds', '4503': 'asdasdasds'}
+        print(list(a.values()))
+        print(a.get(None))
+        print(list({}.values()))
