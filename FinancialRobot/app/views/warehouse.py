@@ -26,7 +26,7 @@ def store_in_warehouse():
 
 
 # 查询库存
-@warehouse.route("/queryStoreGoods", methods=["POST"])
+@warehouse.route("/queryStoreGoods", methods=["POST",'GET'])
 def query_by_warehouse():
     _json = request.json
     _companyId = _json.get("companyId")

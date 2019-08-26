@@ -79,8 +79,7 @@ class GoodsDao:
             res['sellprice'] = row[3]
             res['unitInfo'] = row[4]
             res['amount'] = row[5]
-            res['WarehouseId'] = row[6]
-            res['photo'] = row[7]
+            res['photo'] = row[6]
             result.append(res)
         return result
 
@@ -88,7 +87,7 @@ class GoodsDao:
     def query_by_warehouse(self, companyId, wareHouseId=None, name=None, _type=None):
         connection = MyHelper()
         _sql = "select Goods.id, Goods.name, Goods.type, Goods.sellprice," \
-               "Goods.unitInfo,sum(GoodsStore.number),Goods.WarehouseId, Goods.photo " \
+               "Goods.unitInfo,sum(GoodsStore.number), Goods.photo " \
                "from Goods, GoodsStore " \
                "where Goods.id=GoodsStore.goodsId and Goods.companyId = %s"
         _param = [companyId]
@@ -101,7 +100,6 @@ class GoodsDao:
         if wareHouseId:
             _sql += " and GoodsStore.wareId = %s"
             _param.append(wareHouseId)
-            return connection.executeQuery(_sql, _param)
 
         _sql += " group by Goods.id"
         return connection.executeQuery(_sql, _param)
