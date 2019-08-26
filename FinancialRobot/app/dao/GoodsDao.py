@@ -108,15 +108,16 @@ class GoodsDao:
     def to_ware_goods_amount_dict(cls, data):
         result = []
         for row in data:
-            res = {'wareHouseId': row[0], 'number': row[1]}
+            res = {'wareHouseId': row[0], 'wareHouseName': row[1], 'number': row[2]}
             result.append(res)
         return result
 
     # 根据商品号查库存
     def query_store_by_goods_id(self, company_id, goods_id):
         connection = MyHelper()
-        _sql = "select wareId, GoodsStore.number from GoodsStore where goodsId = %s and %s in " \
-               "(select goodsId from GoodsStore where companyId = %s) " \
-               "and  companyId = %s"
+        _sql = "select GoodsStore.wareId,Warehouse.name, GoodsStore.number from GoodsStore,Warehouse" \
+               " where Warehouse.id=GoodsStore.wareId and goodsId = %s and %s in " \
+               "(select GoodsStore.goodsId from GoodsStore where GoodsStore.companyId = %s) " \
+               "and  GoodsStore.companyId = %s"
         _param = [goods_id, goods_id, company_id, company_id]
         return connection.executeQuery(_sql, _param)
