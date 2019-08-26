@@ -37,11 +37,14 @@ parts:
     - wx.getVerification
     - wx.queryUser
     - wx.bindUserWx
+    - wx.set_position
+    - wx.get_position
   warehouse: &warehouse
     - warehouse.store_in_warehouse
     - warehouse.query_by_warehouse
     - warehouse.addWarehouse
     - warehouse.queryWarehouse
+    - warehouse.deliver_from_warehouse
   company: &company
     - company.CompanyRegister
     - company.queryCompany
@@ -59,6 +62,17 @@ parts:
     - inout_Money.queryDailyByDate
     - inout_Money.queryDailyByOption
     - inout_Money.checkBankStatus
+  arap: &arap
+    - arap.addPurchasePay
+    - arap.queryPurchasePay
+    - arap.addSellReceive
+    - arap.querySellReceive
+    - arap.addPayment
+    - arap.queryPayment
+    - arap.checkPayment
+    - arap.addReceive
+    - arap.queryReceive
+    - arap.checkReceive
 
 features:
   - name: &Common Common # 通用接口
@@ -87,6 +101,9 @@ features:
   - name: &Financial_Management Financial Management #财务处理
     api:
       -
+  - name: &Account_Receive_Account_Payment Account Receive Account Payment # 应收应付管理
+    api:
+      - *arap
 
 roles:
   - name: admin
@@ -97,6 +114,7 @@ roles:
       - *Purchase_Management
       - *Financial_Management
       - *Cashing_Management
+      - *Account_Receive_Account_Payment
   - name: seller
     allow_feature:
       - *Common

@@ -25,6 +25,7 @@ class SellDao:
             res['customerId'] = row[1]
             res['customerName'] = row[2]
             res['date'] = row[3]
+            res['status'] = row[5]
             goodslist=[]
             for good in row[4]:
                 goods = {}

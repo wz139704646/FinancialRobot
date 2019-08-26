@@ -8,16 +8,18 @@ class KeyDao:
     def to_dict(cls, data):
         result = []
         for row in data:
-            res = {'account': row[0], 'private_key': row[1], 'public_key': row[2]}
+            res = {'account': row[0], 'private_key': row[1], 'public_key': row[2], 'userId': row[3],
+                   'description': row[4]}
             result.append(res)
         return result
 
-    def addKeys(self, account):
+    def addKeys(self, account, userId=None, description=None):
         keys = BigchainUtils.gen_random_keypair()
         print(keys)
         connection = MyHelper()
-        return connection.executeUpdate("insert into UserKeys (account, privateKey, publicKey) VALUES (%s,%s,%s)",
-                                        [account, keys.private_key, keys.public_key])
+        return connection.executeUpdate("insert into UserKeys (account, privateKey, publicKey,userId,description)"
+                                        " VALUES (%s,%s,%s,%s,%s)",
+                                        [account, keys.private_key, keys.public_key, userId, description])
 
     def queryKeys(self, _id):
         connection = MyHelper()
@@ -29,4 +31,4 @@ class KeyDao:
 
     def query_public_key(self, _id):
         connection = MyHelper()
-        return connection.executeQuery("select publicKey from UserKeys where account = %s", [_id])
+        return connection.executeQuery("select * from UserKeys where account = %s", [_id])

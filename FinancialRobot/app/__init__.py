@@ -3,6 +3,7 @@ from app.config import MONGO_URI
 from app.views.InOutMoney import inout_Money
 from app.views.picUpload import up
 from app.views.goods import goods
+from app.views.arap import arap
 from app.views.customer import customer
 from app.views.supplier import supplier
 from app.views.company import company
@@ -22,6 +23,7 @@ def create_app():
     app = Flask(__name__)
 
     app.register_blueprint(wx)
+    app.register_blueprint(arap,url_prefix='/arap')
     app.register_blueprint(citi_api)
     app.register_blueprint(permission)
     app.register_blueprint(goods)

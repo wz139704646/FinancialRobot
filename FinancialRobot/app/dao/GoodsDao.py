@@ -79,15 +79,15 @@ class GoodsDao:
             res['sellprice'] = row[3]
             res['unitInfo'] = row[4]
             res['amount'] = row[5]
-            res['WarehouseId'] = row[6]
-            res['photo'] = row[7]
+            res['photo'] = row[6]
             result.append(res)
         return result
 
+    # 根据仓库查库存
     def query_by_warehouse(self, companyId, wareHouseId=None, name=None, _type=None):
         connection = MyHelper()
         _sql = "select Goods.id, Goods.name, Goods.type, Goods.sellprice," \
-               "Goods.unitInfo,GoodsStore.number,Goods.WarehouseId, Goods.photo " \
+               "Goods.unitInfo,sum(GoodsStore.number), Goods.photo " \
                "from Goods, GoodsStore " \
                "where Goods.id=GoodsStore.goodsId and Goods.companyId = %s"
         _param = [companyId]
@@ -100,7 +100,24 @@ class GoodsDao:
         if wareHouseId:
             _sql += " and GoodsStore.wareId = %s"
             _param.append(wareHouseId)
-            return connection.executeQuery(_sql, _param)
-        else:
-            _sql += " order by GoodsStore.wareId"
-            return connection.executeQuery(_sql, _param)
+
+        _sql += " group by Goods.id"
+        return connection.executeQuery(_sql, _param)
+
+    @classmethod
+    def to_ware_goods_amount_dict(cls, data):
+        result = []
+        for row in data:
+            res = {'wareHouseId': row[0], 'wareHouseName': row[1], 'number': row[2]}
+            result.append(res)
+        return result
+
+    # 根据商品号查库存
+    def query_store_by_goods_id(self, company_id, goods_id):
+        connection = MyHelper()
+        _sql = "select GoodsStore.wareId,Warehouse.name, GoodsStore.number from GoodsStore,Warehouse" \
+               " where Warehouse.id=GoodsStore.wareId and goodsId = %s and %s in " \
+               "(select GoodsStore.goodsId from GoodsStore where GoodsStore.companyId = %s) " \
+               "and  GoodsStore.companyId = %s"
+        _param = [goods_id, goods_id, company_id, company_id]
+        return connection.executeQuery(_sql, _param)

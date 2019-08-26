@@ -3,6 +3,7 @@
 import time
 import uuid
 from flask import Blueprint, render_template, request, session, jsonify
+from app.utils.DBHelper import MyHelper
 from app.dao.CustomerDao import CustomerDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.SellDao import SellDao
@@ -15,11 +16,12 @@ sell.secret_key = 'secret_key_sell'
 # 插入销售记录
 @sell.route("/addSell", methods=["POST"])
 def addSell():
-    query = SellDao()
+    conn=MyHelper()
     queryCustomer = CustomerDao()
     queryGoods = GoodsDao()
     _json = request.json
-    rows = []
+    params=[]
+    sqls=[]
     companyId = _json.get('companyId')
     customerId = _json.get('customerId')
     result = queryCustomer.query_byId(customerId)
@@ -41,15 +43,16 @@ def addSell():
             goodsUnit = goodsResult[0][5]
         else:
             goodsName = ""
-        row = query.add(id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, goodsUnit)
-        rows.append(row)
-    length = 0
-    for arow in rows:
-        length += arow
-    if length == len(goodsList):
+        params.append([id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, goodsUnit])
+        sqls.append("insert into Sell (id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName,unitInfo) "
+                    "values (%s, %s, %s, %s, %s,%s, %s, %s, %s, %s)")
+
+    rows = conn.executeUpdateTransaction(sqls=sqls, params=params)
+    if rows:
         return json.dumps(return_success(id))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
+
 
 
 # 查询销售记录
@@ -74,6 +77,7 @@ def querySell():
                     goodsResult = query.query_byId(id)
                     for i in range(0, len(goodsResult)):
                         customerName = goodsResult[i][7]
+                        sellStatus=goodsResult[i][10]
                         customerId = goodsResult[i][1]
                         date = goodsResult[i][6]
                         goods = []
@@ -90,6 +94,7 @@ def querySell():
                     result.append(customerName)
                     result.append(date)
                     result.append(goodslist)
+                    result.append(sellStatus)
                     results.append(result)
         else:
             id = _json.get('id')
@@ -103,6 +108,7 @@ def querySell():
                 customerName = goodsResult[i][7]
                 PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][2])
                 goodsPhoto = PhothResult[0][7]
+                sellStatus = goodsResult[i][10]
                 customerId = goodsResult[i][1]
                 date = goodsResult[i][6]
                 goods = []
@@ -117,6 +123,7 @@ def querySell():
             result.append(customerName)
             result.append(date)
             result.append(goodslist)
+            result.append(sellStatus)
             results.append(result)
     else:
         date = _json.get('date')
@@ -142,6 +149,7 @@ def querySell():
                     PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][2])
                     goodsPhoto = PhothResult[0][7]
                     customerId = goodsResult[i][1]
+                    sellStatus = goodsResult[i][10]
                     date = goodsResult[i][6]
                     goods = []
                     goods.append(goodsResult[i][2])
@@ -155,6 +163,7 @@ def querySell():
                 result.append(customerName)
                 result.append(date)
                 result.append(goodslist)
+                result.append(sellStatus)
                 results.append(result)
     size = len(results)
     # print(results)

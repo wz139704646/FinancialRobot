@@ -7,8 +7,7 @@ class UserDao:
     def to_dict(cls, data):
         result = []
         for row in data:
-            res = {'account': row[0], 'password': row[1], 'companyId': row[2], 'ID': row[3], 'position': row[4],
-                   'openid': row[5]}
+            res = {'account': row[0], 'companyId': row[2], 'ID': row[3], 'position': row[4]}
             result.append(res)
         return result
 
@@ -49,6 +48,10 @@ class UserDao:
         helper = MyHelper()
         return helper.executeUpdate("update User set openid = %s where account = %s",
                                     [openid, account])
+
+    def set_position(self, account, position):
+        connection = MyHelper()
+        return connection.executeUpdate('update User set position = %s where account = %s', [position, account])
 
     # 权限管理
     @classmethod

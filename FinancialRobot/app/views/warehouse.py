@@ -26,7 +26,7 @@ def store_in_warehouse():
 
 
 # 查询库存
-@warehouse.route("/queryStoreGoods", methods=["POST"])
+@warehouse.route("/queryStoreGoods", methods=["POST",'GET'])
 def query_by_warehouse():
     _json = request.json
     _companyId = _json.get("companyId")
@@ -43,6 +43,18 @@ def query_by_warehouse():
     else:
         return jsonify(return_unsuccess("查询失败"))
 
+
+@warehouse.route('/deliverFromWareHouse', methods=['POST'])
+def deliver_from_warehouse():
+    _json = request.json
+    _companyId = _json.get("companyId")
+    _sellId = _json.get("sellId")
+    _outList = _json.get("outList")
+    res = WareHouseDao().out(_companyId, _sellId, _outList)
+    if res:
+        return json.dumps(return_success('Out success'))
+    else:
+        return json.dumps(return_unsuccess('Out Failed'))
 
 # 添加仓库
 @warehouse.route("/addWarehouse", methods=["POST"])

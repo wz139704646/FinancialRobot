@@ -10,38 +10,53 @@ big_db.secret_key = 'bigChainDB'
 def addKeys(account):
     keys_dao = KeyDao()
     try:
-        keys_dao.addKeys(account)
-        return json.dumps(return_success('ok'))
+        user_id = request.args.get('user_id')
+        description = request.args.get('description')
+        res = keys_dao.addKeys(account, user_id, description)
+        if res == 1:
+            return json.dumps(return_success('Add success'))
+        else:
+            return json.dumps(return_success('Add failed'))
     except Exception as e:
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
 
-@big_db.route('/queryKeys/<string:account>', methods=['POST'])
+@big_db.route('/queryKeys/<string:account>', methods=['POST', 'GET'])
 def queryKeys(account):
     keys_dao = KeyDao()
     try:
         res = keys_dao.queryKeys(account)
-        return json.dumps(return_success(KeyDao.to_dict(res)))
+        if len(res) > 0:
+            return json.dumps(return_success(KeyDao.to_dict(res)))
+        else:
+            return json.dumps(return_unsuccess('No data '))
     except Exception as e:
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
 
-@big_db.route('/queryPublicKey/<string:account>', methods=['POST'])
+@big_db.route('/queryPublicKey/<string:account>', methods=['POST', 'GET'])
 def queryPubKey(account):
     keys_dao = KeyDao()
     try:
         res = keys_dao.query_public_key(account)
-        return json.dumps(return_success({'publicKey': res[0][0]}))
+        if len(res) > 0:
+            return json.dumps(return_success(KeyDao.to_dict(res)))
+        else:
+            return json.dumps(return_unsuccess('No data '))
     except Exception as e:
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
 
-@big_db.route('/queryPrivateKey/<string:account>', methods=['POST'])
+@big_db.route('/queryPrivateKey/<string:account>', methods=['POST', 'GET'])
 def queryPriKey(account):
     keys_dao = KeyDao()
     try:
         res = keys_dao.query_private_key(account)
-        return json.dumps(return_success({'privateKey': res[0][0]}))
+        if len(res) > 0:
+            return json.dumps(return_success({'privateKey': res[0][0]}))
+        else:
+            return json.dumps(return_unsuccess('No data '))
+
     except Exception as e:
         return json.dumps(return_unsuccess('Error ' + str(e)))
 
