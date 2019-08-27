@@ -110,9 +110,10 @@ class ZjjTesst(unittest.TestCase):
     def test8(self):
         dao = AccountingSubjectDao()
         print(dao.update_subject_balance({
-            'time': '201908',
+            'time': '201907',
             'subject_code': '1002002',
-            'credit': { 'way': 'update', 'value': -500}
+            'credit': {'way': 'update', 'value': 1000},
+            'debit': {'way': 'set', 'value': 0}
         }))
 
     def test9(self):

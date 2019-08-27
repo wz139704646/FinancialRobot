@@ -258,7 +258,7 @@ class AccountingSubjectDao:
             if row:
                 return True, old_data, new_data
             else:
-                return False,'科目信息错误，更新失败'
+                return False, '科目信息错误，更新失败'
         else:
             return False, '缺少科目更新后的数据'
 
@@ -271,7 +271,6 @@ class AccountingSubjectDao:
         :return: list of dict. 字段time——期（时间段），subject_code——科目代码，opening_balance——期初余额，
                             credit——期间借方发生金额，debit——期间贷方发生金额，closing_balance——期末余额
         """
-        print(cond)
         rows = self.query_subject(cond)
         if rows:
             # 所查询科目存在
@@ -353,7 +352,7 @@ class AccountingSubjectDao:
         params_cur = []
 
         credit = data.get('credit')
-        debit = data.debit('debit')
+        debit = data.get('debit')
         opening_balance = data.get('opening_balance')
 
         # 更新相应字段并重新计算期末余额
@@ -410,8 +409,8 @@ class AccountingSubjectDao:
 
         rows = conn.executeUpdateTransaction(sqls=[sql_update_cur, sql_update_later], params=[params_cur, param_later])
         if rows:
-            new_data = self.subject_balance_to_dict(self.query_subject_balance(
-                cond={'subject_code': data.get('subject_code'), 'time': data.get('time')}))[0]
+            new_data = self.query_subject_balance(
+                cond={'subject_code': data.get('subject_code'), 'time': data.get('time')})[0]
             return True, old[0], new_data
         else:
             return False, '信息出错或重复，更新无效'

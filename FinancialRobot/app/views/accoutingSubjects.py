@@ -101,7 +101,7 @@ def subject_get_new_code():
         cond = request.json
     if cond and cond.get('subject_code'):
         code = cond.get('subject_code')
-        rows = a_s_dao.query_lv_one_sub_subject(code)
+        rows = a_s_dao.query_subject({'superior_subject_code': code})
         if rows:
             lv1_subs = a_s_dao.accounting_subject_to_dict(rows)
             suffix = []
