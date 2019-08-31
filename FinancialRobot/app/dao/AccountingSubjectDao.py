@@ -232,23 +232,23 @@ class AccountingSubjectDao:
         old_data = self.accounting_subject_to_dict(subject)[0]
         new_data = old_data.copy()
 
-        if not all([data.get('subject_code') is None, data.get('name') is None, data.get('type') is None,
-                    data.get('type_detail') is None]):
+        if not all([not data.get('subject_code'), not data.get('name'), not data.get('type'),
+                    not data.get('type_detail')]):
             sql = "update accounting_subjects set "
             param = []
-            if data.get('subject_code') is not None:
+            if data.get('subject_code'):
                 sql += "subject_code = %s "
                 param.append(data.get('subject_code'))
                 new_data['subject_code'] = data.get('subject_code')
-            if data.get('name') is not None:
+            if data.get('name'):
                 sql += "name = %s "
                 param.append(data.get('name'))
                 new_data['name'] = data.get('name')
-            if data.get('type') is not None:
+            if data.get('type'):
                 sql += "type = %s "
                 param.append(data.get('type'))
                 new_data['type'] = data.get('type')
-            if data.get('type_detail') is not None:
+            if data.get('type_detail'):
                 sql += "type_detail = %s "
                 param.append(data.get('type_detail'))
                 new_data['type_detail'] = data.get('type_detail')
@@ -326,6 +326,69 @@ class AccountingSubjectDao:
                     if cond.get('time'):
                         sql += " and time = %s"
                         params.append(cond.get('time'))
+                    sql += " order by time desc"
+                    res.extend(self.subject_balance_to_dict(list(conn.executeQuery(sql, params) or [])))
+
+            return res
+
+    def query_subject_balance_by_time_range(self, cond, low=None, up=None):
+        """
+        根据时间范围查询科目余额
+        :param cond: 查询科目的限定条件
+        :param low: 时间下界（大于等于）
+        :param up: 时间上界（小于等于）
+        :return: dict类型，同query_subject_balance
+        """
+        if not low and not up:
+            return self.query_subject_balance(cond)
+        if all([low, up, low > up]):
+            return
+
+        rows = self.query_subject(cond)
+        if rows:
+            # 所查询科目存在
+            conn = MyHelper()
+            cond = cond or {}
+            subjects = self.accounting_subject_to_dict(rows)
+            res = []
+            for subject in subjects:
+                rows_sub = self.query_subject({'superior_subject_code': subject.get('subject_code')})
+                if rows_sub:
+                    # 科目有子科目
+                    # 将数额类值均初始化为0
+                    subject['opening_balance'] = 0
+                    subject['credit'] = 0
+                    subject['debit'] = 0
+                    subject['closing_balance'] = 0
+
+                    sub_balance = self.query_subject_balance_by_time_range({
+                        'superior_subject_code': subject.get('subject_code')}, low, up)
+                    # 时间字典
+                    time_dict = {}
+                    for bal in sub_balance:
+                        subject_time = time_dict.get(bal.get('time'))
+                        if subject_time is None:
+                            # 复制一份添加到字典中
+                            subject_time = time_dict[bal.get('time')] = subject.copy()
+                            subject_time['credit_debit'] = bal.get('credit_debit')
+                            subject_time['time'] = bal.get('time')
+                        subject_time['opening_balance'] += bal.get('opening_balance')
+                        subject_time['credit'] += bal.get('credit')
+                        subject_time['debit'] += bal.get('debit')
+                        subject_time['closing_balance'] += sub_balance[0].get('closing_balance')
+                    # 将字典的值加入返回数据
+                    res.extend(list(time_dict.values()))
+                else:
+                    # 科目无子科目
+                    sql = "select * from accounting_subjects natural join accounting_subjects_balance " \
+                          "where subject_code = %s"
+                    params = [subject.get('subject_code')]
+                    if low:
+                        sql += " and time >= %s"
+                        params.append(low)
+                    if up:
+                        sql += " and time <= %s"
+                        params.append(up)
                     sql += " order by time desc"
                     res.extend(self.subject_balance_to_dict(list(conn.executeQuery(sql, params) or [])))
 
@@ -415,6 +478,7 @@ class AccountingSubjectDao:
         else:
             return False, '信息出错或重复，更新无效'
 
+    # TODO 插入之前的科目余额时需要更新之后的科目余额
     def insert_subject_balance(self, data):
         """
         插入科目余额记录
@@ -433,7 +497,8 @@ class AccountingSubjectDao:
             last = int(data.get('time')) - 1
             if last % 100 == 0:
                 last = last - 100 + 12
-            last_balance = self.query_subject_balance({'time': str(last), 'subject_code': data.get('subject_code')})
+            last_balance = self.query_subject_balance_by_time_range({
+                'subject_code': data.get('subject_code')}, up=str(last))
             if not len(last_balance):
                 data['opening_balance'] = 0
             else:
@@ -447,6 +512,12 @@ class AccountingSubjectDao:
 
         rows = conn.executeUpdate(sql, params)
         if rows:
-            return True, self.query_subject_balance({'time': data.get('time'), 'subject_code': data.get('subject_code')})
+            new_data = self.query_subject_balance({'time': data.get('time'), 'subject_code': data.get('subject_code')})[0]
+            # 更新该期之后每一期的期初余额
+            conn.executeUpdate(
+                sql="update accounting_subjects_balance set opening_balance = opening_balance + %s",
+                param=[new_data.get('closing_balance')-new_data.get('opening_balance')]
+            )
+            return True, new_data
         else:
             return False, '信息有误，科目余额更新失败'
