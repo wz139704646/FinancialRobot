@@ -9,7 +9,6 @@ chardet==3.0.4
 Click==7.0
 cryptoconditions==0.8.0
 cryptography==2.3.1
-datascience
 Flask==1.0.3
 Flask-PyMongo==2.3.0
 idna==2.8
