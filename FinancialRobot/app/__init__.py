@@ -16,7 +16,10 @@ from app.views.wx import wx
 from app.views.citi_api import citi_api
 from app.utils.languageProcess import lanprocess
 from app.utils.auth import *
+from app.utils.crawler import *
+from app.utils.RegressionHelper import *
 from app.views.accoutingSubjects import accounting_subjects
+from app.views.data_analysis import *
 
 
 def create_app():
@@ -38,6 +41,7 @@ def create_app():
     app.register_blueprint(lanprocess)
     app.register_blueprint(up, url_prefix='/pic')
     app.register_blueprint(accounting_subjects)
+    app.register_blueprint(analysis_results)
 
     app.config["MONGO_URI"] = MONGO_URI
 
