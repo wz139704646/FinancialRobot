@@ -1,5 +1,5 @@
 from app.utils.DBHelper import MyHelper
-from app.utils.RegressionHelper import *
+# from app.utils.RegressionHelper import *
 from flask import Blueprint, render_template, request
 from app.dao.DataAnalysisDao import DataAnalysisDao
 from app.utils.json_util import *
@@ -52,23 +52,23 @@ def get_earnings_per_share():
         return jsonify(return_unsuccess('无法获取相关每股收益信息'))
 
 
-# 输入一个表和想预测的年份，返回拟合曲线预测的year年的值，默认表第一个列是年份
-@analysis_results.route("/data/predict", methods=["GET", "POST"])
-def predict(tbl, year):
-    regression_results = fit_line(tbl)
-    s = regression_results.item(0)
-    i = regression_results.item(1)
-    return round(year * s + i, 2)
+# # 输入一个表和想预测的年份，返回拟合曲线预测的year年的值，默认表第一个列是年份
+# @analysis_results.route("/data/predict", methods=["GET", "POST"])
+# def predict(tbl, year):
+#     regression_results = fit_line(tbl)
+#     s = regression_results.item(0)
+#     i = regression_results.item(1)
+#     return round(year * s + i, 2)
 
 
-# 返回一个表，接受两个tuple作为两列，第一列是years，第二列是值values
-@analysis_results.route("/data/createTable", methods=["GET", "POST"])
-def create_table(years_tuple, values_tuple):
-    tbl = ds.Table().with_columns(
-        'year', tuple(map(lambda x: int(x), years_tuple)),
-        'earnings', tuple(map(lambda x: float(x), values_tuple))
-    )
-    return tbl
+# # 返回一个表，接受两个tuple作为两列，第一列是years，第二列是值values
+# @analysis_results.route("/data/createTable", methods=["GET", "POST"])
+# def create_table(years_tuple, values_tuple):
+#     tbl = ds.Table().with_columns(
+#         'year', tuple(map(lambda x: int(x), years_tuple)),
+#         'earnings', tuple(map(lambda x: float(x), values_tuple))
+#     )
+#     return tbl
 
 
 # 连接销售表和商品表，并返回不同商品种类/销量占比/销售额占比的二维tuple
