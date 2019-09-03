@@ -127,7 +127,7 @@ features:
   - name: &Account_Receive_Account_Payment Account Receive Account Payment # 应收应付管理
     api:
       - *arap
-  - name: &data data # 数据分析
+  - name: &Data_Analysis Data Analysis # 数据分析
     api:
       - *data
 
@@ -141,7 +141,7 @@ roles:
       - *Financial_Management
       - *Cashing_Management
       - *Account_Receive_Account_Payment
-      - *data
+      - *Data_Analysis
   - name: seller
     allow_feature:
       - *Common
