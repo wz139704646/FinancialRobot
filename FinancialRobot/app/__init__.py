@@ -20,13 +20,15 @@ from app.utils.crawler import *
 from app.utils.RegressionHelper import *
 from app.views.accoutingSubjects import accounting_subjects
 from app.views.data_analysis import *
+from app.views.fixed_assets import fixed_assets
 
 
 def create_app():
     app = Flask(__name__)
 
     app.register_blueprint(wx)
-    app.register_blueprint(arap,url_prefix='/arap')
+    app.register_blueprint(fixed_assets)
+    app.register_blueprint(arap, url_prefix='/arap')
     app.register_blueprint(citi_api)
     app.register_blueprint(permission)
     app.register_blueprint(goods)
