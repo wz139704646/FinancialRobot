@@ -11,10 +11,10 @@ import json
 company = Blueprint("company", __name__)
 
 
-@company.before_request
-@check_token
-def res():
-    pass
+# @company.before_request
+# @check_token
+# def res():
+#     pass
 
 
 # 注册公司
