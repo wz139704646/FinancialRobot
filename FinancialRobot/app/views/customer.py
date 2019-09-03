@@ -2,11 +2,18 @@
 # -*- coding:utf-8 -*-
 from flask import Blueprint, render_template, request
 from app.dao.CustomerDao import CustomerDao
+from app.utils.auth import check_token
 from app.utils.json_util import *
 import uuid
 import json
 
 customer = Blueprint("customer", __name__)
+
+
+@customer.before_request
+@check_token
+def res():
+    pass
 
 
 # 增加客户

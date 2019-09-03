@@ -3,11 +3,18 @@
 from flask import Blueprint, render_template, request
 from app.utils.DBHelper import MyHelper
 from app.dao.CompanyDao import CompanyDao
+from app.utils.auth import check_token
 from app.utils.json_util import *
 import uuid
 import json
 
 company = Blueprint("company", __name__)
+
+
+@company.before_request
+@check_token
+def res():
+    pass
 
 
 # 注册公司

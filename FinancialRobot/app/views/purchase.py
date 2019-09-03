@@ -5,19 +5,26 @@ from app.utils.DBHelper import MyHelper
 from app.dao.PurchaseDao import PurchaseDao
 from app.dao.SupplierDao import SupplierDao
 from app.dao.GoodsDao import GoodsDao
+from app.utils.auth import check_token
 from app.utils.json_util import *
 
 purchase = Blueprint("purchase", __name__)
 purchase.secret_key = 'secret_key_purchase'
 
 
+@purchase.before_request
+@check_token
+def res():
+    pass
+
+
 # 登记进货
 @purchase.route("/addPurchase", methods=["POST"])
 def addPurchase():
-    conn=MyHelper()
+    conn = MyHelper()
     _json = request.json
-    params=[]
-    sqls=[]
+    params = []
+    sqls = []
     companyId = _json.get('companyId')
     purchases = _json.get('purchases')
     provideNo = _json.get('supplierId')
@@ -34,13 +41,13 @@ def addPurchase():
         purchasePrice = puchase['price']
         print(purchasePrice)
         params.append([id, goodsId, goodsName, provideNo, companyId, number, purchasePrice, date, "运"])
-        sqls.append("insert into Purchase (id,goodId, goodName, supplierId, companyId, number, purchasePrice, date,status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+        sqls.append(
+            "insert into Purchase (id,goodId, goodName, supplierId, companyId, number, purchasePrice, date,status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)")
     rows = conn.executeUpdateTransaction(sqls=sqls, params=params)
     if rows:
         return json.dumps(return_success(id))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
-
 
 
 # 根据Id查询进货记录

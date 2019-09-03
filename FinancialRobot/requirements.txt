@@ -19,6 +19,7 @@ MarkupSafe==1.1.1
 mysql-connector-python==8.0.13
 numpy
 pandas
+bs4
 protobuf==3.8.0
 pyasn1==0.4.5
 pycparser==2.19

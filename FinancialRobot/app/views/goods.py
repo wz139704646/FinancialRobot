@@ -1,9 +1,17 @@
 from flask import Blueprint, render_template, request, session, jsonify
+
+from app.utils.auth import check_token
 from app.utils.json_util import *
 from app.dao.GoodsDao import GoodsDao
 
 goods = Blueprint("goods", __name__)
 goods.secret_key = 'secret_key_goods'
+
+
+@goods.before_request
+@check_token
+def res():
+    pass
 
 
 # 添加商品
@@ -68,4 +76,4 @@ def queryGoodsStoreByGoodsId():
         else:
             return json.dumps(return_unsuccess("未找到该商品"), ensure_ascii=False)
     except Exception as e:
-        return json.dumps(return_unsuccess("查询商品失败 "+str(e)), ensure_ascii=False)
+        return json.dumps(return_unsuccess("查询商品失败 " + str(e)), ensure_ascii=False)

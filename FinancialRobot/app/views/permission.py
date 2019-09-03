@@ -1,9 +1,16 @@
 from flask import Blueprint, request
 from app.dao.UserDao import UserDao
+from app.utils.auth import check_token
 from app.utils.json_util import *
 
 permission = Blueprint("permission", __name__)
 permission.secret_key = 'secret_key_permission'
+
+
+@permission.before_request
+@check_token
+def res():
+    pass
 
 
 @permission.route('/addPermissionByFeatures', methods=['POST'])

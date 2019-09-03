@@ -128,7 +128,6 @@ def check_account():
 @wx.route("/login", methods=['POST', 'GET'])
 def login():
     # token登陆
-    print(request.method)
     if request.method == 'GET':
         return decode_token()
 

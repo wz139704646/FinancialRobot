@@ -47,11 +47,11 @@ def create_app():
 
     # mongo = PyMongo(app)
 
-    @app.before_request
+    # @app.before_request
     # @check_token
-    def res():
-        print(request.path)
-        # print(request.endpoint)
+    # def res():
+    #     # print(request.path)
+    #     print(request.endpoint)
 
     @app.after_request
     def after_request(response):

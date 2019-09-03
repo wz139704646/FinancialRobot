@@ -1,9 +1,19 @@
 from flask import Flask, request, redirect, Blueprint
+
+from app.utils.auth import *
 from app.utils.json_util import *
 from app.dao.ARAPDao import ARAPDao
 
 arap = Blueprint("arap", __name__)
 arap.secret_key = 'arapxxxx'
+
+
+@arap.before_request
+@check_token
+def res():
+    pass
+    # print(request.path)
+    # print(request.endpoint)
 
 
 @arap.route('/addPurchasePay', methods=['POST'])

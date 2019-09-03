@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 def check_permission(account):
     # 当前请求端点
     pre_endpoint = str(request.endpoint)
-    print(pre_endpoint)
     # 允许的功能
     allow_feature = list(UserDao().query_permission(account))  # 转list
     # 全部的功能
