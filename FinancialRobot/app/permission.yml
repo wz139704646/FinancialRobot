@@ -3,6 +3,7 @@ parts:
     - goods.addGoods
     - goods.queryGoods
     - goods.update_goods_info
+    - goods.queryGoodsStoreByGoodsId
   sell: &sell
     - sell.addSell
     - sell.querySell
