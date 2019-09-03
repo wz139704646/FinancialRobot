@@ -74,27 +74,28 @@ parts:
     - arap.queryReceive
     - arap.checkReceive
   data: &data
-    - analysis_results.time0918
-    - analysis_results.time1019
-    - analysis_results.profitRates
-    - analysis_results.earningsPerShare
-    - analysis_results.getSalesProportions
-    - analysis_results.getTotalSalesByYearAndMonth
-    - analysis_results.getOperatingIncomeByYearAndMonth
-    - analysis_results.getTotalOperatingIncome
-    - analysis_results.getOperatingExpenditureByYearAndMonth
-    - analysis_results.getOperatingExpenditureByYear
-    - analysis_results.getTotalOperatingExpenditure
-    - analysis_results.getOperatingProfits
-    - analysis_results.getTotalProfits
-    - analysis_results.getNetProfit
-    - analysis_results.getGrossProfitRate
-    - analysis_results.getNetProfitRate
-    - analysis_results.getTurnoverRate
-    - analysis_results.getDebtRate
-    - analysis_results.getLiquidRatio
-    - analysis_results.getCashRatio
-    - analysis_results.getIndustrydata
+    - analysis_results.get09_18_tuple
+    - analysis_results.get10_19_tuple
+    - analysis_results.get_asset_growth_rate_per_year
+    - analysis_results.get_earnings_per_share
+    - analysis_results.analyze_sales
+    - analysis_results.analyze_sales_by_year_and_month
+    - analysis_results.analyze_sales_by_year
+    - analysis_results.analyze_operating_income_by_year
+    - analysis_results.analyze_total_operating_income
+    - analysis_results.analyze_operating_expenditures_by_year_and_month
+    - analysis_results.analyze_operating_expenditures_by_year
+    - analysis_results.analyze_total_operating_expenditure
+    - analysis_results.analyze_operating_profits
+    - analysis_results.analyze_total_profits
+    - analysis_results.analyze_net_profit
+    - analysis_results.analyze_gross_profit_rate
+    - analysis_results.analyze_net_profit_rate
+    - analysis_results.analyze_turnover_rate
+    - analysis_results.analyze_debt_rate
+    - analysis_results.analyze_liquid_ratio_rate
+    - analysis_results.analyze_cash_ratio
+    - analysis_results.getData
 
 features:
   - name: &Common Common # 通用接口
