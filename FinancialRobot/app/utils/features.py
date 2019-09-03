@@ -26,5 +26,12 @@ def get_roles():
         names.append(role['name'])
     return names
 
+def get_features():
+    _all = get_permission()
+    # print(_all['roles'])
+    names = []
+    for feature in _all['features']:
+        names.append(feature['name'])
+    return names
 
 

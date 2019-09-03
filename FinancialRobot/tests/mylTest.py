@@ -83,11 +83,19 @@ class MylTest(unittest.TestCase):
         print(r.text)
 
     def test10(self):
-        res = UserDao().add_permission_by_role('15771000587', 'admin')
+        res = UserDao().query_all()
+        for r in res:
+            print(r[0])
+            res = UserDao().add_permission_by_role(r[0], 'admin')
+        print(res)
+
+    def test10_1(self):
+        res = UserDao().del_permission_by_role('15771000587', 'admin')
         print(res)
 
     def test11(self):
-        res = UserDao().del_permission_by_features('15771000587', ['Common'])
+        res = UserDao().del_permission_by_features('15771000587', ['Common', 'Data Analysis'])
+
         print(res)
 
     def test12(self):
@@ -108,5 +116,5 @@ class MylTest(unittest.TestCase):
         print(res)
 
     def test15(self):
-        res = GoodsDao().query_store_by_goods_id('5','81e40a91-6554-3605-824b-d944634c1d71')
+        res = GoodsDao().query_store_by_goods_id('5', '81e40a91-6554-3605-824b-d944634c1d71')
         print(res)

@@ -51,22 +51,6 @@ def decode_token():
                 return json.dumps((return_unsuccess("Error: " + str(e))))
 
 
-@wx.route('/setPosition', methods=["POST"])
-def set_position():
-    _json = request.json
-    account = _json.get("account")
-    position = _json.get('position')
-    try:
-        UserDao().set_position(account, position)
-        return json.dumps(return_success('Set position success'))
-    except Exception as e:
-        return json.dumps(return_unsuccess('Failed to set position ' + str(e)))
-
-
-@wx.route('/getPosition', methods=['POST', 'GET'])
-def get_position():
-    return json.dumps(return_success(get_roles()))
-
 
 @wx.route("/userRegister", methods=["POST"])
 def userRegister():

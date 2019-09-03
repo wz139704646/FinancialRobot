@@ -96,3 +96,12 @@ class UserDao:
                 self.add_permission_by_features(account, r['allow_feature'])
                 return
         pass
+
+    def del_permission_by_role(self, account, role):
+        roles = get_permission()['roles']
+        # print(roles)
+        for r in roles:
+            if role == r['name']:
+                self.del_permission_by_features(account, r['allow_feature'])
+                return
+        pass
