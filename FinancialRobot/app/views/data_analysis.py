@@ -16,6 +16,12 @@ import re
 analysis_results = Blueprint('analysis_results', __name__)
 
 
+@goods.before_request
+@check_token
+def res():
+    pass
+
+
 # 0 时间（年份tuple)
 @analysis_results.route("/data/time0918", methods=["GET", "POST"])
 def get09_18_tuple():

@@ -37,8 +37,6 @@ parts:
     - wx.getVerification
     - wx.queryUser
     - wx.bindUserWx
-    - wx.set_position
-    - wx.get_position
   warehouse: &warehouse
     - warehouse.store_in_warehouse
     - warehouse.query_by_warehouse
@@ -96,12 +94,28 @@ parts:
     - analysis_results.analyze_liquid_ratio_rate
     - analysis_results.analyze_cash_ratio
     - analysis_results.getData
+  fixed_assets: &fixed_assets
+    - fixed_assets.query_fixed_assets
+    - fixed_assets.add_fixed_assets
+    - fixed_assets.dep_fixed_assets
+  permission: &permission
+    - permission.addPermissionByFeatures
+    - permission.delPermissionByFeatures
+    - permission.addPermissionByRole
+    - permission.queryPermission
+    - permission.delPermissionByRole
+    - permission.queryAllFeatures
+    - permission.set_position
+    - permission.get_position
 
 features:
   - name: &Common Common # 通用接口
     api:
       - *user
       - *company
+  - name: &Permission_Management Permission Management # 权限管理
+    api:
+      - *permission
   - name: &Sell_Management Sell Management # 销售管理
     api:
       - *goods
@@ -129,12 +143,16 @@ features:
       - *arap
   - name: &Data_Analysis Data Analysis # 数据分析
     api:
-      - *Data_Analysis
+      - *data
+  - name: &Fixed_Assets_Management Fixed Assets Management # 固定资产管理
+    api:
+      - *fixed_assets
 
 roles:
   - name: admin
     allow_feature:
       - *Common
+      - *Permission_Management
       - *Sell_Management
       - *Warehouse_Management
       - *Purchase_Management
@@ -142,6 +160,7 @@ roles:
       - *Cashing_Management
       - *Account_Receive_Account_Payment
       - *Data_Analysis
+      - *Fixed_Assets_Management
   - name: seller
     allow_feature:
       - *Common
