@@ -345,7 +345,10 @@ class Test11(unittest.TestCase):
                 results.append(result)
         print(results)
         print(len(results))
-
+    def test35(self):
+        query = BankStatementDao()
+        result = query.querySumAmount()
+        print(result[0][0])
     def test26(self):
         query = PurchaseDao()
         results = []
