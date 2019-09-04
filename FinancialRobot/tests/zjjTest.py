@@ -8,6 +8,12 @@ from app.utils.DBHelper import MyHelper
 from app.dao.AccountingSubjectDao import AccountingSubjectDao
 from app.utils.features import get_permission
 from app.dao.GeneralVoucherDao import GeneralVoucherDao
+import xlwings as xw
+import numpy as np
+import imgkit
+from app.utils.finance_utils import *
+from app.views.general_voucher import magnitude_digit
+from app.utils.pic_str import *
 
 
 async def main():
@@ -108,16 +114,34 @@ class ZjjTesst(unittest.TestCase):
        ))
 
     def test8(self):
-        dao = AccountingSubjectDao()
-        print(dao.update_subject_balance({
-            'time': '201907',
-            'subject_code': '1002002',
-            'credit': {'way': 'update', 'value': 1000},
-            'debit': {'way': 'set', 'value': 0}
-        }))
+        dao = GeneralVoucherDao()
+        voucher = dao.general_voucher_to_dict(dao.query_voucher({'voucher_no': '201908001'}))
+        print(type(voucher[0].get('record_date')))
+        now = datetime.date(2019, 8, 1)
+        print(now.strftime('%Y%m%d'))
 
     def test9(self):
         a = {'123': 'sdasds', '4503': 'asdasdasds'}
         print(list(a.values()))
         print(a.get(None))
         print(list({}.values()))
+
+    # 只能在windows下使用，放弃
+    def test_xlwings_1(self):
+        f = xw.Book('')
+        sheet = f.sheets.add()
+        sheet.range('A1').value = np.zeros([2000, 1200]) + 65536
+        f.close()
+
+    def test_html2img(self):
+        path_wk = r'D:\Application\wkhtmltox\bin\wkhtmltoimage.exe'  # 安装位置
+        imgkit_config = imgkit.config(wkhtmltoimage=path_wk)
+
+        imgkit.from_url('http://baidu.com', 'D://out.jpg', config=imgkit_config)
+
+    def test_money_cap(self):
+        money = 1300.8
+        print(capitalized_amount_of_money(money))
+        print(magnitude_digit(122.2, -1))
+        print(Pic_str().create_uuid())
+        print(type(remove_exponent(1.0)))

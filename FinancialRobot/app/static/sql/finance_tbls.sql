@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS accounting_subjects(
 
 
 CREATE TABLE IF NOT EXISTS general_voucher (
-    date DATETIME NOT NULL,
+    date DATE NOT NULL,
 	record_date DATETIME NOT NULL DEFAULT NOW(),
 	voucher_no VARCHAR(10),
 	attachments_number TINYINT NOT NULL,

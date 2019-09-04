@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    .table-c {
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+        background-color: white;
+    }
+
+    .maxtd {
+        width: 170px;
+    }
+
+    .middletd {
+        width: 150px;
+    }
+
+    .mintd-blue {
+        border-right: 1.5px solid deepskyblue !important;
+    }
+
+    .mintd-red {
+        border-right: 1.5px solid orangered !important;
+    }
+
+    .mintd-m {
+        width: 3px;
+    }
+
+    .mintd, .mintd-blue, .mintd-red {
+        width: 2.5%;
+        text-align: center;
+    }
+
+    .td, .maxtd, .middletd, .mintd, .mintd-blue, .mintd-red, .mintd-m {
+        height: 40px;
+        border-left: 1px solid black;
+        border-top: 1px solid black;
+    }
+
+    .default-tr {
+        height: 40px;
+    }
+
+    .small-text {
+        font-size: small;
+    }
+
+    body td {
+        font-size: 13px;
+    }
+    .td-head {
+        font-size: 16px;
+    }
+</style>
+
+<script>
+    window.onresize = function () {
+        resize();
+    };
+    $(document).ready(function () {
+        resize();
+    });
+
+    function resize() {
+        let table = document.getElementById("maintable");
+        table.style.width = window.innerWidth * 0.65 + "px";
+        table.style.height = window.innerWidth * 0.65 / 2.8 + "px";
+    }
+</script>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Voucher Template</title>
+</head>
+<body>
+<div style="width: 100%;">
+<table style="margin: 0 auto;">
+    <tr>
+        <td colspan="27" style="text-align: center;"><h1>{{ voucher_type }}</h1></td>
+    </tr>
+    <tr>
+        <td colspan="27" style="text-align: right" class="small-text">附单据 {{ num_attachments }} 张</td>
+    </tr>
+    <tr>
+        <td colspan="5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td colspan="13" style="text-align: right; padding-left: 75px;" class="small-text">
+            <span style="margin-right: 160px;">日期: {{ date }}</span>
+        </td>
+        <td colspan="9" style="text-align: right;" class="small-text">
+            凭证号: {{ voucher_no }}&nbsp;&nbsp;&nbsp;{{ num_voucher_cur }}/{{ num_vouchers }}</td>
+    </tr>
+    <tr>
+        <td colspan="27">
+            <table class="table-c" id="maintable" cellspacing="0">
+                <tr>
+                    <td rowspan="2" class="maxtd td-head" style="text-align:center;"><h4><b>摘 要</b></h4></td>
+                    <td colspan="2" class="td td-head" style="text-align:center;"><b>科 目</b></td>
+                    <td colspan="11" class="td td-head" style="text-align: center;"><b>借 方 金 额</b></td>
+                    <td colspan="11" class="td td-head" style="text-align: center;"><b>贷 方 金 额</b></td>
+                </tr>
+                <tr>
+                    <td class="middletd td-head" style="text-align: center;"><b>科 目 代 码</b></td>
+                    <td class="maxtd td-head" style="text-align: center;"><b>会 计 科 目</b></td>
+
+                    <td class="mintd">亿</td>
+                    <td class="mintd">千</td>
+                    <td class="mintd-blue">百</td>
+                    <td class="mintd" style="border-left: 0px;">十</td>
+                    <td class="mintd">万</td>
+                    <td class="mintd-blue">千</td>
+                    <td class="mintd" style="border-left: 0px;">百</td>
+                    <td class="mintd">十</td>
+                    <td class="mintd">元</td>
+                    <td class="mintd-red">角</td>
+                    <td class="mintd" style="border-left: 0px;">分</td>
+
+                    <td class="mintd">亿</td>
+                    <td class="mintd">千</td>
+                    <td class="mintd-blue">百</td>
+                    <td class="mintd" style="border-left: 0px;">十</td>
+                    <td class="mintd">万</td>
+                    <td class="mintd-blue">千</td>
+                    <td class="mintd" style="border-left: 0px;">百</td>
+                    <td class="mintd">十</td>
+                    <td class="mintd">元</td>
+                    <td class="mintd-red">角</td>
+                    <td class="mintd" style="border-left: 0px;">分</td>
+                </tr>
+                {% for entry in entries %}
+                    <tr>
+                        <td class="maxtd">{{ entry.abstract }}</td>
+                        <td class="middletd">{{ entry.subject_code }}</td>
+                        <td class="maxtd">{{ entry.subject_name }}</td>
+                        {% if entry.credit_debit == '借' %}
+                            <td class="mintd">{{ entry.total | magnitude_digit(8) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(7) }}</td>
+                            <td class="mintd-blue">{{ entry.total | magnitude_digit(6) }}</td>
+                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(5) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(4) }}</td>
+                            <td class="mintd-blue">{{ entry.total | magnitude_digit(3) }}</td>
+                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(2) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(1) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(0) }}</td>
+                            <td class="mintd-red">{{ entry.total | magnitude_digit(-1) }}</td>
+                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(-2) }}</td>
+
+                            <td class="mintd"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd-blue"></td>
+                            <td class="mintd" style="border-left: 0px;"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd-blue"></td>
+                            <td class="mintd" style="border-left: 0px;"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd-red"></td>
+                            <td class="mintd" style="border-left: 0px;"></td>
+                        {% else %}
+                            <td class="mintd"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd-blue"></td>
+                            <td class="mintd" style="border-left: 0px;"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd-blue"></td>
+                            <td class="mintd" style="border-left: 0px;"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd-red"></td>
+                            <td class="mintd" style="border-left: 0px;"></td>
+
+                            <td class="mintd">{{ entry.total | magnitude_digit(8) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(7) }}</td>
+                            <td class="mintd-blue">{{ entry.total | magnitude_digit(6) }}</td>
+                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(5) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(4) }}</td>
+                            <td class="mintd-blue">{{ entry.total | magnitude_digit(3) }}</td>
+                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(2) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(1) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(0) }}</td>
+                            <td class="mintd-red">{{ entry.total | magnitude_digit(-1) }}</td>
+                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(-2) }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+
+                {% for i in [1, 2, 3, 4] if i > entries | length %}
+                    <tr class="default-tr">
+                        <td class="maxtd"></td>
+                        <td class="middletd"></td>
+                        <td class="maxtd"></td>
+                        {% for j in [0,1] %}
+                            <td class="mintd"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd-blue"></td>
+                            <td class="mintd" style="border-left: 0px;"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd-blue"></td>
+                            <td class="mintd" style="border-left: 0px;"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd"></td>
+                            <td class="mintd-red"></td>
+                            <td class="mintd" style="border-left: 0px;"></td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+
+
+                <tr>
+                    <td colspan="3" class="td" style="text-align: center;"><b>合计: </b>{{ total_cap }}</td>
+
+                    <td class="mintd">{{ credit_total | magnitude_digit(8) }}</td>
+                    <td class="mintd">{{ credit_total | magnitude_digit(7) }}</td>
+                    <td class="mintd-blue">{{ credit_total | magnitude_digit(6) }}</td>
+                    <td class="mintd" style="border-left: 0px;">{{ credit_total | magnitude_digit(5) }}</td>
+                    <td class="mintd">{{ credit_total | magnitude_digit(4) }}</td>
+                    <td class="mintd-blue">{{ credit_total | magnitude_digit(3) }}</td>
+                    <td class="mintd" style="border-left: 0px;">{{ credit_total | magnitude_digit(2) }}</td>
+                    <td class="mintd">{{ credit_total | magnitude_digit(1) }}</td>
+                    <td class="mintd">{{ credit_total | magnitude_digit(0) }}</td>
+                    <td class="mintd-red">{{ credit_total | magnitude_digit(-1) }}</td>
+                    <td class="mintd" style="border-left: 0px;">{{ credit_total | magnitude_digit(-2) }}</td>
+
+                    <td class="mintd">{{ debit_total | magnitude_digit(8) }}</td>
+                    <td class="mintd">{{ debit_total | magnitude_digit(7) }}</td>
+                    <td class="mintd-blue">{{ debit_total | magnitude_digit(6) }}</td>
+                    <td class="mintd" style="border-left: 0px;">{{ debit_total | magnitude_digit(5) }}</td>
+                    <td class="mintd">{{ debit_total | magnitude_digit(4) }}</td>
+                    <td class="mintd-blue">{{ debit_total | magnitude_digit(3) }}</td>
+                    <td class="mintd" style="border-left: 0px;">{{ debit_total | magnitude_digit(2) }}</td>
+                    <td class="mintd">{{ debit_total | magnitude_digit(1) }}</td>
+                    <td class="mintd">{{ debit_total | magnitude_digit(0) }}</td>
+                    <td class="mintd-red">{{ debit_total | magnitude_digit(-1) }}</td>
+                    <td class="mintd" style="border-left: 0px;">{{ debit_total | magnitude_digit(-2) }}</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr style="height: 10px;">
+        <td colspan="27"></td>
+    </tr>
+    <tr>
+        <td colspan="12" class="small-text">记账人: {{ made_by | default('') }}</td>
+        <td colspan="15" class="small-text">审核人: {{ checked_by | default('') }}</td>
+    </tr>
+
+</table>
+</div>
+</body>
+</html>

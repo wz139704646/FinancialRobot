@@ -19,4 +19,6 @@ class DecimalEncoder(json.JSONEncoder):
             return float(o)
         if isinstance(o, datetime.datetime):
             return o.strftime("%Y-%m-%d %H:%M:%S")
+        if isinstance(o, datetime.date):
+            return o.strftime("%Y-%m-%d")
         super(DecimalEncoder, self).default(o)

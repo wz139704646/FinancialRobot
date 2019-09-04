@@ -92,6 +92,23 @@ def subject_get_subs():
         return jsonify(return_unsuccess('未提供科目代码'))
 
 
+@accounting_subjects.route("/finance/subject/getTop", methods=["GET", "POST"])
+def subject_get_top_subject():
+    _method = request.method
+    if _method == 'GET':
+        cond = request.args
+    else:
+        cond = request.json
+
+    if not cond.get('subject_code'):
+        return jsonify(return_unsuccess('参数不全，未给出科目代码'))
+    top = a_s_dao.query_top_subject(cond.get('subject_code'))
+    if top:
+        return jsonify(return_success(top))
+    else:
+        return jsonify(return_unsuccess('无相关科目信息'))
+
+
 @accounting_subjects.route("/finance/subject/getNewCode", methods=["GET", "POST"])
 def subject_get_new_code():
     _method = request.method
@@ -148,7 +165,6 @@ def subject_add_subject():
         return jsonify(return_unsuccess(res[1]))
 
 
-# TODO
 @accounting_subjects.route("/finance/subject/getBalance", methods=["GET", "POST"])
 def subject_get_balance():
     _method = request.method
@@ -159,4 +175,42 @@ def subject_get_balance():
 
     balance = a_s_dao.query_subject_balance(cond)
     if len(balance):
-        return jsonify(return_success(balance))
+        return json.dumps(return_success(balance), cls=DecimalEncoder)
+    else:
+        return jsonify(return_unsuccess("无相关科目余额信息"))
+
+
+@accounting_subjects.route("/finance/subject/getBalanceWithTimeRange", methods=["GET", "POST"])
+def subject_get_balance_with_time_range():
+    _method = request.method
+    if _method == 'GET':
+        cond = request.args
+    else:
+        cond = request.json
+
+    balance = a_s_dao.query_subject_balance_by_time_range(cond, cond.get('low'), cond.get('up'))
+    if len(balance):
+        return json.dumps(return_success(balance), cls=DecimalEncoder)
+    else:
+        return jsonify(return_unsuccess('该条件下无相关科目信息'))
+
+
+@accounting_subjects.route("/finance/subject/setBalance", methods=["POST"])
+def subject_set_balance():
+    data = request.json
+    update_res = a_s_dao.update_subject_balance(data)
+    if update_res[0]:
+        return json.dumps(return_success({'old': update_res[1], 'new': update_res[2]}), cls=DecimalEncoder)
+    else:
+        return jsonify(return_unsuccess(update_res[1]))
+
+
+@accounting_subjects.route("/finance/subject/addBalance", methods=["POST"])
+def subject_add_balance():
+    data = request.json
+    insert_res = a_s_dao.insert_subject_balance(data)
+    if insert_res[0]:
+        return json.dumps(return_success(insert_res[1]), cls=DecimalEncoder)
+    else:
+        return jsonify(return_unsuccess(insert_res[1]))
+

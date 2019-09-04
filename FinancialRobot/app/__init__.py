@@ -17,6 +17,7 @@ from app.views.citi_api import citi_api
 from app.utils.languageProcess import lanprocess
 from app.utils.auth import *
 from app.views.accoutingSubjects import accounting_subjects
+from app.views.general_voucher import general_voucher
 
 
 def create_app():
@@ -38,6 +39,7 @@ def create_app():
     app.register_blueprint(lanprocess)
     app.register_blueprint(up, url_prefix='/pic')
     app.register_blueprint(accounting_subjects)
+    app.register_blueprint(general_voucher)
 
     app.config["MONGO_URI"] = MONGO_URI
 
