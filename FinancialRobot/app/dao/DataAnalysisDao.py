@@ -58,3 +58,6 @@ class DataAnalysisDao:
 
     def query_cash(self):
         return MyHelper().executeQuery("select * from Diet01 where Diet01.`﻿info` = '现金及存放中央银行款项';")
+
+    def query_goods_in_warehouse(self):
+        return MyHelper().executeQuery("select type, sum(sellprice*number) from Goods, GoodsStore where Goods.id = goodsId group by type;")

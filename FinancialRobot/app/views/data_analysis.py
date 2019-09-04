@@ -377,3 +377,15 @@ def getData():
     dict_of_name_and_value = {names[i]: values[i] for i in range(7)}
     print(dict_of_name_and_value)
     return jsonify(return_success(dict_of_name_and_value))
+
+
+# 查看仓库不同种类商品价值比例
+@analysis_results.route("/data/getRatioOfGoodsInWarehouse", methods=["GET", "POST"])
+def analyze_goods_ratio():
+    info = DataAnalysisDao().query_goods_in_warehouse()
+    dict_of_type_and_ratio = {t: float(0) for t in ['食品类', '日用品类', '其他类', '电子类']}
+    for tu in info:
+        dict_of_type_and_ratio[str(tu[0])] = float(tu[1])
+    if not dict_of_type_and_ratio:
+        return jsonify(return_unsuccess('无法获取仓库信息'))
+    return jsonify(return_success(dict_of_type_and_ratio))
