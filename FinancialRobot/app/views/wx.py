@@ -51,6 +51,16 @@ def decode_token():
                 return json.dumps((return_unsuccess("Error: " + str(e))))
 
 
+@wx.route('/querySelfPermission', methods=['GET', 'POST'])
+def query_self_permission():
+    res = json.loads(decode_token()).get('result')
+    try:
+        account = res[0]['account']
+        features = UserDao().query_permission(account)
+        return jsonify(return_success(UserDao.to_permission_dict(features)))
+    except Exception as e:
+        return jsonify(return_unsuccess('Query Failed :' + str(e)))
+
 
 @wx.route("/userRegister", methods=["POST"])
 def userRegister():
@@ -96,7 +106,7 @@ def userRegister():
         return json.dumps(return_unsuccess("注册失败"), ensure_ascii=False)
 
 
-@wx.route("/checkAccount")
+@wx.route("/checkAccount", methods=["POST", 'GET'])
 def check_account():
     account = request.json.get('account')
     # 到数据库中进行查询
