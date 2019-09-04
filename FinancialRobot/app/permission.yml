@@ -95,6 +95,7 @@ parts:
     - analysis_results.analyze_liquid_ratio_rate
     - analysis_results.analyze_cash_ratio
     - analysis_results.getData
+    - analysis_results.analyze_goods_ratio
   fixed_assets: &fixed_assets
     - fixed_assets.query_fixed_assets
     - fixed_assets.add_fixed_assets

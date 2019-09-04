@@ -8,7 +8,7 @@ goods = Blueprint("goods", __name__)
 goods.secret_key = 'secret_key_goods'
 
 
-@goods.before_request
+@goods.before_request   
 @check_token
 def res():
     pass
