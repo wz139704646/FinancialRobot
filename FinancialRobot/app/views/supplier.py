@@ -2,11 +2,18 @@
 # -*- coding:utf-8 -*-
 from flask import Blueprint, render_template, request
 from app.dao.SupplierDao import SupplierDao
+from app.utils.auth import check_token
 from app.utils.json_util import *
 import uuid
 import json
 
 supplier = Blueprint("supplier", __name__)
+
+
+@supplier.before_request
+@check_token
+def res():
+    pass
 
 
 # 增加供应商

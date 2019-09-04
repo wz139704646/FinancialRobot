@@ -1,7 +1,8 @@
 from app.utils.DBHelper import MyHelper
-from app.utils.RegressionHelper import *
+# from app.utils.RegressionHelper import *
 from flask import Blueprint, render_template, request
 from app.dao.DataAnalysisDao import DataAnalysisDao
+from app.utils.auth import check_token
 from app.utils.json_util import *
 from flask import Blueprint, render_template, request, session, jsonify
 from app.utils.json_util import *
@@ -16,10 +17,16 @@ import re
 analysis_results = Blueprint('analysis_results', __name__)
 
 
+@analysis_results.before_request
+@check_token
+def res():
+    pass
+
+
 # 0 时间（年份tuple)
 @analysis_results.route("/data/time0918", methods=["GET", "POST"])
 def get09_18_tuple():
-    res = {x: x+2009 for x in range(0, 10)}
+    res = {x: x + 2009 for x in range(0, 10)}
     return jsonify(return_success(res))
 
 
@@ -52,23 +59,23 @@ def get_earnings_per_share():
         return jsonify(return_unsuccess('无法获取相关每股收益信息'))
 
 
-# 输入一个表和想预测的年份，返回拟合曲线预测的year年的值，默认表第一个列是年份
-@analysis_results.route("/data/predict", methods=["GET", "POST"])
-def predict(tbl, year):
-    regression_results = fit_line(tbl)
-    s = regression_results.item(0)
-    i = regression_results.item(1)
-    return round(year * s + i, 2)
+# # 输入一个表和想预测的年份，返回拟合曲线预测的year年的值，默认表第一个列是年份
+# @analysis_results.route("/data/predict", methods=["GET", "POST"])
+# def predict(tbl, year):
+#     regression_results = fit_line(tbl)
+#     s = regression_results.item(0)
+#     i = regression_results.item(1)
+#     return round(year * s + i, 2)
 
 
-# 返回一个表，接受两个tuple作为两列，第一列是years，第二列是值values
-@analysis_results.route("/data/createTable", methods=["GET", "POST"])
-def create_table(years_tuple, values_tuple):
-    tbl = ds.Table().with_columns(
-        'year', tuple(map(lambda x: int(x), years_tuple)),
-        'earnings', tuple(map(lambda x: float(x), values_tuple))
-    )
-    return tbl
+# # 返回一个表，接受两个tuple作为两列，第一列是years，第二列是值values
+# @analysis_results.route("/data/createTable", methods=["GET", "POST"])
+# def create_table(years_tuple, values_tuple):
+#     tbl = ds.Table().with_columns(
+#         'year', tuple(map(lambda x: int(x), years_tuple)),
+#         'earnings', tuple(map(lambda x: float(x), values_tuple))
+#     )
+#     return tbl
 
 
 # 连接销售表和商品表，并返回不同商品种类/销量占比/销售额占比的二维tuple
@@ -84,7 +91,7 @@ def analyze_sales():
     for i in range(len(info)):
         sum_proportions += info[i][1]
     if sum_proportions != 1:
-        info = tuple(map(lambda tu: tuple([tu[0], tu[1] + (1-sum_proportions)/len(info), tu[2]]), info))
+        info = tuple(map(lambda tu: tuple([tu[0], tu[1] + (1 - sum_proportions) / len(info), tu[2]]), info))
     sales_dict = {t[0]: t[2] for t in info}
     if not sales_dict:
         return jsonify(return_unsuccess('无法获取相关销售比例信息'))
@@ -107,7 +114,7 @@ def analyze_sales_by_year_and_month(year, month):
     for i in range(len(info)):
         sum_proportions += info[i][1]
     if sum_proportions != 1:
-        info = tuple(map(lambda tu: tuple([tu[0], tu[1] + (1-sum_proportions)/len(info), tu[2]]), info))
+        info = tuple(map(lambda tu: tuple([tu[0], tu[1] + (1 - sum_proportions) / len(info), tu[2]]), info))
     return info
 
 
@@ -142,7 +149,7 @@ def analyze_sales_by_year():
                 month = "0" + str(i)
             else:
                 month = str(i)
-            dict_of_year_month_type_and_total_sales[month+str(tu[0])] = float(tu[1])
+            dict_of_year_month_type_and_total_sales[month + str(tu[0])] = float(tu[1])
     print(dict_of_year_month_type_and_total_sales)
     if not dict_of_year_month_type_and_total_sales:
         return jsonify(return_unsuccess('无法获取总销售额信息'))
@@ -165,7 +172,7 @@ def analyze_operating_income_by_year():
             days[i] = str(days[i])
     for d in days:
         for t in ['食品类', '日用品类', '其他类', '电子类']:
-            dict_of_day_type_and_operating_income[d+t] = 0
+            dict_of_day_type_and_operating_income[d + t] = 0
     for tu in info:
         if int(tu[0]) < 10:
             dict_of_day_type_and_operating_income['0' + str(tu[0]) + str(tu[1])] = float(tu[2])
@@ -254,7 +261,7 @@ def analyze_total_operating_expenditure():
 def analyze_operating_profits():
     info = DataAnalysisDao().query_operating_profits()
     print(info)
-    dict_of_year_and_operating_profits = {i+2010: info[0][i+1] for i in range(0, 10)}
+    dict_of_year_and_operating_profits = {i + 2010: info[0][i + 1] for i in range(0, 10)}
     print(dict_of_year_and_operating_profits)
     if not dict_of_year_and_operating_profits:
         return jsonify(return_unsuccess('无法获取营业利润信息'))
@@ -266,7 +273,7 @@ def analyze_operating_profits():
 def analyze_total_profits():
     info = DataAnalysisDao().query_total_profits()
     print(info)
-    dict_of_year_and_operating_profits = {i+2010: info[0][i+1] for i in range(0, 10)}
+    dict_of_year_and_operating_profits = {i + 2010: info[0][i + 1] for i in range(0, 10)}
     print(dict_of_year_and_operating_profits)
     if not dict_of_year_and_operating_profits:
         return jsonify(return_unsuccess('无法获取利润总额信息'))
@@ -278,7 +285,7 @@ def analyze_total_profits():
 def analyze_net_profit():
     info = DataAnalysisDao().query_net_profit()
     print(info)
-    dict_of_year_and_net_profit = {i+2010: info[0][i+1] for i in range(0, 10)}
+    dict_of_year_and_net_profit = {i + 2010: info[0][i + 1] for i in range(0, 10)}
     if not dict_of_year_and_net_profit:
         return jsonify(return_unsuccess('无法获取净利润信息'))
     return jsonify(return_success(dict_of_year_and_net_profit))
@@ -289,7 +296,9 @@ def analyze_net_profit():
 def analyze_gross_profit_rate():
     operating_profits = DataAnalysisDao().query_operating_profits()
     operating_incomes = DataAnalysisDao().query_operating_income()
-    dict_of_year_and_gross_profit_rate = {i+2010: 100 * float(float(operating_profits[0][i+1])/float(operating_incomes[0][i+1])) for i in range(0, 10)}
+    dict_of_year_and_gross_profit_rate = {
+        i + 2010: 100 * float(float(operating_profits[0][i + 1]) / float(operating_incomes[0][i + 1])) for i in
+        range(0, 10)}
     if not dict_of_year_and_gross_profit_rate:
         return jsonify(return_unsuccess('无法获取毛利率信息'))
     return jsonify(return_success(dict_of_year_and_gross_profit_rate))
@@ -300,7 +309,8 @@ def analyze_gross_profit_rate():
 def analyze_net_profit_rate():
     net_profits = DataAnalysisDao().query_net_profit()
     operating_incomes = DataAnalysisDao().query_operating_income()
-    dict_of_year_and_net_profit_rate = {i+2010: 100 * float(float(net_profits[0][i+1])/float(operating_incomes[0][i+1])) for i in range(0, 10)}
+    dict_of_year_and_net_profit_rate = {
+        i + 2010: 100 * float(float(net_profits[0][i + 1]) / float(operating_incomes[0][i + 1])) for i in range(0, 10)}
     if not dict_of_year_and_net_profit_rate:
         return jsonify(return_unsuccess('无法获取净利率信息'))
     return jsonify(return_success(dict_of_year_and_net_profit_rate))
@@ -311,7 +321,8 @@ def analyze_net_profit_rate():
 def analyze_turnover_rate():
     operating_incomes = DataAnalysisDao().query_operating_income()
     total_assets = DataAnalysisDao().query_total_assets()
-    dict_of_year_and_total_assets = {i+2010: 100 * float(float(operating_incomes[0][i+1])/float(total_assets[0][i+1])) for i in range(0, 10)}
+    dict_of_year_and_total_assets = {
+        i + 2010: 100 * float(float(operating_incomes[0][i + 1]) / float(total_assets[0][i + 1])) for i in range(0, 10)}
     if not dict_of_year_and_total_assets:
         return jsonify(return_unsuccess('无法获取资产周转率信息'))
     return jsonify(return_success(dict_of_year_and_total_assets))
@@ -322,7 +333,8 @@ def analyze_turnover_rate():
 def analyze_debt_rate():
     total_diets = DataAnalysisDao().query_total_diets()
     total_assets = DataAnalysisDao().query_total_assets()
-    dict_of_year_and_total_assets = {i+2010: 100 * float(float(total_diets[0][i+1])/float(total_assets[0][i+1])) for i in range(0, 10)}
+    dict_of_year_and_total_assets = {i + 2010: 100 * float(float(total_diets[0][i + 1]) / float(total_assets[0][i + 1]))
+                                     for i in range(0, 10)}
     if not dict_of_year_and_total_assets:
         return jsonify(return_unsuccess('无法获取债务率信息'))
     return jsonify(return_success(dict_of_year_and_total_assets))
@@ -334,7 +346,9 @@ def analyze_liquid_ratio_rate():
     total_diets = DataAnalysisDao().query_total_diets()
     total_assets = DataAnalysisDao().query_total_assets()
     total_fixed_assets = DataAnalysisDao().query_fiexed_assets()
-    dict_of_year_and_total_assets = {i+2010: 100 * float(float(total_assets[0][i+1])  - float(total_fixed_assets[0][i+1])) / float(total_diets[0][i+1]) for i in range(0, 9)}
+    dict_of_year_and_total_assets = {
+        i + 2010: 100 * float(float(total_assets[0][i + 1]) - float(total_fixed_assets[0][i + 1])) / float(
+            total_diets[0][i + 1]) for i in range(0, 9)}
     if not dict_of_year_and_total_assets:
         return jsonify(return_unsuccess('无法获取流动比率信息'))
     return jsonify(return_success(dict_of_year_and_total_assets))
@@ -345,7 +359,8 @@ def analyze_liquid_ratio_rate():
 def analyze_cash_ratio():
     total_diets = DataAnalysisDao().query_total_diets()
     total_cash = DataAnalysisDao().query_cash()
-    dict_of_year_and_total_assets = {i+2010: 100 * float(total_cash[0][i+1]) / float(total_diets[0][i+1]) for i in range(0, 10)}
+    dict_of_year_and_total_assets = {i + 2010: 100 * float(total_cash[0][i + 1]) / float(total_diets[0][i + 1]) for i in
+                                     range(0, 10)}
     if not dict_of_year_and_total_assets:
         return jsonify(return_unsuccess('无法获取现金比率信息'))
     return jsonify(return_success(dict_of_year_and_total_assets))
@@ -363,3 +378,14 @@ def getData():
     print(dict_of_name_and_value)
     return jsonify(return_success(dict_of_name_and_value))
 
+
+# 查看仓库不同种类商品价值比例
+@analysis_results.route("/data/getRatioOfGoodsInWarehouse", methods=["GET", "POST"])
+def analyze_goods_ratio():
+    info = DataAnalysisDao().query_goods_in_warehouse()
+    dict_of_type_and_ratio = {t: float(0) for t in ['食品类', '日用品类', '其他类', '电子类']}
+    for tu in info:
+        dict_of_type_and_ratio[str(tu[0])] = float(tu[1])
+    if not dict_of_type_and_ratio:
+        return jsonify(return_unsuccess('无法获取仓库信息'))
+    return jsonify(return_success(dict_of_type_and_ratio))

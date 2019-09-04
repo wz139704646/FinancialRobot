@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from flask import Blueprint, render_template, request, make_response, send_from_directory
 import os
 from app.dao.GoodsDao import GoodsDao
+from app.utils.auth import check_token
 from app.utils.pic_str import *
 from app.utils.json_util import *
 
@@ -12,6 +13,12 @@ UPLOAD_FOLDER = '../static/img/upload'
 basedir = os.path.abspath(os.path.dirname(__file__))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF'}
 MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB
+
+
+@up.before_request
+@check_token
+def res():
+    pass
 
 
 def allowed_file(filename):

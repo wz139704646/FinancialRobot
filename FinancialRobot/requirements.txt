@@ -10,7 +10,6 @@ chardet==3.0.4
 Click==7.0
 cryptoconditions==0.8.0
 cryptography==2.3.1
-datascience
 Flask==1.0.3
 Flask-PyMongo==2.3.0
 idna==2.8
@@ -21,6 +20,7 @@ MarkupSafe==1.1.1
 mysql-connector-python==8.0.13
 numpy
 pandas
+bs4
 protobuf==3.8.0
 pyasn1==0.4.5
 pycparser==2.19

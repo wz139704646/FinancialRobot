@@ -5,6 +5,7 @@ from app.dao.COHDao import COHDao
 from app.dao.CompanyDao import CompanyDao
 from app.dao.BankStatementDao import BankStatementDao
 from app.dao.DailyfundDao import DailyfundDao
+from app.utils.auth import check_token
 from app.utils.json_util import *
 from app.utils.timeProcess import timeProcess
 import uuid
@@ -13,6 +14,12 @@ import time
 import json
 
 inout_Money = Blueprint("inout_Money", __name__)
+
+
+@inout_Money.before_request
+@check_token
+def res():
+    pass
 
 
 # 查询现金记录
@@ -292,11 +299,11 @@ def queryDailyByOption():
 # 审核银行记录
 @inout_Money.route("/checkBankStatus", methods=["GET", "POST"])
 def checkBankStatus():
-    query=BankStatementDao()
+    query = BankStatementDao()
     _json = request.json
     voucher = _json.get('voucher')
-    row=query.update(voucher)
-    if row== 1:
+    row = query.update(voucher)
+    if row == 1:
         return json.dumps(return_success("修改成功"))
     else:
         return json.dumps(return_unsuccess('修改失败'))

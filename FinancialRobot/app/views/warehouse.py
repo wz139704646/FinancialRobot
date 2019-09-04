@@ -3,10 +3,18 @@ import uuid
 from app.dao.GoodsDao import GoodsDao
 from app.dao.WareHouseDao import WareHouseDao
 from flask import Blueprint, render_template, request, session, jsonify
+
+from app.utils.auth import check_token
 from app.utils.json_util import *
 
 warehouse = Blueprint("warehouse", __name__)
 warehouse.secret_key = 'secret_key_warehouse'
+
+
+@warehouse.before_request
+@check_token
+def res():
+    pass
 
 
 # 入库
@@ -26,7 +34,7 @@ def store_in_warehouse():
 
 
 # 查询库存
-@warehouse.route("/queryStoreGoods", methods=["POST",'GET'])
+@warehouse.route("/queryStoreGoods", methods=["POST", 'GET'])
 def query_by_warehouse():
     _json = request.json
     _companyId = _json.get("companyId")
@@ -55,6 +63,7 @@ def deliver_from_warehouse():
         return json.dumps(return_success('Out success'))
     else:
         return json.dumps(return_unsuccess('Out Failed'))
+
 
 # 添加仓库
 @warehouse.route("/addWarehouse", methods=["POST"])

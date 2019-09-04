@@ -7,21 +7,28 @@ from app.utils.DBHelper import MyHelper
 from app.dao.CustomerDao import CustomerDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.SellDao import SellDao
+from app.utils.auth import check_token
 from app.utils.json_util import *
 
 sell = Blueprint("sell", __name__)
 sell.secret_key = 'secret_key_sell'
 
 
+@sell.before_request
+@check_token
+def res():
+    pass
+
+
 # 插入销售记录
 @sell.route("/addSell", methods=["POST"])
 def addSell():
-    conn=MyHelper()
+    conn = MyHelper()
     queryCustomer = CustomerDao()
     queryGoods = GoodsDao()
     _json = request.json
-    params=[]
-    sqls=[]
+    params = []
+    sqls = []
     companyId = _json.get('companyId')
     customerId = _json.get('customerId')
     result = queryCustomer.query_byId(customerId)
@@ -44,15 +51,15 @@ def addSell():
         else:
             goodsName = ""
         params.append([id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, goodsUnit])
-        sqls.append("insert into Sell (id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName,unitInfo) "
-                    "values (%s, %s, %s, %s, %s,%s, %s, %s, %s, %s)")
+        sqls.append(
+            "insert into Sell (id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName,unitInfo) "
+            "values (%s, %s, %s, %s, %s,%s, %s, %s, %s, %s)")
 
     rows = conn.executeUpdateTransaction(sqls=sqls, params=params)
     if rows:
         return json.dumps(return_success(id))
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
-
 
 
 # 查询销售记录
@@ -77,7 +84,7 @@ def querySell():
                     goodsResult = query.query_byId(id)
                     for i in range(0, len(goodsResult)):
                         customerName = goodsResult[i][7]
-                        sellStatus=goodsResult[i][10]
+                        sellStatus = goodsResult[i][10]
                         customerId = goodsResult[i][1]
                         date = goodsResult[i][6]
                         goods = []

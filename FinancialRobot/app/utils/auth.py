@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 def check_permission(account):
     # 当前请求端点
     pre_endpoint = str(request.endpoint)
-    print(pre_endpoint)
     # 允许的功能
     allow_feature = list(UserDao().query_permission(account))  # 转list
     # 全部的功能
@@ -35,6 +34,7 @@ def check_token(func):
     """
 
     def wrapper(*args, **kwargs):
+        # return func(*args, **kwargs)
         # 请求的endpoint
         if request.endpoint is None:
             return json.dumps(return_unsuccess("No such endpoint"), ensure_ascii=False), 404

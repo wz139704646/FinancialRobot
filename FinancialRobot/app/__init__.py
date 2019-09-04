@@ -16,15 +16,20 @@ from app.views.wx import wx
 from app.views.citi_api import citi_api
 from app.utils.languageProcess import lanprocess
 from app.utils.auth import *
+from app.utils.crawler import *
+from app.utils.RegressionHelper import *
 from app.views.accoutingSubjects import accounting_subjects
 from app.views.general_voucher import general_voucher
+from app.views.data_analysis import *
+from app.views.fixed_assets import fixed_assets
 
 
 def create_app():
     app = Flask(__name__)
 
     app.register_blueprint(wx)
-    app.register_blueprint(arap,url_prefix='/arap')
+    app.register_blueprint(fixed_assets)
+    app.register_blueprint(arap, url_prefix='/arap')
     app.register_blueprint(citi_api)
     app.register_blueprint(permission)
     app.register_blueprint(goods)
@@ -40,16 +45,17 @@ def create_app():
     app.register_blueprint(up, url_prefix='/pic')
     app.register_blueprint(accounting_subjects)
     app.register_blueprint(general_voucher)
+    app.register_blueprint(analysis_results)
 
     app.config["MONGO_URI"] = MONGO_URI
 
     # mongo = PyMongo(app)
 
-    @app.before_request
+    # @app.before_request
     # @check_token
-    def res():
-        print(request.path)
-        # print(request.endpoint)
+    # def res():
+    #     # print(request.path)
+    #     print(request.endpoint)
 
     @app.after_request
     def after_request(response):

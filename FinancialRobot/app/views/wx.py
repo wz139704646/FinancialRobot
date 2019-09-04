@@ -51,21 +51,15 @@ def decode_token():
                 return json.dumps((return_unsuccess("Error: " + str(e))))
 
 
-@wx.route('/setPosition', methods=["POST"])
-def set_position():
-    _json = request.json
-    account = _json.get("account")
-    position = _json.get('position')
+@wx.route('/querySelfPermission', methods=['GET', 'POST'])
+def query_self_permission():
+    res = json.loads(decode_token()).get('result')
     try:
-        UserDao().set_position(account, position)
-        return json.dumps(return_success('Set position success'))
+        account = res[0]['account']
+        features = UserDao().query_permission(account)
+        return jsonify(return_success(UserDao.to_permission_dict(features)))
     except Exception as e:
-        return json.dumps(return_unsuccess('Failed to set position ' + str(e)))
-
-
-@wx.route('/getPosition', methods=['POST', 'GET'])
-def get_position():
-    return json.dumps(return_success(get_roles()))
+        return jsonify(return_unsuccess('Query Failed :' + str(e)))
 
 
 @wx.route("/userRegister", methods=["POST"])
@@ -112,7 +106,7 @@ def userRegister():
         return json.dumps(return_unsuccess("注册失败"), ensure_ascii=False)
 
 
-@wx.route("/checkAccount")
+@wx.route("/checkAccount", methods=["POST", 'GET'])
 def check_account():
     account = request.json.get('account')
     # 到数据库中进行查询
@@ -128,7 +122,6 @@ def check_account():
 @wx.route("/login", methods=['POST', 'GET'])
 def login():
     # token登陆
-    print(request.method)
     if request.method == 'GET':
         return decode_token()
 
