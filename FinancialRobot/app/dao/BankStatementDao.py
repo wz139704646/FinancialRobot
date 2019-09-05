@@ -17,7 +17,6 @@ class BankStatementDao:
             res['date'] = row[5]
             res['status'] = row[6]
             res['balance'] = row[7]
-            res['sumBalance'] = row[8]
             result.append(res)
         return result
 
@@ -32,17 +31,19 @@ class BankStatementDao:
     def queryAll(self):
         conn = MyHelper()
         return conn.executeQuery("select * from BankStatement order by date")
-
+    def querySumAmount(self):
+        conn = MyHelper()
+        return conn.executeQuery("select SUM(amount) from BankStatement")
     def query_by_date(self, start, end):
         connection = MyHelper()
         return connection.executeQuery("select * from BankStatement where date >= %s and date <%s order by date ",
                                        [start, end])
 
-    def add(self, voucher, bankName, companyName, clearForm, amount, date, status, balance, sumBalance):
+    def add(self, voucher, bankName, companyName, clearForm, amount, date, status, balance ):
         conn = MyHelper()
         row = conn.executeUpdate(
-            "insert into BankStatement (voucher, bankName, companyName,clearForm,amount,date,status,balance,sumBalance) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            [voucher, bankName, companyName, clearForm, amount, date, status, balance, sumBalance])
+            "insert into BankStatement (voucher, bankName, companyName,clearForm,amount,date,status,balance) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+            [voucher, bankName, companyName, clearForm, amount, date, status, balance])
         return row
 
     def update(self, voucher):
