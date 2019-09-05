@@ -342,7 +342,7 @@ class AccountingSubjectDao:
         """
         if not low and not up:
             return self.query_subject_balance(cond)
-        if all([low, up, low > up]):
+        if low and up and low > up:
             return
 
         rows = self.query_subject(cond)
@@ -518,7 +518,7 @@ class AccountingSubjectDao:
                 data['opening_balance'] = 0
             else:
                 # 将期初余额设置为前一期的期末余额
-                last_balance = self.subject_balance_to_dict(last_balance)[0]
+                last_balance = last_balance[0]
                 data['opening_balance'] = last_balance.get('closing_balance')
         params.append(data.get('time'))
         params.append(data.get('subject_code'))

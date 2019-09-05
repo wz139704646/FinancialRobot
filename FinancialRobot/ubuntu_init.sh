@@ -5,4 +5,8 @@ wget https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generi
 tar xf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
 cd wkhtmltox
 sudo chown root:root bin/wkhtmltopdf
+sudo chown root:root bin/wkhtmltoimage
 sudo cp -r * /usr/
+cd ../
+sudo rm -rf wkhtmltox*
+cp SimSun.ttf /usr/share/fonts

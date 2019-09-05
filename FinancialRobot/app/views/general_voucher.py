@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, render_template
 from app.utils.DBHelper import MyHelper
 from app.utils.json_util import *
 from app.utils.finance_utils import *
+from app.utils.jinja2_utils import render_without_request
 import json
 from app.dao.AccountingSubjectDao import AccountingSubjectDao
 from app.dao.GeneralVoucherDao import GeneralVoucherDao
@@ -12,12 +13,11 @@ import math
 import imgkit
 import os
 from werkzeug.utils import secure_filename
-import requests
 import threading
 
 
 general_voucher = Blueprint('general_voucher', __name__)
-general_voucher.add_app_template_filter(magnitude_digit, 'magnitude_digit')
+# general_voucher.add_app_template_filter(magnitude_digit, 'magnitude_digit')
 g_v_dao = GeneralVoucherDao()
 a_s_dao = AccountingSubjectDao()
 max_entries_in_one_voucher_pic = 6
@@ -83,72 +83,7 @@ def update_subject_balance_on_voucher_update(time, entries_del=[], entries_add=[
         # 更新失败，返回错误信息
         return False, update_res[1]
     # 更新成功
-    return True
-
-
-@general_voucher.route("/finance/voucher/delVoucher", methods=["POST"])
-def voucher_del_with_no():
-    _json = request.json
-
-    if _json.get('voucher_no'):
-        # 删除凭证
-        del_res = g_v_dao.delete_voucher(_json.get('voucher_no'))
-        if del_res[0]:
-            # 删除凭证时通过分录提交对应科目余额的变动
-            old_data = del_res[1]
-            update_res = update_subject_balance_on_voucher_update(
-                time=old_data.get('date').strftime('%Y%m'), entries_del=old_data['entries']
-            )[0]
-            # 删除失败，取消凭证删除，重新添加回去
-            if not update_res[0]:
-                g_v_dao.insert_voucher(old_data)
-                return jsonify(return_unsuccess(update_res[1]))
-            else:
-                # 删除成功，返回原数据
-                # 清除所有凭证附件
-                file_dir = os.path.join(basedir, UPLOAD_FOLDER)
-                attachment = g_v_dao.query_voucher_attachments({'voucher_no': _json.get('voucher_no')})
-                if attachment:
-                    attachment = g_v_dao.voucher_attachment_to_dict(attachment)
-                for att in attachment:
-                    try:
-                        os.remove(os.path.join(file_dir, '%s' % att.get('attachment_url')))
-                    except Exception as e:
-                        print(e)
-                return json.dumps(return_success(old_data), cls=DecimalEncoder)
-        else:
-            return jsonify(return_unsuccess(del_res[1]))
-    else:
-        return jsonify(return_unsuccess('参数不全，缺少凭证编号'))
-
-
-@general_voucher.route("/finance/voucher/setVoucher", methods=["POST"])
-def voucher_set_with_no():
-    _json = request.json
-
-    if not all([_json.get('voucher_no'), _json.get('changes')]):
-        return jsonify(return_unsuccess('参数不全，缺少凭证编号或更改信息'))
-    else:
-        if not _json.get('changes').get('record_date'):
-            _json['changes']['record_date'] = datetime.datetime.now()
-        set_res = g_v_dao.update_voucher(_json.get('voucher_no'), _json.get('changes'))
-        if set_res[0]:
-            old_data = set_res[1]
-            new_data = set_res[2]
-            if _json.get('changes').get('entries'):
-                # 如果更新了分录，则将原分录信息和新分录信息的科目余额变动提交
-                update_res = update_subject_balance_on_voucher_update(
-                    old_data.get('date').strftime('%Y%m'),
-                    entries_del=old_data.get('entries'),
-                    entries_add=new_data.get('entries')
-                )
-                if not update_res[0]:
-                    # 余额更新失败，将变动取消
-                    g_v_dao.update_voucher(new_data.get('voucher_no'), old_data)
-                    return jsonify(return_unsuccess(update_res[1]))
-            return json.dumps(return_success({'old': old_data, 'new': new_data}), cls=DecimalEncoder)
-        else:
-            return jsonify(return_unsuccess(set_res[1]))
+    return True, update_res[1]
 
 
 def allowed_file(filename):
@@ -182,7 +117,7 @@ def voucher_add_attachment():
                 f.save(os.path.join(file_dir, new_filename))
                 f.close()
                 g_v_dao.insert_voucher_attachment({'voucher_no': voucher_no, 'attachment_url': new_filename})
-                return json.dumps(return_success({"attachment_url": new_filename}), ensure_ascii=False)
+                return json.dumps(return_success(new_filename), ensure_ascii=False)
             except Exception as e:
                 return jsonify(return_unsuccess('附件上传失败'))
         else:
@@ -337,8 +272,8 @@ def voucher_gen_save(voucher_no):
         entries_cur = entries[max_entries_in_one_voucher_pic * i:end]
         credit_total, debit_total = reduce(cal_total_credit_debit, entries_cur, [0, 0])
         cur_total = max(credit_total, debit_total)
-        rendered = render_template(
-            'voucher_template.html',
+        rendered = render_without_request(
+            template_name='voucher_template.html', filters={'magnitude_digit': magnitude_digit},
             voucher_type='记账凭证', num_attachments=vouchers[0].get('attachments_number'),
             date=vouchers[0].get('date'), voucher_no=vouchers[0].get('voucher_no'), num_voucher_cur=i + 1,
             num_vouchers=num_voucher, entries=entries_cur,
@@ -349,9 +284,12 @@ def voucher_gen_save(voucher_no):
         new_filename = voucher_no + '_' + Pic_str().create_uuid() \
                        + 'voucher({})'.format(i + 1) + '.' + 'png'
         store_path = os.path.join(file_dir, new_filename)
-        path_wk = r'D:\Application\wkhtmltox\bin\wkhtmltoimage.exe'  # 安装位置
-        imgkit_config = imgkit.config(wkhtmltoimage=path_wk)
-        if imgkit.from_string(rendered, store_path, config=imgkit_config):
+        # Windows下
+        # path_wk = r'D:\Application\wkhtmltox\bin\wkhtmltoimage.exe'  # 安装位置
+        # imgkit_config = imgkit.config(wkhtmltoimage=path_wk)
+        # if imgkit.from_string(rendered, store_path, config=imgkit_config):
+        #     renders.append(new_filename)
+        if imgkit.from_string(rendered, store_path):
             renders.append(new_filename)
         else:
             for file in renders:
@@ -362,7 +300,12 @@ def voucher_gen_save(voucher_no):
             return False, '凭证生成失败'
 
     # 删除已有的凭证的图片
-    g_v_dao.delete_voucher_attachment(voucher_no, {'for_voucher': 1})
+    suc, attachment = g_v_dao.delete_voucher_attachment(voucher_no, {'for_voucher': 1})
+    for att in attachment:
+        try:
+            os.remove(os.path.join(file_dir, '%s' % att.get('attachment_url')))
+        except Exception as e:
+            print(e)
     # 重新添加凭证图片
     for v in renders:
         g_v_dao.insert_voucher_attachment({
@@ -428,7 +371,7 @@ def voucher_add():
             return jsonify(return_unsuccess(update_res[1]))
         # 凭证添加完成
         # 产生子线程生成凭证图片并保存
-        t = threading.Thread(target=voucher_gen_save, name='gen_voucher')
+        t = threading.Thread(target=voucher_gen_save, name='gen_voucher', args=(add_res[1].get('voucher_no'),))
         t.start()
 
         return json.dumps(return_success(add_res[1]), cls=DecimalEncoder)
@@ -436,4 +379,79 @@ def voucher_add():
         return jsonify(return_unsuccess(add_res[1]))
 
 
+@general_voucher.route("/finance/voucher/delVoucher", methods=["POST"])
+def voucher_del_with_no():
+    _json = request.json
 
+    if _json.get('voucher_no'):
+        # 删除凭证
+        del_res = g_v_dao.delete_voucher(_json.get('voucher_no'))
+        if del_res[0]:
+            # 删除凭证时通过分录提交对应科目余额的变动
+            old_data = del_res[1]
+            update_res = update_subject_balance_on_voucher_update(
+                time=old_data.get('date').strftime('%Y%m'), entries_del=old_data['entries']
+            )
+            # 删除失败，取消凭证删除，重新添加回去
+            if not update_res[0]:
+                g_v_dao.insert_voucher(old_data)
+                return jsonify(return_unsuccess(update_res[1]))
+            else:
+                # 删除成功，返回原数据
+                # 清除所有凭证附件
+                file_dir = os.path.join(basedir, UPLOAD_FOLDER)
+                attachment = g_v_dao.query_voucher_attachments({'voucher_no': _json.get('voucher_no')})
+                if attachment:
+                    attachment = g_v_dao.voucher_attachment_to_dict(attachment)
+                for att in attachment:
+                    try:
+                        os.remove(os.path.join(file_dir, '%s' % att.get('attachment_url')))
+                    except Exception as e:
+                        print(e)
+                return json.dumps(return_success(old_data), cls=DecimalEncoder)
+        else:
+            return jsonify(return_unsuccess(del_res[1]))
+    else:
+        return jsonify(return_unsuccess('参数不全，缺少凭证编号'))
+
+
+@general_voucher.route("/finance/voucher/setVoucher", methods=["POST"])
+def voucher_set_with_no():
+    _json = request.json
+
+    if not all([_json.get('voucher_no'), _json.get('changes')]):
+        return jsonify(return_unsuccess('参数不全，缺少凭证编号或更改信息'))
+    else:
+        if not _json.get('changes').get('record_date'):
+            _json['changes']['record_date'] = datetime.datetime.now()
+        if _json.get('changes').get('entries'):
+            credit_tot = 0
+            debit_tot = 0
+            for entry in _json.get('changes').get('entries'):
+                if entry.get('credit_debit') == '借':
+                    credit_tot = credit_tot + entry.get('total')
+                else:
+                    debit_tot = debit_tot + entry.get('total')
+            if credit_tot != debit_tot:
+                return jsonify(return_unsuccess('更新失败，凭证借贷不平衡'))
+        set_res = g_v_dao.update_voucher(_json.get('voucher_no'), _json.get('changes'))
+        if set_res[0]:
+            old_data = set_res[1]
+            new_data = set_res[2]
+            if _json.get('changes').get('entries'):
+                # 如果更新了分录，则将原分录信息和新分录信息的科目余额变动提交
+                update_res = update_subject_balance_on_voucher_update(
+                    old_data.get('date').strftime('%Y%m'),
+                    entries_del=old_data.get('entries'),
+                    entries_add=new_data.get('entries')
+                )
+                if not update_res[0]:
+                    # 余额更新失败，将变动取消
+                    g_v_dao.update_voucher(new_data.get('voucher_no'), old_data)
+                    return jsonify(return_unsuccess(update_res[1]))
+                # 分录更新成功，将对应的凭证图片重新生成
+                t = threading.Thread(target=voucher_gen_save, name='voucher_gen', args=(new_data.get('voucher_no'),))
+                t.start()
+            return json.dumps(return_success({'old': old_data, 'new': new_data}), cls=DecimalEncoder)
+        else:
+            return jsonify(return_unsuccess(set_res[1]))

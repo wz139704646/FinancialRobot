@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS accounting_subjects(
 	subject_code VARCHAR(15),
-	name VARCHAR(20) NOT NULL,
+	name VARCHAR(50) NOT NULL,
 	superior_subject_code VARCHAR(15),
 	type VARCHAR(10) NOT NULL,
 	type_detail VARCHAR(10),
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS accounting_subjects_balance(
 
 CREATE TABLE IF NOT EXISTS voucher_entry (
 	voucher_no VARCHAR(10) NOT NULL,
-	abstract VARCHAR(30) NOT NULL,
+	abstract VARCHAR(50) NOT NULL,
 	subject_code VARCHAR(15) NOT NULL,
 	credit_debit VARCHAR(1) check ( credit_debit in ("借", "贷") ),
 	total DECIMAL(19, 4) NOT NULL,

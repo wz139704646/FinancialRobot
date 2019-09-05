@@ -67,14 +67,14 @@ class GeneralVoucherDao:
     def insert_voucher(self, data):
         """
         插入新的凭证，包括其各个分录
-        :param data: 字典类型，date: 凭证日期，voucher_no：凭证编号, attachments_no：凭证附件数, entries: 凭证分录数组
+        :param data: 字典类型，date: 凭证日期，voucher_no：凭证编号, attachments_number：凭证附件数, entries: 凭证分录数组
         entries每一个元素仍为字典, abstract: 分录摘要, subject_code: 分录科目代码, credit_debit：分录金额为"借"/"贷"
                                     total: 分录总金额
         :return: tuple类型, 第一个元素表示是否插入成功, 若成功第二个元素则返回所有数据, 否则第二个元素返回错误信息
         """
         conn = MyHelper()
-        if (not all([data.get('date'), data.get('voucher_no'), data.get('attachments_number') is not None, data.get('entries')])) \
-                or (data.get('entries') and len(data.get('entries')) == 0):
+        if (not all([data.get('date'), data.get('voucher_no'), data.get('attachments_number') is not None,
+                     data.get('entries')])) or (data.get('entries') and len(data.get('entries')) == 0):
             return False, '凭证信息不全'
 
         sqls = ["insert into general_voucher (date, voucher_no, attachments_number) "
@@ -217,14 +217,14 @@ class GeneralVoucherDao:
         # 若数据中含有分录字段，则更新分录，采用先全部删除，后进行添加的方式
         if data.get('entries') and len(data.get('entries')):
             sqls.append("delete from voucher_entry where voucher_no = %s")
-            params.append([data.get('voucher_no')])
+            params.append([voucher_no])
             for entry in data.get('entries'):
                 if not all([entry.get('abstract'), entry.get('subject_code'), entry.get('credit_debit'),
                             entry.get('total')]):
                     return False, '分录信息不全'
                 sqls.append("insert into voucher_entry (voucher_no, abstract, subject_code, credit_debit, total) "
                             "values (%s, %s, %s, %s, %s)")
-                params.append([data.get("voucher_no"), entry.get('abstract'), entry.get('subject_code'),
+                params.append([voucher_no, entry.get('abstract'), entry.get('subject_code'),
                                entry.get('credit_debit'), entry.get('total')])
             # new_data['entries'] = data.get('entries')
 
@@ -383,7 +383,7 @@ class GeneralVoucherDao:
         if not old:
             return False, '无相关附件信息'
 
-        old = self.voucher_attachment_to_dict(old)[0]
+        old = self.voucher_attachment_to_dict(old)
 
         sql = "delete from voucher_attachment where voucher_no = %s"
         params = [voucher_no]
