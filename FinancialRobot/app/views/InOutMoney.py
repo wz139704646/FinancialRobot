@@ -78,14 +78,7 @@ def addCashRecord():
     variation = float(_json.get('variation'))
     changeDescription = _json.get('changeDescription')
     id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(date)))
-    nowResult = query.queryNow()
-    length = len(nowResult)
-    if length >= 1:
-        originValue = nowResult[0][2]
-    else:
-        originValue = 0
-    balance = variation + originValue
-    row = query.add(id, date, balance, originValue, variation, changeDescription)
+    row = query.add(id, date, variation, changeDescription)
     insertDailyRow = InsertDailyfund(date, changeDescription, variation)
     if row == 1:
         if insertDailyRow == 1:

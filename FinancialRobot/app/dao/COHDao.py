@@ -12,10 +12,8 @@ class COHDao:
             res = {}
             res['id'] = row[0]
             res['date'] = row[1]
-            res['balance'] = row[2]
-            res['originValue'] = row[3]
-            res['variation'] = row[4]
-            res['changeDescription'] = row[5]
+            res['variation'] = row[2]
+            res['changeDescription'] = row[3]
             result.append(res)
         return result
 
@@ -32,9 +30,9 @@ class COHDao:
         return connection.executeQuery("select * from CashOnHand where date >= %s and date <%s order by date ",
                                        [start, end])
 
-    def add(self, id, date, balance, originValue, variation, changeDescription):
+    def add(self, id, date, variation, changeDescription):
         conn = MyHelper()
         row = conn.executeUpdate(
-            "insert into CashOnHand (id, date, balance,originValue,variation,changeDescription) VALUES (%s,%s,%s,%s,%s,%s)",
-            [id, date, balance, originValue, variation, changeDescription])
+            "insert into CashOnHand (id, date,variation,changeDescription) VALUES (%s,%s,%s,%s)",
+            [id, date,  variation, changeDescription])
         return row
