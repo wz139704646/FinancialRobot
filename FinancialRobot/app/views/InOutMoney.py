@@ -1,5 +1,7 @@
 #!/usr/bin/env python 
 # -*- coding:utf-8 -*-
+from decimal import *
+
 from flask import Blueprint, request
 from app.dao.COHDao import COHDao
 from app.dao.CustomerDao import CustomerDao
@@ -75,7 +77,7 @@ def addCashRecord():
     query = COHDao()
     _json = request.json
     date = _json.get('date')
-    variation = float(_json.get('variation'))
+    variation = Decimal(_json.get('variation'))
     changeDescription = _json.get('changeDescription')
     id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(date)))
     row = query.add(id, date, variation, changeDescription)
@@ -101,7 +103,7 @@ def addBankRecord():
     if len(comResult) == 1:
         companyName = comResult[0][1]
         clearForm = _json.get('clearForm')
-        amount = float(_json.get('amount'))
+        amount = Decimal(_json.get('amount'))
         date = _json.get('date')
         status = "未核对"
         bankResult = query.queryByName(bankName)

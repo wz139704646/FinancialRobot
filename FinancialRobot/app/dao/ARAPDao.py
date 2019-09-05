@@ -134,22 +134,23 @@ class ARAPDao:
     def to_pay_dict(cls, data):
         result = []
         for row in data:
-            res = {'id': row[0], 'purchaseId': row[1], 'pay': row[2], 'date': row[3], 'status': row[5]}
+            res = {'id': row[0], 'purchaseId': row[1], 'pay': row[2], 'date': row[3], 'status': row[5],
+                   'bank_name': row[6], 'clear_form': row[7]}
             result.append(res)
         return result
 
-    def add_payment(self, purchaseId, amount, date):
+    def add_payment(self, purchaseId, amount, date, bank_name, clear_form):
         connection = MyHelper()
         _id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(time.time())))
         rows = connection.executeQuery("select companyId from Purchase where id = %s", [purchaseId])
-        row = connection.executeUpdate("insert into Payment (id, purchaseId, pay, date, companyId)"
-                                       " values (%s,%s,%s,%s,%s)",
-                                       [_id, purchaseId, amount, date, rows[0][0]])
+        row = connection.executeUpdate("insert into Payment (id, purchaseId, pay, date, companyId,bankName,clearForm)"
+                                       " values (%s,%s,%s,%s,%s,%s,%s)",
+                                       [_id, purchaseId, amount, date, rows[0][0], bank_name, clear_form])
 
         res = {"row": row, "id": _id.__str__()}
         return res
 
-    def query_payment(self, _id, purchaseId, days):
+    def query_payment(self, _id, purchaseId=None, days=None):
         _param = []
         _sql = "select * from Payment where 1 = 1"
         if _id:
@@ -173,28 +174,30 @@ class ARAPDao:
 
     def check_payment(self, _id):
         connection = MyHelper()
-        return connection.executeUpdate("update Payment set status = 1 where id=%s", [_id])
+        connection.executeUpdate("update Payment set status = 1 where id=%s", [_id])
+        return self.query_payment(_id)
 
     # 收到 Receive
     @classmethod
     def to_receive_dict(cls, data):
         result = []
         for row in data:
-            res = {'id': row[0], 'sellId': row[1], 'receive': row[2], 'date': row[3], 'status': row[5]}
+            res = {'id': row[0], 'sellId': row[1], 'receive': row[2], 'date': row[3], 'status': row[5],
+                   'bank_name': row[6], 'clear_form': row[7]}
             result.append(res)
         return result
 
-    def add_receive(self, sellId, amount, date):
+    def add_receive(self, sellId, amount, date, bank_name, clear_form):
         connection = MyHelper()
         _id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(time.time())))
         rows = connection.executeQuery("select companyId from Sell where id = %s", [sellId])
-        row = connection.executeUpdate("insert into Receive (id, sellId, receive, date, companyId)"
-                                       " values (%s,%s,%s,%s,%s)",
-                                       [_id, sellId, amount, date, rows[0][0]])
+        row = connection.executeUpdate("insert into Receive (id, sellId, receive, date, companyId,bankName,clearForm)"
+                                       " values (%s,%s,%s,%s,%s,%s,%s)",
+                                       [_id, sellId, amount, date, rows[0][0], bank_name, clear_form])
         res = {"row": row, "id": _id.__str__()}
         return res
 
-    def query_receive(self, _id, sellId, days):
+    def query_receive(self, _id, sellId=None, days=None):
         _param = []
         _sql = "select * from Receive where 1 = 1"
         if _id:
@@ -218,4 +221,5 @@ class ARAPDao:
 
     def check_receive(self, _id):
         connection = MyHelper()
-        return connection.executeUpdate("update Receive set status = 1 where id=%s", [_id])
+        connection.executeUpdate("update Receive set status = 1 where id=%s", [_id])
+        return self.query_receive(_id)
