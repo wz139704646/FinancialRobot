@@ -80,7 +80,7 @@ def addCashRecord():
     date = _json.get('date')
     variation = Decimal(_json.get('variation'))
     changeDescription = _json.get('changeDescription')
-    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(date)))
+    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(date)+str(time.time())))
     row = query.add(id, date, variation, changeDescription)
     insertDailyRow = InsertDailyfund(date, changeDescription, variation)
     if row == 1:
@@ -102,7 +102,7 @@ def addBankRecord():
     voucher = _json.get('voucher')
     bankName = _json.get('bankName')
     customerId = _json.get('customerId')
-    amount = float(_json.get('amount'))
+    amount = Decimal(_json.get('amount'))
     if amount > 0:
         comResult = queryName.query_byId(customerId)
         companyName = comResult[0][1]
@@ -137,7 +137,6 @@ def querySumBankAmount():
         return json.dumps(return_success(result[0][0]))
     else:
         return json.dumps(return_unsuccess('Error:Sorry,no data'))
-    print(result)
 
 
 # 查询所有现金记录
