@@ -42,6 +42,13 @@ import time
 import datetime
 import uuid
 
+
+def str_to_unix(string):
+    return int(time.mktime(datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S').timetuple()))
+
+def unix_to_date(unix):
+    return datetime.datetime.fromtimestamp(unix)
+
 class COHDao:
 
     def __init__(self):
@@ -50,14 +57,18 @@ class COHDao:
 
     @classmethod
     def to_dict(cls, data):
-        return data
+        result = []
+        for i in data:
+            i["data"]["date"] = unix_to_date(i["data"]["date"])
+            result.append(i["data"])
+        return result
 
     def queryNow(self):
         uuid_list = self.mongo.find_assets_uuid(keyword={"data.asset_type":"现金"})
         # return list(self.mongo.find_assets(keyword={"data.asset_type":"现金"},size=None).sort(
         result = []
         for i in uuid_list:
-            asset = self.mongo.find_one_asset(asset_id=i)
+            asset = self.mongo.find_one_asset(asset_id=i["_id"])
             if asset:
                 result.append(asset)
         return result
@@ -66,12 +77,9 @@ class COHDao:
     def queryAll(self):
         return self.queryNow()
 
-    def str_to_unix(self,string):
-        return int(time.mktime(datetime.datetime.strptime(string, '%Y-%m-%d').timetuple()))
-
     def query_by_date(self, start, end):
-        start_time = self.str_to_unix(start)
-        end_time = self.str_to_unix(end)
+        start_time = str_to_unix(start)
+        end_time = str_to_unix(end)
         keyword = {
             "data.asset_type": "现金",
             "data.date": {
@@ -94,8 +102,8 @@ class COHDao:
             "asset_type": "现金",
             "id": id,
             "uuid": id,
-            "date": self.str_to_unix(date),
-            "variation": variation,
+            "date": str_to_unix(date),
+            "variation": str(variation),
             "changeDescription": changeDescription,
             "edition": time.time()
         }
@@ -107,4 +115,4 @@ class COHDao:
         asset = bdb.create_asset(signer=company, asset=asset_data, metadata=metadata)
         if not asset:
             raise RuntimeError("bigchain insert error")
-        return asset
+        return 1
