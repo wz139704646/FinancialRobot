@@ -346,9 +346,9 @@ class Test11(unittest.TestCase):
         print(results)
         print(len(results))
     def test35(self):
-        query = BankStatementDao()
-        result = query.querySumAmount()
-        print(result[0][0])
+        query = SupplierDao()
+        result = query.query_byId('08580344-22e0-34a6-9cce-774279c9b9a8')
+        print(result[0][1])
     def test26(self):
         query = PurchaseDao()
         results = []

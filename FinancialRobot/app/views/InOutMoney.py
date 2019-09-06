@@ -3,6 +3,7 @@
 from flask import Blueprint, request
 from app.dao.COHDao import COHDao
 from app.dao.CustomerDao import CustomerDao
+from app.dao.SupplierDao import SupplierDao
 from app.dao.BankStatementDao import BankStatementDao
 from app.dao.DailyfundDao import DailyfundDao
 from app.utils.auth import check_token
@@ -88,52 +89,57 @@ def addCashRecord():
     else:
         return json.dumps(return_unsuccess('Error: Add failed'))
 
+
 # 录入银行存/取款记录
 @inout_Money.route("/addBankRecord", methods=["GET", "POST"])
 def addBankRecord():
     query = BankStatementDao()
     queryName = CustomerDao()
+    querySupplierName = SupplierDao()
     _json = request.json
     voucher = _json.get('voucher')
     bankName = _json.get('bankName')
     customerId = _json.get('customerId')
-    comResult = queryName.query_byId(customerId)
-    if len(comResult) == 1:
+    amount = float(_json.get('amount'))
+    if amount > 0:
+        comResult = queryName.query_byId(customerId)
         companyName = comResult[0][1]
-        clearForm = _json.get('clearForm')
-        amount = float(_json.get('amount'))
-        date = _json.get('date')
-        status = "未核对"
-        bankResult = query.queryByName(bankName)
-        if len(bankResult) == 0:
-            balance = amount
-        else:
-            balance = bankResult[0][7] + amount
-
-        print(voucher, bankName, companyName, clearForm, amount, date, status, balance)
-        row = query.add(voucher, bankName, companyName, clearForm, amount, date, status, balance)
-        changeDescription = "在 " + bankName + clearForm + str(abs(amount)) + "元  "
-        insertDailyRow = InsertDailyfund(date, changeDescription, amount)
-        if row == 1:
-            if insertDailyRow == 1:
-                return json.dumps(return_success('Add succeed！'))
-            else:
-                return json.dumps(return_unsuccess('Error: Daily fund add failed,bank add succeed'))
-        else:
-            return json.dumps(return_unsuccess('Error: Add failed'))
     else:
-        return json.dumps(return_unsuccess('Error: CompanyId error!'))
+        supResult = querySupplierName.query_byId(customerId)
+        companyName = supResult[0][1]
+    clearForm = _json.get('clearForm')
+    date = _json.get('date')
+    status = "未核对"
+    bankResult = query.queryByName(bankName)
+    if len(bankResult) == 0:
+        balance = amount
+    else:
+        balance = bankResult[0][7] + amount
+    print(voucher, bankName, companyName, clearForm, amount, date, status, balance)
+    row = query.add(voucher, bankName, companyName, clearForm, amount, date, status, balance)
+    changeDescription = "在 " + bankName + clearForm + str(abs(amount)) + "元  "
+    insertDailyRow = InsertDailyfund(date, changeDescription, amount)
+    if row == 1:
+        if insertDailyRow == 1:
+            return json.dumps(return_success('Add succeed！'))
+        else:
+            return json.dumps(return_unsuccess('Error: Daily fund add failed,bank add succeed'))
+    else:
+        return json.dumps(return_unsuccess('Error: Add failed'))
+
 
 # 查询所有现金记录
 @inout_Money.route("/querySumBankAmount", methods=["GET", "POST"])
 def querySumBankAmount():
     query = BankStatementDao()
-    result=query.querySumAmount()
+    result = query.querySumAmount()
     if len(result) == 0:
         return json.dumps(return_success(result[0][0]))
     else:
         return json.dumps(return_unsuccess('Error:Sorry,no data'))
     print(result)
+
+
 # 查询所有现金记录
 @inout_Money.route("/queryAllCashRecord", methods=["GET", "POST"])
 def queryAllCashRecord():
