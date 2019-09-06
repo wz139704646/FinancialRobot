@@ -125,6 +125,8 @@ class ZjjTesst(unittest.TestCase):
         print(list(a.values()))
         print(a.get(None))
         print(list({}.values()))
+        dao = AccountingSubjectDao()
+        print(dao.query_all_types())
 
     # 只能在windows下使用，放弃
     def test_xlwings_1(self):

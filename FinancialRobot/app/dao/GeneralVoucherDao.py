@@ -131,6 +131,46 @@ class GeneralVoucherDao:
         sql += ' order by date desc, voucher_no asc'
         return conn.executeQuery(sql=sql, param=params)
 
+
+    def query_voucher_by_date_range(self, cond, low=None, up=None):
+        """
+        根据日期范围查询凭证
+        :param cond: 其他限制条件
+        :param low: 日期下界 >=
+        :param up: 日期上界 <=
+        :return: 同query_voucher
+        """
+        conn = MyHelper()
+        params = []
+
+        if low and up and low > up:
+            return
+
+        sql = "select * from general_voucher where 1 = 1"
+        cond = cond or {}
+        if cond.get('record_date'):
+            sql += " and record_date = %s"
+            params.append(cond.get('record_date'))
+        if cond.get('voucher_no'):
+            sql += " and voucher_no = %s"
+            params.append(cond.get('voucher_no'))
+        if cond.get('attachments_number'):
+            sql += " and attachments_number = %s"
+            params.append(cond.get('attachments_number'))
+        if cond.get('checked'):
+            sql += " and checked = %s"
+            params.append(cond.get('checked'))
+
+        if low:
+            sql += " and date >= %s"
+            params.append(low)
+        if up:
+            sql += " and date <= %s"
+            params.append(up)
+
+        sql += ' order by date desc, voucher_no asc'
+        return conn.executeQuery(sql=sql, param=params)
+
     def query_voucher_entries(self, cond={}):
         """
         查询凭证的分录信息

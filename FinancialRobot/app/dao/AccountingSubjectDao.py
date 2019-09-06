@@ -187,7 +187,8 @@ class AccountingSubjectDao:
         conn = MyHelper()
         rows =  conn.executeQuery(
             "select type from accounting_subjects "
-            "group by type"
+            "group by type "
+            "order by min(subject_code)"
         )
         if rows:
             result = []
@@ -332,7 +333,7 @@ class AccountingSubjectDao:
 
             return res
 
-    def query_subject_balance_by_time_range(self, cond, low=None, up=None):
+    def query_subject_balance_by_time_range(self, cond={}, low=None, up=None):
         """
         根据时间范围查询科目余额
         :param cond: 查询科目的限定条件
@@ -570,8 +571,13 @@ class AccountingSubjectDao:
         else:
             return False, '找不到相关科目余额信息'
 
-    # 查询最上一层的科目代码
+    # 查询最上一层的科目
     def query_top_subject(self, subject_code):
+        """
+        查询最上一层的科目信息
+        :param subject_code: 科目代码
+        :return: dict，字段同 query_subject
+        """
         subject = self.query_subject({'subject_code': subject_code})
         if subject:
             subject = self.accounting_subject_to_dict(subject)[0]
@@ -580,3 +586,18 @@ class AccountingSubjectDao:
             else:
                 return subject
 
+    def query_times(self, year=None):
+        """
+        查询最小和最大的期
+        :param year: 如果传入年份则查询某一年最小和最大的期
+        :return: tuple, 第一个元素为最小的期，第二个为最大的期
+        """
+        conn = MyHelper()
+        sql = "select MIN(time), MAX(time) from accounting_subjects_balance"
+        params = []
+        if year:
+            sql += " where FIND_IN_SET(%s, time) = 0"
+            params.append(str(year))
+        rows = conn.executeQuery(sql, params)
+        if rows:
+            return rows[0][0], rows[0][1]

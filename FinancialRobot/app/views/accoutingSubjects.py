@@ -117,15 +117,17 @@ def subject_get_new_code():
     else:
         cond = request.json
     if cond and cond.get('subject_code'):
-        code = cond.get('subject_code')
+        code = str(cond.get('subject_code'))
         rows = a_s_dao.query_subject({'superior_subject_code': code})
         if rows:
             lv1_subs = a_s_dao.accounting_subject_to_dict(rows)
             suffix = []
             nums = []
+            code_len = len(code)
             for sub in lv1_subs:
-                suffix.append((sub['subject_code'])[4:])
-                nums.append(int(sub['subject_code']))
+                if len(sub['subject_code']) > code_len:
+                    suffix.append((sub['subject_code'])[code_len:])
+                    nums.append(int(sub['subject_code']))
             new_code = code
             # 寻找01-99中是否有没有使用的，有则对code直接进行凭借作为新代码
             for i in range(1, 100):
@@ -214,3 +216,17 @@ def subject_add_balance():
     else:
         return jsonify(return_unsuccess(insert_res[1]))
 
+
+@accounting_subjects.route("/finance/subject/getTimes", methods=["GET", "POST"])
+def subject_get_times():
+    _method = request.method
+    if _method == 'GET':
+        cond = request.args
+    else:
+        cond = request.json
+
+    res = a_s_dao.query_times(cond.get('year'))
+    if res:
+        return jsonify(return_success({'low': res[0], 'up': res[1]}))
+    else:
+        return jsonify(return_unsuccess('尚无科目余额记录'))
