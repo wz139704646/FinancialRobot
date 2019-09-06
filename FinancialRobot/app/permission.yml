@@ -62,6 +62,8 @@ parts:
     - inout_Money.queryDailyByOption
     - inout_Money.checkBankStatus
   arap: &arap
+    - arap.get_pay_methods
+    - arap.get_bank_names
     - arap.addPurchasePay
     - arap.queryPurchasePay
     - arap.addSellReceive

@@ -34,7 +34,7 @@ def check_token(func):
     """
 
     def wrapper(*args, **kwargs):
-        # return func(*args, **kwargs)
+        return func(*args, **kwargs)
         # 请求的endpoint
         if request.endpoint is None:
             return json.dumps(return_unsuccess("No such endpoint"), ensure_ascii=False), 404
