@@ -28,8 +28,21 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF'}
 MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB
 
 
-def get_vouchers(cond):
-    vouchers = g_v_dao.query_voucher(cond)
+def get_vouchers(cond, date_ranged=False, spec_time=False):
+    if date_ranged:
+        vouchers = g_v_dao.query_voucher_by_date_range(cond, cond.get('low'), cond.get('up'))
+    elif spec_time:
+        time = cond.get('time')
+        if not time or not len(str(time)) == 6:
+            return
+        time = str(time)
+        year = time[:4]
+        month = time[4:]
+        day_low = '01'
+        day_up = '31'
+        vouchers = g_v_dao.query_voucher_by_date_range(cond, year+month+day_low, year+month+day_up)
+    else:
+        vouchers = g_v_dao.query_voucher(cond)
     if vouchers:
         vouchers = g_v_dao.general_voucher_to_dict(vouchers)
         # 为每一个凭证添加分录字段
@@ -50,12 +63,20 @@ def voucher_get_with_options():
         cond = request.args
     else:
         cond = request.json
-    # 按条件查询凭证信息
-    vouchers = get_vouchers(cond)
+    # 根据查询条件中有关日期限制条件的不同，按条件查询凭证信息
+    if cond.get('date'):
+        vouchers = get_vouchers(cond)
+    elif all([cond.get('low'), cond.get('up')]):
+        vouchers = get_vouchers(cond, date_ranged=True)
+    elif cond.get('time'):
+        vouchers = get_vouchers(cond, spec_time=True)
+    else:
+        vouchers = get_vouchers(cond)
+
     if vouchers:
         return json.dumps(return_success(vouchers), cls=DecimalEncoder)
     else:
-        return jsonify(return_unsuccess('无相关凭证信息'))
+        return jsonify(return_unsuccess('无相关凭证信息，请检查查询条件'))
 
 
 def update_subject_balance_on_voucher_update(time, entries_del=[], entries_add=[]):
@@ -197,9 +218,16 @@ def voucher_get_with_attachment():
     if cond.get('for_voucher') is not None:
         cond.pop('for_voucher')
 
-    vouchers = g_v_dao.query_voucher(cond)
+    if cond.get('date'):
+        vouchers = get_vouchers(cond)
+    elif all([cond.get('low'), cond.get('up')]):
+        vouchers = get_vouchers(cond, date_ranged=True)
+    elif cond.get('time'):
+        vouchers = get_vouchers(cond, spec_time=True)
+    else:
+        vouchers = get_vouchers(cond)
+
     if vouchers:
-        vouchers = g_v_dao.general_voucher_to_dict(vouchers)
         # 添加凭证分录信息和摘要、总金额、附件
         for v in vouchers:
             v['entries'] = g_v_dao.voucher_entry_to_dict(
@@ -258,7 +286,7 @@ def voucher_gen_save(voucher_no):
 
     vouchers = get_vouchers({'voucher_no': voucher_no})
     if not vouchers:
-        return False, '无相关凭证信息'
+        return False, '无相关凭证信息，请检查查询条件'
 
     # 根据分录数目决定凭证张数
     entries = vouchers[0].get('entries')
