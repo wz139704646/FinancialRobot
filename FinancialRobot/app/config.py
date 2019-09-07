@@ -14,4 +14,5 @@ redis_store = Redis(host=host, port=redis_port, db=redis_db, password='Wdrs14569
 SECRET_KEY = 'WDRSZXNSHQBND11rZJYYnjhjKKXX'
 JWT_HEADER_NAME = 'HTTP_TOKEN'
 BIGCHAINDB_URL = 'http://47.100.244.29:9984/'
-MONGO_URI = 'mongodb://47.100.244.29:27017/bigchain'
+# MONGO_URI = 'mongodb://47.100.244.29:27017/bigchain'
+MONGO_URI = 'mongodb://47.100.244.29:27017'

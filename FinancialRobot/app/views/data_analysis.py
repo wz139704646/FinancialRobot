@@ -108,7 +108,6 @@ def analyze_sales_by_year_and_month(year, month):
             total_num += info[i][1]
     except():
         Exception('sql failed!')
-    print(info)
     info = tuple(map(lambda tu: tuple([tu[0], round(int(tu[1]) / total_num, 4), tu[2]]), info))
     sum_proportions = 0
     for i in range(len(info)):
@@ -121,10 +120,8 @@ def analyze_sales_by_year_and_month(year, month):
 # 按年查看不同种类总销售额变化
 @analysis_results.route("/data/getTotalSalesByYearAndMonth", methods=["GET", "POST"])
 def analyze_sales_by_year():
-    print('analyze_sales called')
     _json = request.json
     year = int(_json.get('year'))
-    print(year)
     if not year:
         return jsonify(return_unsuccess('无法获取总销售额信息'))
     types = DataAnalysisDao().query_type_from_goods()
@@ -150,7 +147,6 @@ def analyze_sales_by_year():
             else:
                 month = str(i)
             dict_of_year_month_type_and_total_sales[month + str(tu[0])] = float(tu[1])
-    print(dict_of_year_month_type_and_total_sales)
     if not dict_of_year_month_type_and_total_sales:
         return jsonify(return_unsuccess('无法获取总销售额信息'))
     return jsonify(return_success(dict_of_year_month_type_and_total_sales))
@@ -178,7 +174,6 @@ def analyze_operating_income_by_year():
             dict_of_day_type_and_operating_income['0' + str(tu[0]) + str(tu[1])] = float(tu[2])
         else:
             dict_of_day_type_and_operating_income[str(tu[0]) + str(tu[1])] = float(tu[2])
-    print(dict_of_day_type_and_operating_income)
     if not dict_of_day_type_and_operating_income:
         return jsonify(return_unsuccess('无法获取当月营收信息'))
     return jsonify(return_success(dict_of_day_type_and_operating_income))
@@ -191,7 +186,6 @@ def analyze_total_operating_income():
     dict_of_type_and_total_operating_income = {t: float(0) for t in ['食品类', '日用品类', '其他类', '电子类']}
     for tu in info:
         dict_of_type_and_total_operating_income[str(tu[0])] = float(tu[1])
-    print(dict_of_type_and_total_operating_income)
     if not dict_of_type_and_total_operating_income:
         return jsonify(return_unsuccess('无法获取总营收信息'))
     return jsonify(return_success(dict_of_type_and_total_operating_income))
@@ -219,7 +213,6 @@ def analyze_operating_expenditures_by_year_and_month():
             dict_of_day_type_and_operating_expenditure['0' + str(tu[0]) + str(tu[1])] = float(tu[2])
         else:
             dict_of_day_type_and_operating_expenditure[str(tu[0]) + str(tu[1])] = float(tu[2])
-    print(dict_of_day_type_and_operating_expenditure)
     if not dict_of_day_type_and_operating_expenditure:
         return jsonify(return_unsuccess('无法获取当月营收信息'))
     return jsonify(return_success(dict_of_day_type_and_operating_expenditure))
@@ -233,12 +226,9 @@ def analyze_operating_expenditures_by_year():
     if not year:
         return jsonify(return_unsuccess('无法获取年份参数'))
     info = DataAnalysisDao().query_operating_expenditure_by_year(year)
-    print(info)
     dict_of_month_and_operating_expenditure = {str(month): str(0) for month in range(1, 13)}
-    print(dict_of_month_and_operating_expenditure)
     for tu in info:
         dict_of_month_and_operating_expenditure[str(tu[0])] = str(tu[1])
-    print(dict_of_month_and_operating_expenditure)
     if not dict_of_month_and_operating_expenditure:
         return jsonify(return_unsuccess('无法获取营业支出信息'))
     return jsonify(return_success(dict_of_month_and_operating_expenditure))
@@ -260,9 +250,7 @@ def analyze_total_operating_expenditure():
 @analysis_results.route("/data/getOperatingProfits", methods=["GET", "POST"])
 def analyze_operating_profits():
     info = DataAnalysisDao().query_operating_profits()
-    print(info)
     dict_of_year_and_operating_profits = {i + 2010: info[0][i + 1] for i in range(0, 10)}
-    print(dict_of_year_and_operating_profits)
     if not dict_of_year_and_operating_profits:
         return jsonify(return_unsuccess('无法获取营业利润信息'))
     return jsonify(return_success(dict_of_year_and_operating_profits))
@@ -272,9 +260,7 @@ def analyze_operating_profits():
 @analysis_results.route("/data/getTotalProfits", methods=["GET", "POST"])
 def analyze_total_profits():
     info = DataAnalysisDao().query_total_profits()
-    print(info)
     dict_of_year_and_operating_profits = {i + 2010: info[0][i + 1] for i in range(0, 10)}
-    print(dict_of_year_and_operating_profits)
     if not dict_of_year_and_operating_profits:
         return jsonify(return_unsuccess('无法获取利润总额信息'))
     return jsonify(return_success(dict_of_year_and_operating_profits))
@@ -284,7 +270,6 @@ def analyze_total_profits():
 @analysis_results.route("/data/getNetProfit", methods=["GET", "POST"])
 def analyze_net_profit():
     info = DataAnalysisDao().query_net_profit()
-    print(info)
     dict_of_year_and_net_profit = {i + 2010: info[0][i + 1] for i in range(0, 10)}
     if not dict_of_year_and_net_profit:
         return jsonify(return_unsuccess('无法获取净利润信息'))
@@ -372,10 +357,8 @@ def getData():
     names = getCompanyNames()[0:7]
     values = getValues()
     if len(names) != len(values) or len(names) == 0:
-        print(names, values)
         return jsonify(return_unsuccess('无法获取网页信息，出现bug'))
     dict_of_name_and_value = {names[i]: values[i] for i in range(7)}
-    print(dict_of_name_and_value)
     return jsonify(return_success(dict_of_name_and_value))
 
 
@@ -389,3 +372,51 @@ def analyze_goods_ratio():
     if not dict_of_type_and_ratio:
         return jsonify(return_unsuccess('无法获取仓库信息'))
     return jsonify(return_success(dict_of_type_and_ratio))
+
+
+# 查询返回某年某月的销售记录
+@analysis_results.route("/data/getSalesDetailByYearAndMonth", methods=["GET", "POST"])
+def analyze_sales_detail_by_month():
+    _json = request.json
+    year = int(_json.get('year'))
+    month = int(_json.get('month'))
+    info = DataAnalysisDao().query_sales_info_by_year_and_month(year, month)
+    detail = []
+    for tu in info:
+        detail.append(str(tu[1]) + ' ' + str(tu[0]) + '购买了' + str(tu[2]) + str(tu[3]) + str(tu[4]) + '，共计' + str(tu[5]) + '元。')
+    dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
+    if not dict_of_index_and_detail:
+        return jsonify(return_unsuccess('无法获取销售信息'))
+    return jsonify(return_success(dict_of_index_and_detail))
+
+
+# 查询返回某年某月某日的销售记录
+@analysis_results.route("/data/getSalesDetailByDate", methods=["GET", "POST"])
+def analyze_sales_detail_by_date():
+    _json = request.json
+    year = int(_json.get('year'))
+    month = int(_json.get('month'))
+    day = int(_json.get('day'))
+    info = DataAnalysisDao().query_sales_info_by_date(year, month, day)
+    detail = []
+    for tu in info:
+        detail.append(str(tu[1]) + ' ' + str(tu[0]) + '购买了' + str(tu[2]) + str(tu[3]) + str(tu[4]) + '，共计' + str(tu[5]) + '元。')
+    dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
+    if not dict_of_index_and_detail:
+        return jsonify(return_unsuccess('无法获取销售信息'))
+    return jsonify(return_success(dict_of_index_and_detail))
+
+
+# 查询返回某类的销售记录
+@analysis_results.route("/data/getSalesDetailByCategory", methods=["GET", "POST"])
+def analyze_sales_detail_by_category():
+    _json = request.json
+    category = str(_json.get('category'))
+    info = DataAnalysisDao().query_sales_info_by_category(category)
+    detail = []
+    for tu in info:
+        detail.append(str(tu[1]) + ' ' + str(tu[0]) + '购买了' + str(tu[2]) + str(tu[3]) + str(tu[4]) + '，共计' + str(tu[5]) + '元。')
+    dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
+    if not dict_of_index_and_detail:
+        return jsonify(return_unsuccess('无法获取销售信息'))
+    return jsonify(return_success(dict_of_index_and_detail))
