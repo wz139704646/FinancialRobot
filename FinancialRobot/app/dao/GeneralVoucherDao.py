@@ -131,7 +131,6 @@ class GeneralVoucherDao:
         sql += ' order by date desc, voucher_no asc'
         return conn.executeQuery(sql=sql, param=params)
 
-
     def query_voucher_by_date_range(self, cond, low=None, up=None):
         """
         根据日期范围查询凭证
