@@ -308,7 +308,8 @@ class Test11(unittest.TestCase):
     def test24(self):
         data = {"companyId": "5",
                 "name": "zqr", }
-        _resp = requests.post(url='http://127.0.0.1:5000/queryCustomerByName', json=data)
+        token = request.headers.get('Authorization')
+        _resp = requests.post(url='http://127.0.0.1:5000/queryCustomerByName', json=data, headers=request.headers)
         resp_json = _resp.content
         print(resp_json)
 
@@ -345,10 +346,12 @@ class Test11(unittest.TestCase):
                 results.append(result)
         print(results)
         print(len(results))
+
     def test35(self):
         query = SupplierDao()
         result = query.query_byId('08580344-22e0-34a6-9cce-774279c9b9a8')
         print(result[0][1])
+
     def test26(self):
         query = PurchaseDao()
         results = []
@@ -386,52 +389,7 @@ class Test11(unittest.TestCase):
         language = ""
         jieba.load_userdict("../app/utils/dict.txt")
         # 去除停用词
-        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有"])
-        today = ['今天', '这一天']
-        time2 = ['昨天', '上一天']
-        time3 = ['这周', '这一周']
-        time4 = ['上周', '上一周']
-        time5 = ['这个月']
-
-        action1 = ['赚', '挣', '卖', '收入', '盈利', '进账']
-        action2 = ['进', '买']
-        action3 = ['查', '看', '查看']
-        action4 = ['花', '消费', '支出']
-
-        nouns1 = ['东西', '商品', '货']
-        nouns2 = ['钱']
-        nouns3 = ['库存']
-
-        text1 = "上周进了多少货"
-        text2 = "今天卖了什么东西"
-        text3 = "查询可口可乐的库存"
-        text5 = "查一下商品库存"
-        text4 = "今天花了多少钱"
-        # 精确模式
-        segs = jieba.cut(text5, cut_all=False)
-        final = []
-        for seg in segs:
-            if seg not in stopwords:
-                final.append(seg)
-        print(final)
-        a = 0
-        for i in range(0, len(final)):
-            if final[i] == "库存":
-                a = i - 1
-        print(final[a])
-
-    def test31(self):
-        query=SellDao()
-        result=query.query_byId("96277eb0-79a8-36b9-9b4a-f95d7b6055d0")
-        print(result)
-
-    def test12(self):
-        companyId = "5"
-        date = "2019-7-14"
-        language = ""
-        jieba.load_userdict("../app/utils/dict.txt")
-        # 去除停用词
-        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有","一下"])
+        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下"])
         today = ['今天', '这一天']
         yesterday = ['昨天', '上一天']
         this_week = ['这周', '这一周']
@@ -449,8 +407,61 @@ class Test11(unittest.TestCase):
 
         text1 = "上周进了多少货"
         text2 = "今天卖了什么东西"
-        text3 = "查一下可口可乐的库存"
+        text3 = "查询商品可口可乐的库存"
+        text5 = "查一下所有商品的库存"
         text4 = "今天花了多少钱"
+        # 精确模式
+        segs = jieba.cut(text3, cut_all=False)
+        final = []
+        for seg in segs:
+            if seg not in stopwords:
+                final.append(seg)
+        print(final)
+        a = 0
+        for i in range(0, len(final)):
+            if final[i] == "库存":
+                a = i - 1
+        print(final[a])
+
+    def test31(self):
+        query = SellDao()
+        result = query.query_byId("96277eb0-79a8-36b9-9b4a-f95d7b6055d0")
+        print(result)
+
+    def test12(self):
+        companyId = "5"
+        date1 = "2019-07-24 19:11:03"
+        date = "2019-07-24"
+        d = datetime.datetime.strptime(date1, '%Y-%m-%d %H:%M:%S')
+        language = ""
+        jieba.load_userdict("../app/utils/dict.txt")
+        # 去除停用词
+        stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下"])
+        today = ['今天', '这一天']
+        yesterday = ['昨天', '上一天']
+        this_week = ['这周', '这一周']
+        last_week = ['上周', '上一周']
+        this_month = ['这个月']
+
+        ac_in_money = ['赚', '挣', '卖', '收入', '盈利', '进账']
+        ac_purchase = ['进', '买', "进了", "买了"]
+        ac_query = ['查', '看', '查看', "查询"]
+        ac_out_money = ['花', '消费', '支出']
+
+        goods = ['东西', '商品', '货', "货物"]
+        money = ['钱']
+        price = ['价格']
+        inPrice = ['进价']
+        outPrice = ['售价']
+        store = ['库存']
+        supplier = ['供货商', '供应商', '进货商']
+        customer = ['顾客', '客户']
+        tables = ['利润表', '资产负债表', '经营日报', '利润分析']
+
+        text1 = "这个月进了多少货"
+        text2 = "这个月挣了多少钱"
+        text3 = "查一下供应商蔡徐坤的信息"
+        text4 = "这个月挣了多少钱"
         # 精确模式
         segs = jieba.cut(text3, cut_all=False)
         final = []
@@ -483,9 +494,22 @@ class Test11(unittest.TestCase):
                 nouns = "money"
             if item in store:
                 nouns = "store"
+            if item in price:
+                nouns = "price"
+            if item in inPrice:
+                nouns = "inPrice"
+            if item in outPrice:
+                nouns = "outPrice"
+            if item in supplier:
+                nouns = "supplier"
+            if item in customer:
+                nouns = "customer"
+            if item in tables:
+                nouns = "tables"
         print(time)
         print(action)
         print(nouns)
+
         querySell = SellDao()
         queryPurchase = PurchaseDao()
         inputTime = datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -509,76 +533,152 @@ class Test11(unittest.TestCase):
             delta = datetime.timedelta(days=7)
             start = end - delta
         if time == "this_month":
-            start = datetime.date(inputTime.year, inputTime.month - 1, 1)
-            end = datetime.date(inputTime.year, inputTime.month, 1) - datetime.timedelta(1)
+            start = d.replace(year=d.year, month=d.month, day=1, hour=0, minute=0, second=0)
+            end = d.replace(year=d.year, month=d.month + 1, day=1, hour=0, minute=0, second=0)
+        print(time)
         print(start)
         print(end)
+        # token = request.headers.get('Authorization')
+        token = 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzI5NTkyOTgsImlhdCI6MTU2Nzc3NTI5OCwiZGF0YSI6eyJhY2NvdW50IjoiMTU4MjcxNTI2NzAiLCJsb2dpbl90aW1lIjoxNTY3Nzc1Mjk4fX0.UqCe-5K99K_HPL8UglxtYUHNLpj_f7rWC3M39SjNRfw'
+        headers = {
+            'Authorization': token,
+            'Content-Type': 'application/json'
+        }
         # 对行为进行判断
-        if action == "ac_in_money":
-            resultInfo = []
-            resultString = ""
-            inMoney = 0
-            outMoney = 0
-            result = querySell.query_byDate(companyId, start, end)
-            size = len(result)
-            if size >= 1:
-                for i in result:
-                    purchasePrice = GoodsDao.get_BuyPrice(i[2])
-                    outMoney += purchasePrice * i[4]
-                    inMoney += i[5]
-                    midstr = i[8] + "," + str(i[4]) + i[9] + "," + "共" + str(i[5]) + "元"
-                    resultInfo.append(midstr)
-            else:
-                print("未查询到数据")
-            resultString = "卖出了" + str(inMoney) + "元" + ";" + "成本" + str(outMoney) + "元" + ";" + "利润" + str(
-                inMoney - outMoney) + "元"
-            if nouns == "goods":
-                print(resultInfo)
-            if nouns == "money":
-                print(resultString)
-        if action == "ac_purchase" and nouns == "goods":
-            result = queryPurchase.query_byDate(companyId, start, end)
-            finalresult = []
-            outMoneyarray = []
-            outMoney = 0
-            size = len(result)
-            if size >= 1:
-                for buy in result:
-                    mid = "购入 " + buy[2] + " " + str(buy[5]) + "个" + "，单价" + str(buy[6]) + "元"
-                    outMoney += float(buy[4]) * float(buy[5])
-                    finalresult.append(mid)
-            else:
-                print("未查询到数据")
-            outString = "进货支出" + str(outMoney) + "元"
-            outMoneyarray.append(outString)
-            print(finalresult)
-        if action == "ac_query" and (nouns == "goods" or nouns == "store"):
-            for i in range(0, len(final)):
-                if final[i] == "库存":
-                    a = i - 1
-            print(final[a])
-            if final[a] in goods or final[a] in ac_query:
-                data = {"companyId": "5"}
-                _resp = requests.post(url='http://127.0.0.1:5000/queryStoreGoods', json=data)
-                resp_json = _resp.text
-                print(resp_json)
-            else:
-                data = {"companyId": "5",
-                        "name":final[a]}
-                _resp = requests.post(url='http://127.0.0.1:5000/queryStoreGoods', json=data)
-                resp_json = _resp.text
-                print(resp_json)
 
-        if action == "ac_out_money" and nouns == "money":
-            result = queryPurchase.query_byDate(companyId, start, end)
-            outMoneyarray = []
-            outMoney = 0
-            size = len(result)
-            if size >= 1:
-                for buy in result:
-                    outMoney += float(buy[4]) * float(buy[5])
+        # 一段时期内的销售情况
+        if action == "ac_in_money" and nouns == "goods":
+            data = {"start": start,
+                    "end": end,
+                    'companyId': '5',
+                    'date': "hh"}
+            data_json = json.dumps(data, cls=DecimalEncoder)
+            _resp = requests.post(url='http://127.0.0.1:5000/querySell', data=data_json, headers=headers)
+            resp_json = _resp.content
+            print(resp_json)
+            # resultInfo = []
+            # resultString = ""
+            # inMoney = 0
+            # outMoney = 0
+            # result = querySell.query_byDate(companyId, start, end)
+            # size = len(result)
+            # if size >= 1:
+            #     for i in result:
+            #         purchasePrice = GoodsDao.get_BuyPrice(i[2])
+            #         outMoney += purchasePrice * i[4]
+            #         inMoney += i[5]
+            #         midstr = i[8] + "," + str(i[4]) + i[9] + "," + "共" + str(i[5]) + "元"
+            #         resultInfo.append(midstr)
+            # else:
+            #     print("未查询到数据")
+            # resultString = "卖出了" + str(inMoney) + "元" + ";" + "成本" + str(outMoney) + "元" + ";" + "利润" + str(
+            #     inMoney - outMoney) + "元"
+
+        # 某段时间内进的货物
+        if action == "ac_purchase" and nouns == "goods":
+            data = {'companyId': '5',
+                    'date': "hh",
+                    'start': start,
+                    'end': end}
+            data_json = json.dumps(data, cls=DecimalEncoder)
+            _resp = requests.post(url='http://127.0.0.1:5000/queryPurchase', data=data_json,
+                                  headers=headers)
+            resp_json = _resp.content
+            print(resp_json)
+            # result = queryPurchase.query_byDate(companyId, start, end)
+            # finalresult = []
+            # outMoneyarray = []
+            # outMoney = 0
+            # size = len(result)
+            # if size >= 1:
+            #     for buy in result:
+            #         mid = "购入 " + buy[2] + " " + str(buy[5]) + "个" + "，单价" + str(buy[6]) + "元"
+            #         outMoney += float(buy[4]) * float(buy[5])
+            #         finalresult.append(mid)
+            # else:
+            #     print("未查询到数据")
+            # outString = "进货支出" + str(outMoney) + "元"
+            # outMoneyarray.append(outString)
+            # print(finalresult)
+        # 查商品库存
+        if action == "ac_query" and (nouns == "goods" or nouns == "store"):
+            if len(final) == 3:
+                if final[1] in goods:
+                    data = {'companyId': '5'}
+                else:
+                    data = {'companyId': '5',
+                            'name': final[1]}
             else:
-                print("未查询到数据")
-            outString = "进货支出" + str(outMoney) + "元"
-            outMoneyarray.append(outString)
-            print(outMoneyarray)
+                data = {'companyId': '5',
+                        'name': final[2]}
+            data_json = json.dumps(data, cls=DecimalEncoder)
+            _resp = requests.post(url='http://127.0.0.1:5000/queryStoreGoods', data=data_json, headers=headers)
+            resp_json = _resp.content
+            print(resp_json)
+        # 查询商品的价格
+        if action == "ac_query" and (nouns == "price" or nouns == "inPrice" or nouns == "outPrice"):
+            if len(final) == 3:
+                data = {'name': final[1]}
+            else:
+                data = {'name': final[2]}
+            data_json = json.dumps(data, cls=DecimalEncoder)
+            if nouns == "inPrice":
+                _respIn = requests.post(url='http://127.0.0.1:5000/purchasePriceByName', data=data_json,
+                                        headers=headers)
+                resp_jsonIn = _respIn.content
+                print(resp_jsonIn)
+            if nouns == "outPrice":
+                _respOut = requests.post(url='http://127.0.0.1:5000/SellPriceByName', data=data_json, headers=headers)
+                resp_jsonOut = _respOut.content
+                print(resp_jsonOut)
+            if nouns == "price":
+                _respIn = requests.post(url='http://127.0.0.1:5000/purchasePriceByName', data=data_json,
+                                        headers=headers)
+                resp_jsonIn = _respIn.content
+                print(resp_jsonIn)
+                _respOut = requests.post(url='http://127.0.0.1:5000/SellPriceByName', data=data_json, headers=headers)
+                resp_jsonOut = _respOut.content
+                print(resp_jsonOut)
+        # 一段时间的支出
+        if nouns == "money":
+            data = {'start': start,
+                    'end': end}
+            data_json = json.dumps(data, cls=DecimalEncoder)
+            _respCash = requests.post(url='http://127.0.0.1:5000/queryCashRecordByDate', data=data_json,
+                                      headers=headers)
+            CashResult = _respCash.content
+            print(CashResult)
+            _respBank = requests.post(url='http://127.0.0.1:5000/queryBankRecordByDate', data=data_json,
+                                      headers=headers)
+            BankResult = _respBank.content
+            print(BankResult)
+            # 一段时期内的收入情况，查询两个表，现金表和银行存款表
+            if action == "ac_in_money":
+                print('一段时间内的收入')
+            if action == "ac_out_money":
+                print('一段时间内的支出')
+        #####查询顾客信息#####
+        if action == "ac_query" and nouns == "customer":
+            data = {'companyId': '5',
+                    'name': final[2]}
+            data_json = json.dumps(data, cls=DecimalEncoder)
+            _respCash = requests.post(url='http://127.0.0.1:5000/queryCustomer', data=data_json,headers=headers)
+            CusResult = _respCash.content
+            print(CusResult)
+         #####查询供应商信息#####
+        if action == "ac_query" and nouns == "supplier":
+            data = {'companyId': '5',
+                    'name': final[2]}
+            data_json = json.dumps(data, cls=DecimalEncoder)
+            _respCash = requests.post(url='http://127.0.0.1:5000/querySupplierByName', data=data_json,headers=headers)
+            CashResult = _respCash.content
+            print(CashResult)
+        #####查询表格信息#####
+        if action == "ac_query" and nouns == "tables":
+            data = {'start': start,
+                    'end': end}
+            data_json = json.dumps(data, cls=DecimalEncoder)
+            _respCash = requests.post(url='http://127.0.0.1:5000/queryCashRecordByDate', data=data_json,
+                                      headers=headers)
+            CashResult = _respCash.content
+            print(CashResult)

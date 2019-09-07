@@ -71,3 +71,8 @@ class SellDao:
             "insert into Sell (id,customerId, goodsId, companyId, number, sumprice,date,customerName,goodsName,unitInfo) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
             [id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, unitInfo])
         return row
+
+    def SellPriceByName(self, name):
+        connection = MyHelper()
+        return connection.executeQuery(
+            "SELECT number ,sumprice, date FROM Sell WHERE goodsName LIKE %s ORDER BY date", [name])
