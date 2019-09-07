@@ -389,3 +389,57 @@ def analyze_goods_ratio():
     if not dict_of_type_and_ratio:
         return jsonify(return_unsuccess('无法获取仓库信息'))
     return jsonify(return_success(dict_of_type_and_ratio))
+
+
+# 查询返回某年某月的销售记录
+@analysis_results.route("/data/getSalesDetailByYearAndMonth", methods=["GET", "POST"])
+def analyze_sales_detail_by_month():
+    _json = request.json
+    year = int(_json.get('year'))
+    month = int(_json.get('month'))
+    info = DataAnalysisDao().query_sales_info_by_year_and_month(year, month)
+    print(info)
+    detail = []
+    for tu in info:
+        detail.append(str(tu[1]) + ' ' + str(tu[0]) + '购买了' + str(tu[2]) + str(tu[3]) + str(tu[4]) + '，共计' + str(tu[5]) + '元。')
+    print (detail)
+    dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
+    if not dict_of_index_and_detail:
+        return jsonify(return_unsuccess('无法获取销售信息'))
+    return jsonify(return_success(dict_of_index_and_detail))
+
+
+# 查询返回某年某月某日的销售记录
+@analysis_results.route("/data/getSalesDetailByDate", methods=["GET", "POST"])
+def analyze_sales_detail_by_date():
+    _json = request.json
+    year = int(_json.get('year'))
+    month = int(_json.get('month'))
+    day = int(_json.get('day'))
+    info = DataAnalysisDao().query_sales_info_by_date(year, month, day)
+    print(info)
+    detail = []
+    for tu in info:
+        detail.append(str(tu[1]) + ' ' + str(tu[0]) + '购买了' + str(tu[2]) + str(tu[3]) + str(tu[4]) + '，共计' + str(tu[5]) + '元。')
+    print (detail)
+    dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
+    if not dict_of_index_and_detail:
+        return jsonify(return_unsuccess('无法获取销售信息'))
+    return jsonify(return_success(dict_of_index_and_detail))
+
+
+# 查询返回某年某月某日的销售记录
+@analysis_results.route("/data/getSalesDetailByCategory", methods=["GET", "POST"])
+def analyze_sales_detail_by_category():
+    _json = request.json
+    category = int(_json.get('category'))
+    info = DataAnalysisDao().query_sales_info_by_category(category)
+    print(info)
+    detail = []
+    for tu in info:
+        detail.append(str(tu[1]) + ' ' + str(tu[0]) + '购买了' + str(tu[2]) + str(tu[3]) + str(tu[4]) + '，共计' + str(tu[5]) + '元。')
+    print (detail)
+    dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
+    if not dict_of_index_and_detail:
+        return jsonify(return_unsuccess('无法获取销售信息'))
+    return jsonify(return_success(dict_of_index_and_detail))

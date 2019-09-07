@@ -98,6 +98,9 @@ parts:
     - analysis_results.analyze_cash_ratio
     - analysis_results.getData
     - analysis_results.analyze_goods_ratio
+    - analysis_results.analyze_sales_detail_by_month
+    - analysis_results.analyze_sales_detail_by_date
+    - analysis_results.analyze_sales_detail_by_category
   fixed_assets: &fixed_assets
     - fixed_assets.query_fixed_assets
     - fixed_assets.add_fixed_assets
