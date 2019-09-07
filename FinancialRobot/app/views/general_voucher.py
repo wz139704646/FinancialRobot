@@ -129,7 +129,6 @@ def voucher_add_attachment():
     if f and allowed_file(f.filename):
         if size <= MAX_CONTENT_LENGTH:
             fname = secure_filename(f.filename)
-            print(fname)
             ext = fname.rsplit('.', 1)[1]
             new_filename = voucher_no + '_' + Pic_str().create_uuid() + '.' + ext
             # 更新photo
@@ -413,6 +412,7 @@ def voucher_del_with_no():
 
     if _json.get('voucher_no'):
         # 删除凭证
+        attachment = g_v_dao.query_voucher_attachments({'voucher_no': _json.get('voucher_no')})
         del_res = g_v_dao.delete_voucher(_json.get('voucher_no'))
         if del_res[0]:
             # 删除凭证时通过分录提交对应科目余额的变动
@@ -428,7 +428,6 @@ def voucher_del_with_no():
                 # 删除成功，返回原数据
                 # 清除所有凭证附件
                 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
-                attachment = g_v_dao.query_voucher_attachments({'voucher_no': _json.get('voucher_no')})
                 if attachment:
                     attachment = g_v_dao.voucher_attachment_to_dict(attachment)
                 for att in attachment:

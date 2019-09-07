@@ -60,6 +60,7 @@ class COHDao:
         result = []
         for i in data:
             i["data"]["date"] = unix_to_date(i["data"]["date"])
+            i["data"]["variation"] = float(i["data"]["variation"])
             result.append(i["data"])
         return result
 
