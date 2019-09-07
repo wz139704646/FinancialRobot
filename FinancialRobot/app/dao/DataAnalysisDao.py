@@ -69,4 +69,4 @@ class DataAnalysisDao:
         return MyHelper().executeQuery("select name, date, number, unitInfo, goodsName, sumprice from Sell as s, Company as c where c.id = s.companyId and MONTH(date) = " + str(month) + " and YEAR(date) = " + str(year) + " and DAY(date) = " + str(day) + " and number <> 0 and sumprice is not NULL;")
 
     def query_sales_info_by_category(self, category):
-        return MyHelper().executeQuery("select c.name, date, type, number, g.unitInfo, goodsName, sumprice from Sell as s, Company as c, Goods as g where c.id = s.companyId and g.id = goodsId and g.type = '" + category + "' and number <> 0 and sumprice is not NULL;")
+        return MyHelper().executeQuery("select c.name, date, number, g.unitInfo, goodsName, sumprice from Sell as s, Company as c, Goods as g where c.id = s.companyId and g.id = goodsId and g.type = '" + category + "' and number <> 0 and sumprice is not NULL;")

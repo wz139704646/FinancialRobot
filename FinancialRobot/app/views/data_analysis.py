@@ -432,7 +432,7 @@ def analyze_sales_detail_by_date():
 @analysis_results.route("/data/getSalesDetailByCategory", methods=["GET", "POST"])
 def analyze_sales_detail_by_category():
     _json = request.json
-    category = int(_json.get('category'))
+    category = str(_json.get('category'))
     info = DataAnalysisDao().query_sales_info_by_category(category)
     print(info)
     detail = []
