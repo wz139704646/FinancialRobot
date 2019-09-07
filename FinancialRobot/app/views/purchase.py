@@ -77,12 +77,16 @@ def queryPurchase():
         if _json.get('date') == None:
             idResult = query.queryAllId(companyId)
         else:
-            date = _json.get('date')
-            start = datetime.datetime.strptime(date, '%Y-%m-%d')
-            delta = datetime.timedelta(days=1)
-            n_days = start + delta
-            end = n_days.strftime('%Y-%m-%d %H:%M:%S')
-            idResult = query.query_byDate(companyId, start, end)
+            if _json.get('start') != None:
+                start = _json.get('start')
+                end = _json.get('end')
+            else:
+                date = _json.get('date')
+                start = datetime.datetime.strptime(date, '%Y-%m-%d')
+                delta = datetime.timedelta(days=1)
+                n_days = start + delta
+                end = n_days.strftime('%Y-%m-%d %H:%M:%S')
+        idResult = query.query_byDate(companyId, start, end)
         size = len(idResult)
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
@@ -146,3 +150,24 @@ def queryPurchase():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(PurchaseDao.to_dict(results)), ensure_ascii=False, cls=DecimalEncoder)
+
+
+# 查询商品进货价格
+@purchase.route("/purchasePriceByName", methods=["POST"])
+def purchasePriceByName():
+    query = PurchaseDao()
+    _json = request.json
+    name = _json.get('name')
+    newname = '%' + name + '%'
+    result1 = query.purchasePriceByName(newname)
+    size = len(result1)
+    if size >= 1:
+        result = []
+        for row in result1:
+            res = {}
+            res['purchasePrice'] = row[0]
+            res['date'] = row[1]
+            result.append(res)
+        return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
+    else:
+        return json.dumps(return_unsuccess('Error: No data'))

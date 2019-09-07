@@ -80,7 +80,7 @@ def addCashRecord():
     date = _json.get('date')
     variation = Decimal(_json.get('variation'))
     changeDescription = _json.get('changeDescription')
-    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(date)+str(time.time())))
+    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(date) + str(time.time())))
     row = query.add(id, date, variation, changeDescription)
     insertDailyRow = InsertDailyfund(date, changeDescription, variation)
     if row == 1:
@@ -153,9 +153,11 @@ def queryAllCashRecord():
 # 根据日期查询现金记录
 @inout_Money.route("/queryCashRecordByDate", methods=["GET", "POST"])
 def queryCashRecordByDate():
-    _json = request.json
-    start = _json.get('start')
-    end = _json.get('end')
+    data = request.json
+    start = data.get('start')
+    end = data.get('end')
+    print(start)
+    print(end)
     result = queryCash(start, end)
     if len(result) >= 1:
         return json.dumps(return_success(COHDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
@@ -220,29 +222,41 @@ def queryBankRecordByDate():
 @inout_Money.route("/queryBankRecordByOption", methods=["GET", "POST"])
 def queryBankRecordByOption():
     _json = request.json
-    date = _json.get('date')
-    option = int(_json.get('option'))
-    d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
-    if option == 1 or option == 2 or option == 3:
-        if option == 1:
-            start = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
-            end = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
-        if option == 2:
-            monday = timeProcess.get_current_week(d)
-            start = monday.replace(year=monday.year, month=monday.month, day=monday.day, hour=0, minute=0, second=0)
-            delta = datetime.timedelta(days=7)
-            end = start + delta
-        if option == 3:
-            start = d.replace(year=d.year, month=d.month, day=1, hour=0, minute=0, second=0)
-            end = d.replace(year=d.year, month=d.month + 1, day=1, hour=0, minute=0, second=0)
+    if _json.get('start') == None:
+        date = _json.get('date')
+        option = int(_json.get('option'))
+        d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+        if option == 1 or option == 2 or option == 3:
+            if option == 1:
+                start = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
+                end = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
+            if option == 2:
+                monday = timeProcess.get_current_week(d)
+                start = monday.replace(year=monday.year, month=monday.month, day=monday.day, hour=0, minute=0, second=0)
+                delta = datetime.timedelta(days=7)
+                end = start + delta
+            if option == 3:
+                start = d.replace(year=d.year, month=d.month, day=1, hour=0, minute=0, second=0)
+                end = d.replace(year=d.year, month=d.month + 1, day=1, hour=0, minute=0, second=0)
+            result = queryBank(start, end)
+            print(start, end)
+            if len(result) >= 1:
+                return json.dumps(return_success(BankStatementDao.to_dict(result)), ensure_ascii=False,
+                                  cls=DecimalEncoder)
+            else:
+                return json.dumps(return_unsuccess('Sorry,no data'))
+        else:
+            return json.dumps(return_unsuccess('Error!'))
+    else:
+        start=_json.get('start')
+        end = _json.get('end')
         result = queryBank(start, end)
         print(start, end)
         if len(result) >= 1:
-            return json.dumps(return_success(BankStatementDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+            return json.dumps(return_success(BankStatementDao.to_dict(result)), ensure_ascii=False,
+                              cls=DecimalEncoder)
         else:
             return json.dumps(return_unsuccess('Sorry,no data'))
-    else:
-        return json.dumps(return_unsuccess('Error!'))
 
 
 # 查询日报表所有记录

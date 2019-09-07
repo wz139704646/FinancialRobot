@@ -38,14 +38,16 @@ class PurchaseDao:
             res['goodsList'] = goodslist
             result.append(res)
         return result
+
     def query_all(self):
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase")
 
     def query_byDate(self, companyId, start, end):
         connection = MyHelper()
-        return connection.executeQuery("select distinct id ,date from Purchase where companyId=%s and date >= %s and date <%s order by date ",
-                                       [companyId, start, end])
+        return connection.executeQuery(
+            "select distinct id ,date from Purchase where companyId=%s and date >= %s and date <%s order by date ",
+            [companyId, start, end])
 
     def query_byCid(self, companyId):
         connection = MyHelper()
@@ -55,9 +57,15 @@ class PurchaseDao:
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where id = %s", [id])
 
+    def purchasePriceByName(self, name):
+        connection = MyHelper()
+        return connection.executeQuery(
+            "SELECT DISTINCT(purchasePrice), date FROM Purchase WHERE goodName LIKE %s ORDER BY date", [name])
+
     def queryAllId(self, companyId):
         connection = MyHelper()
-        return connection.executeQuery("select distinct id ,date from Purchase where companyId = %s order by date ", [companyId])
+        return connection.executeQuery("select distinct id ,date from Purchase where companyId = %s order by date ",
+                                       [companyId])
 
     def add(self, id, goodId, goodName, supplierId, companyId, number, purchasePrice, date, status):
         connection = MyHelper()

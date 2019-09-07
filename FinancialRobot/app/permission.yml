@@ -9,6 +9,7 @@ parts:
     - sell.querySell
     - sell.querySellById
     - sell.querySellByDate
+    - sell.SellPriceByName
   customer: &customer
     - customer.addCustomer
     - customer.queryAllCustomer
@@ -24,11 +25,13 @@ parts:
     - purchase.addPurchase
     - purchase.queryPurchaseById
     - purchase.queryPurchase
+    - purchase.purchasePriceByName
   supplier: &supplier
     - supplier.addSupplier
     - supplier.queryAllSupplier
     - supplier.query_supplier_by_cid
     - supplier.querySupplierById
+    - supplier.querySupplierByName
   user: &user
     - wx.hello
     - wx.decode_token
