@@ -80,7 +80,7 @@ def addCashRecord():
     date = _json.get('date')
     variation = Decimal(_json.get('variation'))
     changeDescription = _json.get('changeDescription')
-    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(date)+str(time.time())))
+    id = str(uuid.uuid3(uuid.NAMESPACE_OID, str(date) + str(time.time())))
     row = query.add(id, date, variation, changeDescription)
     insertDailyRow = InsertDailyfund(date, changeDescription, variation)
     if row == 1:
@@ -116,7 +116,7 @@ def addBankRecord():
     if len(bankResult) == 0:
         balance = amount
     else:
-        balance = bankResult[0][7] + amount
+        balance = Decimal(bankResult[0]['data']['balance']) + amount
     print(voucher, bankName, companyName, clearForm, amount, date, status, balance)
     row = query.add(voucher, bankName, companyName, clearForm, amount, date, status, balance)
     changeDescription = "在 " + bankName + clearForm + str(abs(amount)) + "元  "
@@ -131,12 +131,12 @@ def addBankRecord():
 # 查询所有现金记录
 @inout_Money.route("/querySumBankAmount", methods=["GET", "POST"])
 def querySumBankAmount():
-    query = BankStatementDao()
-    result = query.querySumAmount()
-    if len(result) == 0:
-        return json.dumps(return_success(result[0][0]))
-    else:
-        return json.dumps(return_unsuccess('Error:Sorry,no data'))
+    try:
+        query = BankStatementDao()
+        result = query.querySumAmount()
+        return json.dumps(return_success(result))
+    except Exception as e:
+        return json.dumps(return_unsuccess('Error: ' + str(e)))
 
 
 # 查询所有现金记录
@@ -304,8 +304,8 @@ def checkBankStatus():
     query = BankStatementDao()
     _json = request.json
     voucher = _json.get('voucher')
-    row = query.update(voucher)
-    if row == 1:
+    try:
+        query.update(voucher)
         return json.dumps(return_success("修改成功"))
-    else:
-        return json.dumps(return_unsuccess('修改失败'))
+    except Exception as e:
+        return json.dumps(return_unsuccess('修改失败 ' + str(e)))

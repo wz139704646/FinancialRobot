@@ -61,6 +61,7 @@ parts:
     - inout_Money.queryDailyByDate
     - inout_Money.queryDailyByOption
     - inout_Money.checkBankStatus
+    - inout_Money.querySumBankAmount
   arap: &arap
     - arap.get_pay_methods
     - arap.get_bank_names

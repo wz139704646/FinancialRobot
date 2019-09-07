@@ -9,11 +9,11 @@ import jieba
 from hashlib import sha1
 
 from app.config import redis_store
+from app.dao.BankStatementDao import BankStatementDao
 from app.dao.CompanyDao import CompanyDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
 from app.dao.WareHouseDao import WareHouseDao
-from app.utils.MongoUtils import MongoUtils
 from app.utils.BigchainUtils import BigchainUtils
 from app.utils.DBHelper import MyHelper
 from app.utils.json_util import *
@@ -63,9 +63,10 @@ class MylTest(unittest.TestCase):
         print(u"[全模式]:", "/".join(seg_list))
 
     def test7(self):
-        mongo = MongoUtils.get_mongo()
-        trans = mongo.db.transactions.find({"operation": "TRANSFER"})
-        print(list(trans))
+        pass
+        # mongo = MongoUtils.get_mongo()
+        # trans = mongo.db.transactions.find({"operation": "TRANSFER"})
+        # print(list(trans))
 
     def test8(self):
         goods = GoodsDao()
@@ -117,4 +118,16 @@ class MylTest(unittest.TestCase):
 
     def test15(self):
         res = GoodsDao().query_store_by_goods_id('5', '81e40a91-6554-3605-824b-d944634c1d71')
+        print(res)
+
+    def test16(self):
+        res = BankStatementDao().queryAll()
+        print(res)
+
+    def test17(self):
+        res = BankStatementDao().queryByName('珞珈山人民银行')
+        print(res)
+
+    def test18(self):
+        res = BankStatementDao().querySumAmount()
         print(res)
