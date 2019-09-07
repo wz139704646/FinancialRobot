@@ -90,7 +90,7 @@ class COHDao:
         uuid_list = self.mongo.find_assets_uuid(keyword=keyword)
         result = []
         for i in uuid_list:
-            asset = self.mongo.find_one_asset(asset_id=i)
+            asset = self.mongo.find_one_asset(asset_id=i["_id"])
             if asset:
                 result.append(asset)
         return result
