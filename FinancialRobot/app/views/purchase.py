@@ -86,7 +86,7 @@ def queryPurchase():
                 delta = datetime.timedelta(days=1)
                 n_days = start + delta
                 end = n_days.strftime('%Y-%m-%d %H:%M:%S')
-        idResult = query.query_byDate(companyId, start, end)
+            idResult = query.query_byDate(companyId, start, end)
         size = len(idResult)
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
