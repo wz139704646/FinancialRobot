@@ -299,7 +299,7 @@ class AccountingSubjectDao:
                                 subject['opening_balance'] += bal.get('opening_balance')
                                 subject['credit'] += bal.get('credit')
                                 subject['debit'] += bal.get('debit')
-                                subject['closing_balance'] += sub_balance[0].get('closing_balance')
+                                subject['closing_balance'] += bal.get('closing_balance')
                             res.append(subject)
                     else:
                         # 未限制期数，存在多期，需要复制多份
