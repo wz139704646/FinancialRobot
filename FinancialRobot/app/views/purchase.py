@@ -86,7 +86,7 @@ def queryPurchase():
                 delta = datetime.timedelta(days=1)
                 n_days = start + delta
                 end = n_days.strftime('%Y-%m-%d %H:%M:%S')
-        idResult = query.query_byDate(companyId, start, end)
+            idResult = query.query_byDate(companyId, start, end)
         size = len(idResult)
         if size == 0:
             return json.dumps(return_unsuccess('Error: No data'))
@@ -123,28 +123,29 @@ def queryPurchase():
         result = []
         goodsList = []
         goodsResult = query.query_byId(id)
-        for i in range(0, len(goodsResult)):
-            status = goodsResult[i][8]
-            supplierId = goodsResult[i][3]
-            PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][1])
-            goodsPhoto = PhothResult[0][7]
-            NameResult = querySupplierName.query_byId(supplierId)
-            supplierName = NameResult[0][1]
-            date = goodsResult[i][7]
-            goods = []
-            goods.append(goodsResult[i][6])
-            goods.append(goodsResult[i][1])
-            goods.append(goodsPhoto)
-            goods.append(goodsResult[i][2])
-            goods.append(goodsResult[i][5])
-            goodsList.append(goods)
-        result.append(id)
-        result.append(status)
-        result.append(supplierId)
-        result.append(date)
-        result.append(supplierName)
-        result.append(goodsList)
-        results.append(result)
+        if len(goodsResult) >= 0:
+            for i in range(0, len(goodsResult)):
+                status = goodsResult[i][8]
+                supplierId = goodsResult[i][3]
+                PhothResult = queryGoodsPhoto.query_byId(goodsResult[i][1])
+                goodsPhoto = PhothResult[0][7]
+                NameResult = querySupplierName.query_byId(supplierId)
+                supplierName = NameResult[0][1]
+                date = goodsResult[i][7]
+                goods = []
+                goods.append(goodsResult[i][6])
+                goods.append(goodsResult[i][1])
+                goods.append(goodsPhoto)
+                goods.append(goodsResult[i][2])
+                goods.append(goodsResult[i][5])
+                goodsList.append(goods)
+            result.append(id)
+            result.append(status)
+            result.append(supplierId)
+            result.append(date)
+            result.append(supplierName)
+            result.append(goodsList)
+            results.append(result)
     size = len(results)
     if size == 0:
         return json.dumps(return_unsuccess('Error: No data'))

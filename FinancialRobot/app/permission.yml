@@ -132,16 +132,16 @@ parts:
     - accounting_subjects.subject_add_balance
     - accounting_subjects.subject_get_times
   general_voucher: &general_voucher
-    - voucher_get_with_options
-    - voucher_add_attachment
-    - voucher_set_attachment
-    - voucher_del_attachment
-    - voucher_get_with_attachment
-    - voucher_get_attachment
-    - voucher_gen_with_no
-    - voucher_add
-    - voucher_del_with_no
-    - voucher_set_with_no
+    - general_voucher.voucher_get_with_options
+    - general_voucher.voucher_add_attachment
+    - general_voucher.voucher_set_attachment
+    - general_voucher.voucher_del_attachment
+    - general_voucher.voucher_get_with_attachment
+    - general_voucher.voucher_get_attachment
+    - general_voucher.voucher_gen_with_no
+    - general_voucher.voucher_add
+    - general_voucher.voucher_del_with_no
+    - general_voucher.voucher_set_with_no
 
 features:
   - name: &Common Common # 通用接口
@@ -170,9 +170,6 @@ features:
   - name: &Cashing_Management Cashing Management # 出纳管理
     api:
       - *inout_money
-  - name: &Financial_Management Financial Management #财务处理
-    api:
-      -
   - name: &Account_Receive_Account_Payment Account Receive Account Payment # 应收应付管理
     api:
       - *arap
@@ -190,32 +187,53 @@ features:
       - *general_voucher
 
 roles:
-  - name: admin
+  - name: admin # 管理员
     allow_feature:
       - *Common
       - *Permission_Management
       - *Sell_Management
       - *Warehouse_Management
       - *Purchase_Management
-      - *Financial_Management
       - *Cashing_Management
       - *Account_Receive_Account_Payment
       - *Data_Analysis
       - *Fixed_Assets_Management
-  - name: seller
+      - *Accounting_Subjects_Management
+      - *Voucher_Management
+  - name: seller # 销售人员
     allow_feature:
       - *Common
       - *Sell_Management
-  - name: purchase
+  - name: purchase # 生产管理人员
     allow_feature:
       - *Common
       - *Purchase_Management
-  - name: cashier
+  - name: finance #财务管理人员
     allow_feature:
       - *Common
       - *Cashing_Management
-  - name: accountant
-    allow_feature:
-      - *Common
+      - *Account_Receive_Account_Payment
       - *Accounting_Subjects_Management
       - *Voucher_Management
+      - *Fixed_Assets_Management
+      - *Data_Analysis
+  - name: high_level # 高层管理人员
+    allow_feature:
+      - *Common
+      - *Data_Analysis
+      - *Cashing_Management
+  - name: HR #人力资源管理
+    allow_feature:
+      - *Common
+      - *Data_Analysis
+  - name: market #市场管理
+    allow_feature:
+      - *Common
+      - *Sell_Management
+      - *Warehouse_Management
+  - name: logistics # 物流管理
+    allow_feature:
+      - *Common
+      - *Sell_Management
+      - *Warehouse_Management
+      - *Purchase_Management

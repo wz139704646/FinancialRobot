@@ -424,9 +424,11 @@ class Test11(unittest.TestCase):
         print(final[a])
 
     def test31(self):
-        query = SellDao()
-        result = query.query_byId("96277eb0-79a8-36b9-9b4a-f95d7b6055d0")
-        print(result)
+        result=[]
+        print(len(result))
+        # query = SellDao()
+        # result = query.query_byId("96277eb0-79a8-36b9-9b4a-f95d7b6055d0")
+        # print(result)
 
     def test12(self):
         companyId = "5"
