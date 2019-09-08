@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.utils.DBHelper import MyHelper
+from app.utils.auth import check_token
 from app.utils.json_util import *
 import json
 from app.dao.AccountingSubjectDao import AccountingSubjectDao
@@ -9,6 +10,12 @@ from app.dao.GeneralVoucherDao import GeneralVoucherDao
 accounting_subjects = Blueprint('accounting_subjects', __name__)
 a_s_dao = AccountingSubjectDao()
 g_v_dao = GeneralVoucherDao()
+
+
+@accounting_subjects.before_request
+@check_token
+def res():
+    pass
 
 
 def get_top_subject_code(subject_code):

@@ -114,6 +114,30 @@ parts:
     - permission.queryAllFeatures
     - permission.set_position
     - permission.get_position
+  accounting_subjects: &accounting_subjects
+    - accounting_subjects.subject_get_types
+    - accounting_subjects.subject_get_with_options
+    - accounting_subjects.subject_get_tree
+    - accounting_subjects.subject_get_subs
+    - accounting_subjects.subject_get_top_subject
+    - accounting_subjects.subject_get_new_code
+    - accounting_subjects.subject_add_subject
+    - accounting_subjects.subject_get_balance
+    - accounting_subjects.subject_get_balance_with_time_range
+    - accounting_subjects.subject_set_balance
+    - accounting_subjects.subject_add_balance
+    - accounting_subjects.subject_get_times
+  general_voucher: &general_voucher
+    - voucher_get_with_options
+    - voucher_add_attachment
+    - voucher_set_attachment
+    - voucher_del_attachment
+    - voucher_get_with_attachment
+    - voucher_get_attachment
+    - voucher_gen_with_no
+    - voucher_add
+    - voucher_del_with_no
+    - voucher_set_with_no
 
 features:
   - name: &Common Common # 通用接口
@@ -154,6 +178,12 @@ features:
   - name: &Fixed_Assets_Management Fixed Assets Management # 固定资产管理
     api:
       - *fixed_assets
+  - name: &Accounting_Subjects_Management Accounting Subjects Management # 会计科目管理
+    api:
+      - *accounting_subjects
+  - name: &Voucher_Management Voucher Management # 凭证管理
+    api:
+      - *general_voucher
 
 roles:
   - name: admin
@@ -180,3 +210,8 @@ roles:
     allow_feature:
       - *Common
       - *Cashing_Management
+  - name: accountant
+    allow_feature:
+      - *Common
+      - *Accounting_Subjects_Management
+      - *Voucher_Management

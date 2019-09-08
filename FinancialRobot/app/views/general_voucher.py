@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
 from app.utils.DBHelper import MyHelper
+from app.utils.auth import check_token
 from app.utils.json_util import *
 from app.utils.finance_utils import *
 from app.utils.jinja2_utils import render_without_request
@@ -26,6 +27,12 @@ UPLOAD_FOLDER = '../static/img/voucher'
 basedir = os.path.abspath(os.path.dirname(__file__))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'JPG', 'PNG', 'gif', 'GIF'}
 MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB
+
+
+@general_voucher.before_request
+@check_token
+def res():
+    pass
 
 
 def get_vouchers(cond, date_ranged=False, spec_time=False):
