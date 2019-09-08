@@ -46,8 +46,10 @@ import uuid
 def str_to_unix(string):
     return int(time.mktime(datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S').timetuple()))
 
+
 def unix_to_date(unix):
     return datetime.datetime.fromtimestamp(unix)
+
 
 class COHDao:
 
@@ -60,11 +62,12 @@ class COHDao:
         result = []
         for i in data:
             i["data"]["date"] = unix_to_date(i["data"]["date"])
+            i["data"]["variation"] = float(i["data"]["variation"])
             result.append(i["data"])
         return result
 
     def queryNow(self):
-        uuid_list = self.mongo.find_assets_uuid(keyword={"data.asset_type":"现金"})
+        uuid_list = self.mongo.find_assets_uuid(keyword={"data.asset_type": "现金"})
         # return list(self.mongo.find_assets(keyword={"data.asset_type":"现金"},size=None).sort(
         result = []
         for i in uuid_list:
@@ -72,7 +75,6 @@ class COHDao:
             if asset:
                 result.append(asset)
         return result
-
 
     def queryAll(self):
         return self.queryNow()

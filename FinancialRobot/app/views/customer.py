@@ -72,7 +72,6 @@ def queryCustomer():
                 return json.dumps(return_unsuccess('Error: No data'))
             else:
                 return json.dumps(return_success(CustomerDao.to_dict(Cusresult)), ensure_ascii=False)
-
     else:
         name = _json['name']
         newname = '%' + name + '%'

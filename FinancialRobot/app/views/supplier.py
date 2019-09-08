@@ -70,3 +70,16 @@ def querySupplierById():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(SupplierDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
+# 根据名称查询供应商名称
+@supplier.route("/querySupplierByName", methods=["POST"])
+def querySupplierByName():
+    query = SupplierDao()
+    _json = request.json
+    name = _json.get('name')
+    newName='%' + name + '%'
+    result = query.query_byName(newName)
+    size = len(result)
+    if size == 0:
+        return json.dumps(return_unsuccess('Error: No data'))
+    else:
+        return json.dumps(return_success(SupplierDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)

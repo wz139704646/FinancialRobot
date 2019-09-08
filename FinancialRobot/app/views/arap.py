@@ -66,7 +66,6 @@ def queryPurchasePay():
         else:
             return json.dumps(return_unsuccess('未查询到相关数据'), ensure_ascii=False)
     except Exception as e:
-        print(e)
         return json.dumps(return_unsuccess('Query Error: ' + str(e)))
 
 
@@ -83,7 +82,6 @@ def addSellReceive():
         else:
             return json.dumps(return_unsuccess('添加应收失败'), ensure_ascii=False)
     except Exception as e:
-        print(e)
         return json.dumps(return_unsuccess('添加应收失败: ' + str(e)), ensure_ascii=False)
 
 
@@ -102,7 +100,6 @@ def querySellReceive():
         else:
             return json.dumps(return_unsuccess("No related data"))
     except Exception as e:
-        print(e)
         return json.dumps(return_unsuccess('Query Error: ' + str(e)))
 
 
@@ -122,7 +119,6 @@ def addPayment():
         else:
             return json.dumps(return_unsuccess('添加支出失败'), ensure_ascii=False)
     except Exception as e:
-        print(e)
         return json.dumps(return_unsuccess('添加支出失败: ' + str(e)), ensure_ascii=False)
 
 
@@ -138,7 +134,6 @@ def queryPayment():
         return json.dumps(return_success(ARAPDao.to_pay_dict(res)),
                           cls=DecimalEncoder, ensure_ascii=False)
     except Exception as e:
-        print(e)
         return json.dumps(return_unsuccess('Query Error: ' + str(e)))
 
 
@@ -175,7 +170,6 @@ def checkPayment():
                                  headers=headers)
         return response.content
     except Exception as e:
-        print(e)
         return json.dumps(return_unsuccess('Check Error: ' + str(e)))
 
 
@@ -195,7 +189,6 @@ def addReceive():
         else:
             return json.dumps(return_unsuccess('添加收入失败'), ensure_ascii=False)
     except Exception as e:
-        print(e)
         return json.dumps(return_unsuccess('添加收入失败: ' + str(e)), ensure_ascii=False)
 
 
