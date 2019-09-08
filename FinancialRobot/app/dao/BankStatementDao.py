@@ -100,9 +100,9 @@ class BankStatementDao:
         for i in uuid_list:
             asset = self.mongo.find_one_asset(asset_id=i["_id"])
             if asset:
-                meta = self.mongo.db.metadata.find_one({'metadata.voucher': i["_id"]})
-                asset['data']['status'] = meta['metadata']['status']
-                asset['data']['edition'] = meta['metadata']['edition']
+                # meta = self.mongo.db.metadata.find_one({'metadata.voucher': i["_id"]})
+                # asset['data']['status'] = meta['metadata']['status']
+                # asset['data']['edition'] = meta['metadata']['edition']
                 result.append(asset)
         return result
 
@@ -116,8 +116,6 @@ class BankStatementDao:
             asset = self.mongo.find_one_asset(asset_id=i["_id"])
             if asset:
                 sum_amount = sum_amount + float(asset['data']['amount'])
-        # conn = MyHelper()
-        # return conn.executeQuery("select SUM(amount) from BankStatement")
         return sum_amount
 
     def query_by_date(self, start, end):
@@ -166,6 +164,10 @@ class BankStatementDao:
         return 1
 
     def update(self, voucher):
-        self.mongo.db.metadata.update({'metadata.voucher': voucher},
-                                      {"$set": {"metadata.status": "已审核", "edition": time.time()}})
+        # self.mongo.db.metadata.update({'metadata.voucher': voucher},
+        #                               {"$set": {"metadata.status": "已审核", "edition": time.time()}})
+        asset = self.mongo.find_one_asset(asset_id=voucher)['data']
+        print(asset)
+        self.add(asset['voucher'], asset['bankName'], asset['companyName'], asset['clearForm'], asset['amount'],
+                 str(unix_to_date(asset['date'])), '已审核', asset['balance'])
         return 1

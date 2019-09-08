@@ -131,3 +131,7 @@ class MylTest(unittest.TestCase):
     def test18(self):
         res = BankStatementDao().querySumAmount()
         print(res)
+
+    def test19(self):
+        res = BankStatementDao().update("9f4bd060-85fa-3f47-b1f6-6d9e1ed1ffc9")
+        print(res)
