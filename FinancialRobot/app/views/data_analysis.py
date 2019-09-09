@@ -383,7 +383,7 @@ def analyze_sales_detail_by_month():
     info = DataAnalysisDao().query_sales_info_by_year_and_month(year, month)
     detail = []
     for tu in info:
-        detail.append(str(tu[1]) + ' ' + str(tu[0]) + '购买了' + str(tu[2]) + str(tu[3]) + str(tu[4]) + '，共计' + str(tu[5]) + '元。')
+        detail.append(str(tu[2]) + ' ' + str(tu[0]) + '向' + str(tu[1]) + '购买了' + str(tu[3]) + str(tu[4]) + str(tu[5]) + '，共计' + str(tu[6]) + '元。')
     dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
     if not dict_of_index_and_detail:
         return jsonify(return_unsuccess('无法获取销售信息'))
@@ -400,7 +400,7 @@ def analyze_sales_detail_by_date():
     info = DataAnalysisDao().query_sales_info_by_date(year, month, day)
     detail = []
     for tu in info:
-        detail.append(str(tu[1]) + ' ' + str(tu[0]) + '购买了' + str(tu[2]) + str(tu[3]) + str(tu[4]) + '，共计' + str(tu[5]) + '元。')
+        detail.append(str(tu[2]) + ' ' + str(tu[0]) + '向' + str(tu[1]) + '购买了' + str(tu[3]) + str(tu[4]) + str(tu[5]) + '，共计' + str(tu[6]) + '元。')
     dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
     if not dict_of_index_and_detail:
         return jsonify(return_unsuccess('无法获取销售信息'))
@@ -415,7 +415,7 @@ def analyze_sales_detail_by_category():
     info = DataAnalysisDao().query_sales_info_by_category(category)
     detail = []
     for tu in info:
-        detail.append(str(tu[1]) + ' ' + str(tu[0]) + '购买了' + str(tu[2]) + str(tu[3]) + str(tu[4]) + '，共计' + str(tu[5]) + '元。')
+        detail.append(str(tu[2]) + ' ' + str(tu[0]) + '向' + str(tu[1]) + '购买了' + str(tu[3]) + str(tu[4]) + str(tu[5]) + '，共计' + str(tu[6]) + '元。')
     dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
     if not dict_of_index_and_detail:
         return jsonify(return_unsuccess('无法获取销售信息'))
