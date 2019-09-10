@@ -110,9 +110,9 @@ def languageProcess():
     # 对时间进行判断
     if time == "today":
         start = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
-        end = d.replace(year=d.year, month=d.month, day=d.day+1, hour=0, minute=0, second=0)
+        end = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
     if time == "yesterday":
-        start = d.replace(year=d.year, month=d.month, day=d.day-1, hour=0, minute=0, second=0)
+        start = d.replace(year=d.year, month=d.month, day=d.day - 1, hour=0, minute=0, second=0)
         end = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
     if time == "this_week":
         newDay = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
@@ -172,8 +172,9 @@ def languageProcess():
             sellInfo = {'type': 'collapse-group',
                         'summary': '该段时间的销售信息如下：',
                         'groups': groups}
-            print(json.dumps(sellInfo))
-            return json.dumps(sellInfo)
+            return json.dumps(return_success(sellInfo))
+        else:
+            return json.dumps(return_unsuccess('Sorry,no data'))
     ##### 某段时间内进的货物 #####
     if action == "ac_purchase" and nouns == "goods":
         data = {'companyId': '5',
@@ -215,8 +216,9 @@ def languageProcess():
             sellInfo = {'type': 'collapse-group',
                         'summary': '该段时间的进货信息如下：',
                         'groups': groups}
-            print(json.dumps(sellInfo))
-            return json.dumps(sellInfo)
+            return json.dumps(return_success(sellInfo))
+        else:
+            return json.dumps(return_unsuccess('Sorry,no data'))
     ###### 查商品库存#####
     if action == "ac_query" and (nouns == "goods" or nouns == "store"):
         queryWare = WareHouseDao()
@@ -280,9 +282,9 @@ def languageProcess():
                     print(summary)
                     storeInfo = {'type': 'text',
                                  'summary': summary}
-                    return json.dumps(storeInfo)
+                    return json.dumps(return_success(storeInfo))
                 else:
-                    return None
+                    return json.dumps(return_unsuccess('Sorry,no data'))
         else:
             data = {'companyId': '5',
                     'name': final[2]}
@@ -300,9 +302,9 @@ def languageProcess():
                 print(summary)
                 storeInfo = {'type': 'text',
                              'summary': summary}
-                return json.dumps(storeInfo)
+                return json.dumps(return_success(storeInfo))
             else:
-                return None
+                return json.dumps(return_unsuccess('Sorry,no data'))
     # 查询商品的价格
     if action == "ac_query" and (nouns == "price" or nouns == "inPrice" or nouns == "outPrice"):
         if len(final) == 3:
@@ -310,6 +312,11 @@ def languageProcess():
         else:
             data = {'name': final[2]}
         data_json = json.dumps(data, cls=DecimalEncoder)
+        _respOut = requests.post(url='http://47.100.244.29:5000/SellPriceByName', data=data_json, headers=headers)
+        outRecords = json.loads(_respOut.content)
+        _respIn = requests.post(url='http://47.100.244.29:5000/purchasePriceByName', data=data_json,
+                                headers=headers)
+        inRecords = json.loads(_respIn.content)
         judge = 0
         allgroups = []
         averageInmoney = 0
@@ -318,77 +325,76 @@ def languageProcess():
         NewOutmoney = 0
         if nouns == "price":
             judge = 1
-        if nouns == "inPrice" or judge == 1:
-            _respIn = requests.post(url='http://47.100.244.29:5000/purchasePriceByName', data=data_json,
-                                    headers=headers)
-            inRecords = json.loads(_respIn.content)
-            if inRecords['success'] == True:
-                inRecord = inRecords['result']
-                groups = []
-                group = {}
-                items = []
-                count = 0
-                sumPrice = 0
-                newPrice = 0
-                for inGoods in inRecord:
-                    item = {}
-                    item['title'] = inGoods['goodName']
-                    item['value'] = inGoods['purchasePrice']
-                    sumPrice = sumPrice + inGoods['purchasePrice']
-                    NewInmoney = newPrice = inGoods['purchasePrice']
-                    count = count + 1
-                    querySupName = SupplierDao()
-                    supID = inGoods['supplierId']
-                    querySupNameResult = querySupName.queryName_byId(supID)
-                    print(querySupNameResult[0][0])
-                    item['label'] = '供货商：' + querySupNameResult[0][0]
-                    item['tag'] = inGoods['date']
-                    items.append(item)
-                group['title'] = '商品的进价情况如下'
-                group['items'] = items
-                allgroups.append(group)
-                groups.append(group)
-                averageInmoney = round(sumPrice / count, 2)
+        if inRecords['success'] == True and outRecords['success'] == True:
+            if nouns == "inPrice" or judge == 1:
+                if inRecords['success'] == True:
+                    inRecord = inRecords['result']
+                    groups = []
+                    group = {}
+                    items = []
+                    count = 0
+                    sumPrice = 0
+                    newPrice = 0
+                    for inGoods in inRecord:
+                        item = {}
+                        item['title'] = inGoods['goodName']
+                        item['value'] = inGoods['purchasePrice']
+                        sumPrice = sumPrice + inGoods['purchasePrice']
+                        NewInmoney = newPrice = inGoods['purchasePrice']
+                        count = count + 1
+                        querySupName = SupplierDao()
+                        supID = inGoods['supplierId']
+                        querySupNameResult = querySupName.queryName_byId(supID)
+                        print(querySupNameResult[0][0])
+                        item['label'] = '供货商：' + querySupNameResult[0][0]
+                        item['tag'] = inGoods['date']
+                        items.append(item)
+                    group['title'] = '商品的进价情况如下'
+                    group['items'] = items
+                    allgroups.append(group)
+                    groups.append(group)
+                    averageInmoney = round(sumPrice / count, 2)
+                    Price = {'type': 'list-group',
+                             'summary': '商品最新进价为' + str(newPrice) + "元，平均进价为" + str(round(sumPrice / count, 2)) + "元",
+                             'groups': groups}
+            if nouns == "outPrice" or judge == 1:
+                if outRecords['success'] == True:
+                    inRecord = outRecords['result']
+                    print(inRecord)
+                    groups = []
+                    group = {}
+                    items = []
+                    count = 0
+                    sumPrice = 0
+                    newPrice = 0
+                    for inGoods in inRecord:
+                        item = {}
+                        item['title'] = inGoods['goodsName']
+                        item['value'] = str(round(inGoods['sumprice'] / inGoods['number'], 2)) + "元"
+                        sumPrice = sumPrice + inGoods['sumprice'] / inGoods['number']
+                        NewOutmoney = newPrice = inGoods['sumprice'] / inGoods['number']
+                        count = count + 1
+                        item['label'] = '客户：' + inGoods['customerName']
+                        item['tag'] = inGoods['date']
+                        items.append(item)
+                    group['title'] = '商品的售价情况如下'
+                    group['items'] = items
+                    groups.append(group)
+                    allgroups.append(group)
+                    averageOutmoney = round(sumPrice / count, 2)
+                    Price = {'type': 'list-group',
+                             'summary': '商品最新售价为' + str(newPrice) + "元，平均售价为" + str(round(sumPrice / count, 2)) + "元",
+                             'groups': groups}
+            if nouns == "price":
                 Price = {'type': 'list-group',
-                         'summary': '商品最新进价为' + str(newPrice) + "元，平均进价为" + str(round(sumPrice / count, 2)) + "元",
-                         'groups': groups}
-        if nouns == "outPrice" or judge == 1:
-            _respOut = requests.post(url='http://47.100.244.29:5000/SellPriceByName', data=data_json, headers=headers)
-            inRecords = json.loads(_respOut.content)
-            if inRecords['success'] == True:
-                inRecord = inRecords['result']
-                print(inRecord)
-                groups = []
-                group = {}
-                items = []
-                count = 0
-                sumPrice = 0
-                newPrice = 0
-                for inGoods in inRecord:
-                    item = {}
-                    item['title'] = inGoods['goodsName']
-                    item['value'] = str(round(inGoods['sumprice'] / inGoods['number'], 2)) + "元"
-                    sumPrice = sumPrice + inGoods['sumprice'] / inGoods['number']
-                    NewOutmoney = newPrice = inGoods['sumprice'] / inGoods['number']
-                    count = count + 1
-                    item['label'] = '客户：' + inGoods['customerName']
-                    item['tag'] = inGoods['date']
-                    items.append(item)
-                group['title'] = '商品的售价情况如下'
-                group['items'] = items
-                groups.append(group)
-                allgroups.append(group)
-                averageOutmoney = round(sumPrice / count, 2)
-                Price = {'type': 'list-group',
-                         'summary': '商品最新售价为' + str(newPrice) + "元，平均售价为" + str(round(sumPrice / count, 2)) + "元",
-                         'groups': groups}
-        if nouns == "price":
-            Price = {'type': 'list-group',
-                     'summary': '商品最新售价为' + str(NewOutmoney) + "元，平均售价为" + str(
-                         averageOutmoney) + "元 " + ' 商品最新进价为' + str(NewInmoney) + "元，平均进价为" + str(averageInmoney) + "元",
-                     'groups': allgroups}
-        print(Price)
-        return json.dumps(Price)
+                         'summary': '商品最新售价为' + str(NewOutmoney) + "元，平均售价为" + str(
+                             averageOutmoney) + "元 " + ' 商品最新进价为' + str(NewInmoney) + "元，平均进价为" + str(
+                             averageInmoney) + "元",
+                         'groups': allgroups}
+
+            return json.dumps(return_success(Price))
+        else:
+            return json.dumps(return_unsuccess('Sorry,no data'))
 
     #### 一段时间的收入或支出####
     if nouns == "money":
@@ -398,37 +404,40 @@ def languageProcess():
         _respCash = requests.post(url='http://47.100.244.29:5000/queryCashRecordByDate', data=data_json,
                                   headers=headers)
         CashResult = json.loads(_respCash.content)
-        inCash = outCash = 0
-        if CashResult['success'] == True:
-            cashResult = CashResult['result']
-            for sinCash in cashResult:
-                if sinCash['variation'] > 0:
-                    inCash = inCash + sinCash['variation']
-                else:
-                    outCash = outCash + sinCash['variation']
         _respBank = requests.post(url='http://47.100.244.29:5000/queryBankRecordByDate', data=data_json,
                                   headers=headers)
         inBank = outBank = 0
         BankResult = json.loads(_respBank.content)
-        if BankResult['success'] == True:
-            bankResult = BankResult['result']
-            for sinBank in bankResult:
-                if sinBank['amount'] > 0:
-                    inBank = inBank + sinBank['amount']
-                else:
-                    outBank = outBank + sinBank['amount']
-        if action == "ac_in_money":
-            summary = '现金收入' + str(inCash) + '元，银行存款、转账等收入' + str(inBank) + '元，共计' + str(inBank + inCash) + '元'
-            inMoney = {'type': 'text',
-                       'summary': summary}
-            return json.dumps(inMoney)
-        if action == "ac_out_money":
-            outBank = abs(outBank)
-            outCash = abs(outCash)
-            summary = '现金支出' + str(outCash) + '元，银行存款、转账等支出' + str(outBank) + '元，共计' + str(outCash + outCash) + '元'
-            outMoney = {'type': 'text',
-                        'summary': summary}
-            return json.dumps(outMoney)
+        inCash = outCash = 0
+        if CashResult['success'] == True and BankResult['success'] == True:
+            if CashResult['success'] == True:
+                cashResult = CashResult['result']
+                for sinCash in cashResult:
+                    if sinCash['variation'] > 0:
+                        inCash = inCash + sinCash['variation']
+                    else:
+                        outCash = outCash + sinCash['variation']
+            if BankResult['success'] == True:
+                bankResult = BankResult['result']
+                for sinBank in bankResult:
+                    if sinBank['amount'] > 0:
+                        inBank = inBank + sinBank['amount']
+                    else:
+                        outBank = outBank + sinBank['amount']
+            if action == "ac_in_money":
+                summary = '现金收入' + str(inCash) + '元，银行存款、转账等收入' + str(inBank) + '元，共计' + str(inBank + inCash) + '元'
+                inMoney = {'type': 'text',
+                           'summary': summary}
+                return json.dumps(return_success(inMoney))
+            if action == "ac_out_money":
+                outBank = abs(outBank)
+                outCash = abs(outCash)
+                summary = '现金支出' + str(outCash) + '元，银行存款、转账等支出' + str(outBank) + '元，共计' + str(outCash + outCash) + '元'
+                outMoney = {'type': 'text',
+                            'summary': summary}
+                return json.dumps(return_success(outMoney))
+        else:
+            return json.dumps(return_unsuccess('Sorry,no data'))
     #####查询顾客信息#####
     if action == "ac_query" and nouns == "customer":
         name = ''
@@ -459,13 +468,9 @@ def languageProcess():
             supplierInfo = {'type': 'list-group',
                             'summary': '客户' + name + '的信息',
                             'groups': groups}
-            return json.dumps(supplierInfo)
+            return json.dumps(return_success(supplierInfo))
         else:
-            return None
-        CusResult = _respCash.content
-        customerInfo = {'type': 'list-group',
-                        'summary': '客户' + name + '的信息'}
-        print(CusResult)
+            return json.dumps(return_unsuccess('Sorry,no data'))
     #####查询供应商信息#####
     if action == "ac_query" and nouns == "supplier":
         name = ''
@@ -496,15 +501,9 @@ def languageProcess():
             supplierInfo = {'type': 'list-group',
                             'summary': '供应商' + name + '的信息',
                             'groups': groups}
-            return json.dumps(supplierInfo)
+            return json.dumps(return_success(supplierInfo))
         else:
-            return None
+            return json.dumps(return_unsuccess('Sorry,no data'))
     #####查询表格信息#####
     if action == "ac_query" and nouns == "tables":
-        data = {'start': start,
-                'end': end}
-        data_json = json.dumps(data, cls=DecimalEncoder)
-        _respCash = requests.post(url='http://47.100.244.29:5000/queryCashRecordByDate', data=data_json,
-                                  headers=headers)
-        CashResult = _respCash.content
-        print(CashResult)
+        return json.dumps(return_unsuccess('Sorry,no data'))
