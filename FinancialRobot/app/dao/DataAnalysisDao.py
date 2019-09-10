@@ -66,7 +66,12 @@ class DataAnalysisDao:
         return MyHelper().executeQuery("select s.customerName, c.name, date, number, unitInfo, goodsName, sumprice from Sell as s, Company as c where c.id = s.companyId and MONTH(date) = " + str(month) + " and YEAR(date) = " + str(year) + " and number <> 0 and sumprice is not NULL order by date;")
 
     def query_sales_info_by_date(self, year, month, day):
-        return MyHelper().executeQuery("select s.customerName, c.name, date, number, unitInfo, goodsName, sumprice from Sell as s, Company as c where c.id = s.companyId and MONTH(date) = " + str(month) + " and YEAR(date) = " + str(year) + " and DAY(date) = " + str(day) + " and number <> 0 and sumprice is not NULL order by date;")
+        return MyHelper().executeQuery(
+            "select s.customerName, c.name, date, number, unitInfo, goodsName, sumprice from Sell as s, Company as c where c.id = s.companyId and MONTH(date) = " + str(month) + " and YEAR(date) = " + str(year) + " and DAY(date) = " + str(day) + " and number <> 0 and sumprice is not NULL order by date;")
 
     def query_sales_info_by_category(self, category):
         return MyHelper().executeQuery("select s.customerName, c.name, date, number, g.unitInfo, goodsName, sumprice from Sell as s, Company as c, Goods as g where c.id = s.companyId and g.id = goodsId and g.type = '" + category + "' and number <> 0 and sumprice is not NULL order by date;")
+
+    def query_purchase_info_by_category(self, category):
+        return MyHelper().executeQuery(
+            "select date, CONCAT(c1.name, '向', c2.name, '的', s.name, '采购了', p.number, g.unitInfo, p.goodName, ', 合计', p.number * p.purchasePrice, '元。') from Purchase as p, Supplier as s, Company as c1, Company as c2, Goods as g where c1.id = p.companyId and p.supplierId = s.id and c2.id = s.companyId and p.goodname = g.name and g.type = ' "+ category + "' and number <> 0 order by date;")

@@ -420,3 +420,17 @@ def analyze_sales_detail_by_category():
     if not dict_of_index_and_detail:
         return jsonify(return_unsuccess('无法获取销售信息'))
     return jsonify(return_success(dict_of_index_and_detail))
+
+# 查询返回某类的采购记录
+@analysis_results.route("/data/getPurchaseDetailByCategory", methods=["GET", "POST"])
+def analyze_purchase_detail_by_category():
+    _json = request.json
+    category = str(_json.get('category'))
+    info = DataAnalysisDao().query_purchase_info_by_category(category)
+    detail = []
+    for tu in info:
+        detail.append(str(tu[0]) + ' ' + str(tu[1]))
+    dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
+    if not dict_of_index_and_detail:
+        return jsonify(return_unsuccess('无法获取采购信息'))
+    return jsonify(return_success(dict_of_index_and_detail))
