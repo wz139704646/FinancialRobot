@@ -259,6 +259,8 @@ def SellPriceByName():
             res['number'] = row[0]
             res['sumprice'] = row[1]
             res['date'] = row[2]
+            res['goodsName'] = row[3]
+            res['customerName'] = row[4]
             result.append(res)
         return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
     else:

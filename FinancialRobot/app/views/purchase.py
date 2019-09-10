@@ -168,6 +168,8 @@ def purchasePriceByName():
             res = {}
             res['purchasePrice'] = row[0]
             res['date'] = row[1]
+            res['goodName'] = row[2]
+            res['supplierId'] = row[3]
             result.append(res)
         return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
     else:

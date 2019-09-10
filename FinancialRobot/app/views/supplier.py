@@ -76,7 +76,8 @@ def querySupplierByName():
     query = SupplierDao()
     _json = request.json
     name = _json.get('name')
-    newName='%' + name + '%'
+    newName='%'+ name + '%'
+    print(newName)
     result = query.query_byName(newName)
     size = len(result)
     if size == 0:

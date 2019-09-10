@@ -60,7 +60,7 @@ class PurchaseDao:
     def purchasePriceByName(self, name):
         connection = MyHelper()
         return connection.executeQuery(
-            "SELECT DISTINCT(purchasePrice), date FROM Purchase WHERE goodName LIKE %s ORDER BY date", [name])
+            "SELECT DISTINCT(purchasePrice), date ,goodName,supplierId FROM Purchase WHERE goodName LIKE %s ORDER BY date", [name])
 
     def queryAllId(self, companyId):
         connection = MyHelper()

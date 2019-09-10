@@ -75,4 +75,4 @@ class SellDao:
     def SellPriceByName(self, name):
         connection = MyHelper()
         return connection.executeQuery(
-            "SELECT number ,sumprice, date FROM Sell WHERE goodsName LIKE %s ORDER BY date", [name])
+            "SELECT number ,sumprice, date,goodsName,customerName FROM Sell WHERE goodsName LIKE %s ORDER BY date", [name])

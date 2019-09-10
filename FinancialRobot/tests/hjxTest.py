@@ -424,7 +424,7 @@ class Test11(unittest.TestCase):
         print(final[a])
 
     def test31(self):
-        result=[]
+        result = []
         print(len(result))
         # query = SellDao()
         # result = query.query_byId("96277eb0-79a8-36b9-9b4a-f95d7b6055d0")
@@ -460,12 +460,12 @@ class Test11(unittest.TestCase):
         customer = ['顾客', '客户']
         tables = ['利润表', '资产负债表', '经营日报', '利润分析']
 
-        text1 = "这个月进了多少货"
+        text1 = "这一周进了什么货"
         text2 = "这个月挣了多少钱"
-        text3 = "查一下供应商蔡徐坤的信息"
+        text3 = "查一下商品可口可乐的售价"
         text4 = "这个月挣了多少钱"
         # 精确模式
-        segs = jieba.cut(text3, cut_all=False)
+        segs = jieba.cut(text1, cut_all=False)
         final = []
         for seg in segs:
             if seg not in stopwords:
@@ -517,21 +517,18 @@ class Test11(unittest.TestCase):
         inputTime = datetime.datetime.strptime(date, '%Y-%m-%d')
         # 对时间进行判断
         if time == "today":
-            delta = datetime.timedelta(days=1)
-            n_days = inputTime + delta
-            end = n_days.strftime('%Y-%m-%d %H:%M:%S')
-            start = inputTime
+            start = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
+            end = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
         if time == "yesterday":
-            delta = datetime.timedelta(days=1)
-            n_days = inputTime - delta
-            start = n_days.strftime('%Y-%m-%d %H:%M:%S')
-            end = inputTime
+            start = d.replace(year=d.year, month=d.month, day=d.day - 1, hour=0, minute=0, second=0)
+            end = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
         if time == "this_week":
-            start = timeProcess.get_current_week(inputTime)
+            newDay=d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
+            start = timeProcess.get_current_week(newDay)
             delta = datetime.timedelta(days=7)
             end = start + delta
         if time == "last_week":
-            end = timeProcess.get_current_week(inputTime)
+            end = timeProcess.get_current_week(d)
             delta = datetime.timedelta(days=7)
             start = end - delta
         if time == "this_month":
@@ -547,76 +544,177 @@ class Test11(unittest.TestCase):
             'Content-Type': 'application/json'
         }
         # 对行为进行判断
-
-        # 一段时期内的销售情况
+        ##### 一段时期内的销售情况 #####
         if action == "ac_in_money" and nouns == "goods":
             data = {"start": start,
                     "end": end,
                     'companyId': '5',
                     'date': "hh"}
             data_json = json.dumps(data, cls=DecimalEncoder)
-            _resp = requests.post(url='http://127.0.0.1:5000/querySell', data=data_json, headers=headers)
-            resp_json = _resp.content
-            print(resp_json)
-            # resultInfo = []
-            # resultString = ""
-            # inMoney = 0
-            # outMoney = 0
-            # result = querySell.query_byDate(companyId, start, end)
-            # size = len(result)
-            # if size >= 1:
-            #     for i in result:
-            #         purchasePrice = GoodsDao.get_BuyPrice(i[2])
-            #         outMoney += purchasePrice * i[4]
-            #         inMoney += i[5]
-            #         midstr = i[8] + "," + str(i[4]) + i[9] + "," + "共" + str(i[5]) + "元"
-            #         resultInfo.append(midstr)
-            # else:
-            #     print("未查询到数据")
-            # resultString = "卖出了" + str(inMoney) + "元" + ";" + "成本" + str(outMoney) + "元" + ";" + "利润" + str(
-            #     inMoney - outMoney) + "元"
-
-        # 某段时间内进的货物
+            sellRecords = requests.post(url='http://127.0.0.1:5000/querySell', data=data_json, headers=headers)
+            SellResult = json.loads(sellRecords.content)
+            if SellResult['success'] == True:
+                sellResult = SellResult['result']
+                print(sellResult)
+                groups = []
+                group = {}
+                activeNames = []
+                items = []
+                for sellRecord in sellResult:
+                    item = {}
+                    goodsList = sellRecord['goodsList']
+                    lists = []
+                    content = {}
+                    for goods in goodsList:
+                        list = {}
+                        list['title'] = goods['goodsName']
+                        list['value'] = goods['number']
+                        list['label'] = goods['goodsId']
+                        lists.append(list)
+                    content['type'] = 'list'
+                    content['lists'] = lists
+                    item['title'] = sellRecord['date']
+                    item['value'] = '顾客' + sellRecord['customerName']
+                    item['label'] = sellRecord['id']
+                    item['content'] = content
+                    items.append(item)
+                group['activeNames'] = activeNames
+                group['items'] = items
+                groups.append(group)
+                sellInfo = {'type': 'collapse-group',
+                            'summary': '该段时间的销售信息如下：',
+                            'groups': groups}
+                print(json.dumps(sellInfo))
+                return json.dumps(sellInfo)
+        ##### 某段时间内进的货物 #####
         if action == "ac_purchase" and nouns == "goods":
             data = {'companyId': '5',
                     'date': "hh",
                     'start': start,
                     'end': end}
             data_json = json.dumps(data, cls=DecimalEncoder)
-            _resp = requests.post(url='http://127.0.0.1:5000/queryPurchase', data=data_json,
-                                  headers=headers)
-            resp_json = _resp.content
-            print(resp_json)
-            # result = queryPurchase.query_byDate(companyId, start, end)
-            # finalresult = []
-            # outMoneyarray = []
-            # outMoney = 0
-            # size = len(result)
-            # if size >= 1:
-            #     for buy in result:
-            #         mid = "购入 " + buy[2] + " " + str(buy[5]) + "个" + "，单价" + str(buy[6]) + "元"
-            #         outMoney += float(buy[4]) * float(buy[5])
-            #         finalresult.append(mid)
-            # else:
-            #     print("未查询到数据")
-            # outString = "进货支出" + str(outMoney) + "元"
-            # outMoneyarray.append(outString)
-            # print(finalresult)
-        # 查商品库存
+            purchaseRecords = requests.post(url='http://127.0.0.1:5000/queryPurchase', data=data_json, headers=headers)
+            SellResult = json.loads(purchaseRecords.content)
+            print(SellResult)
+            if SellResult['success'] == True:
+                sellResult = SellResult['result']
+                print(sellResult)
+                groups = []
+                group = {}
+                activeNames = []
+                items = []
+                for sellRecord in sellResult:
+                    item = {}
+                    goodsList = sellRecord['goodsList']
+                    lists = []
+                    content = {}
+                    for goods in goodsList:
+                        list = {}
+                        list['title'] = goods['goodsName']
+                        list['value'] = goods['number']
+                        list['label'] = goods['goodsId']
+                        lists.append(list)
+                    content['type'] = 'list'
+                    content['lists'] = lists
+                    item['title'] = sellRecord['date']
+                    item['value'] = '供货商' + sellRecord['supplierName']
+                    item['label'] = sellRecord['id']
+                    item['content'] = content
+                    items.append(item)
+                group['activeNames'] = activeNames
+                group['items'] = items
+                groups.append(group)
+                sellInfo = {'type': 'collapse-group',
+                            'summary': '该段时间的进货信息如下：',
+                            'groups': groups}
+                print(json.dumps(sellInfo))
+                return json.dumps(sellInfo)
+        ###### 查商品库存#####
         if action == "ac_query" and (nouns == "goods" or nouns == "store"):
+            queryWare = WareHouseDao()
+            Cusresult = queryWare.query_byCompanyId('5')
+            print(Cusresult)
             if len(final) == 3:
                 if final[1] in goods:
-                    data = {'companyId': '5'}
+                    groups = []
+                    activeNames = []
+                    group = {}
+                    items = []
+                    for cusresult in Cusresult:
+                        item = {}
+                        content = {}
+                        data = {'companyId': '5',
+                                'wareHouseId': cusresult[0]}
+                        data_json = json.dumps(data, cls=DecimalEncoder)
+                        goodsStore = requests.post(url='http://127.0.0.1:5000/queryStoreGoods', data=data_json,
+                                                   headers=headers)
+                        Goodsstore = json.loads(goodsStore.content)
+                        if Goodsstore['success'] == True:
+                            goodsResult = Goodsstore['result']
+                            goodsList = goodsResult['goodsList']
+                            lists = []
+                            for goods in goodsList:
+                                list = {}
+                                list['title'] = goods['name']
+                                list['value'] = str(goods['amount']) + goods['unitInfo']
+                                list['label'] = goods['id']
+                                lists.append(list)
+                        content['type'] = 'list'
+                        content[lists] = lists
+                        item['content'] = content
+                        item['title'] = cusresult[1]
+                        item['value'] = cusresult[2]
+                        items.append(item)
+                    group['items'] = items
+                    group['activeNames'] = activeNames
+                    groups.append(group)
+                    print(groups)
+                    storeInfo = {'type': 'collapse-group',
+                                 'summary': '所有仓库的库存信息如下：',
+                                 'groups': groups}
+                    print(json.dumps(storeInfo))
+                    return json.dumps(storeInfo)
                 else:
                     data = {'companyId': '5',
                             'name': final[1]}
+                    data_json = json.dumps(data, cls=DecimalEncoder)
+                    goodsStore = requests.post(url='http://127.0.0.1:5000/queryStoreGoods', data=data_json,
+                                               headers=headers)
+                    Goodsstore = json.loads(goodsStore.content)
+                    if Goodsstore['success'] == True:
+                        goodsRecords = Goodsstore['result']
+                        queryGoodsResult = goodsRecords['goodsList']
+                        print(queryGoodsResult)
+                        summary = ""
+                        for goodResult in queryGoodsResult:
+                            summary = summary + "商品" + goodResult['name'] + "当前库存为：" + str(int(goodResult['amount'])) + \
+                                      goodResult['unitInfo'] + '\n'
+                        print(summary)
+                        storeInfo = {'type': 'text',
+                                     'summary': summary}
+                        return json.dumps(storeInfo)
+                    else:
+                        return None
             else:
                 data = {'companyId': '5',
                         'name': final[2]}
-            data_json = json.dumps(data, cls=DecimalEncoder)
-            _resp = requests.post(url='http://127.0.0.1:5000/queryStoreGoods', data=data_json, headers=headers)
-            resp_json = _resp.content
-            print(resp_json)
+                data_json = json.dumps(data, cls=DecimalEncoder)
+                goodsStore = requests.post(url='http://127.0.0.1:5000/queryStoreGoods', data=data_json, headers=headers)
+                Goodsstore = json.loads(goodsStore.content)
+                if Goodsstore['success'] == True:
+                    goodsRecords = Goodsstore['result']
+                    queryGoodsResult = goodsRecords['goodsList']
+                    print(queryGoodsResult)
+                    summary = ""
+                    for goodResult in queryGoodsResult:
+                        summary = summary + "商品" + goodResult['name'] + "当前库存为：" + str(int(goodResult['amount'])) + \
+                                  goodResult['unitInfo'] + '\n'
+                    print(summary)
+                    storeInfo = {'type': 'text',
+                                 'summary': summary}
+                    return json.dumps(storeInfo)
+                else:
+                    return None
         # 查询商品的价格
         if action == "ac_query" and (nouns == "price" or nouns == "inPrice" or nouns == "outPrice"):
             if len(final) == 3:
@@ -624,57 +722,194 @@ class Test11(unittest.TestCase):
             else:
                 data = {'name': final[2]}
             data_json = json.dumps(data, cls=DecimalEncoder)
-            if nouns == "inPrice":
-                _respIn = requests.post(url='http://127.0.0.1:5000/purchasePriceByName', data=data_json,
-                                        headers=headers)
-                resp_jsonIn = _respIn.content
-                print(resp_jsonIn)
-            if nouns == "outPrice":
-                _respOut = requests.post(url='http://127.0.0.1:5000/SellPriceByName', data=data_json, headers=headers)
-                resp_jsonOut = _respOut.content
-                print(resp_jsonOut)
+            judge=0
+            allgroups=[]
+            averageInmoney=0
+            NewInmoney = 0
+            averageOutmoney = 0
+            NewOutmoney = 0
             if nouns == "price":
+                judge=1
+            if nouns == "inPrice" or judge==1:
                 _respIn = requests.post(url='http://127.0.0.1:5000/purchasePriceByName', data=data_json,
                                         headers=headers)
-                resp_jsonIn = _respIn.content
-                print(resp_jsonIn)
+                inRecords = json.loads(_respIn.content)
+                if inRecords['success'] == True:
+                    inRecord = inRecords['result']
+                    groups=[]
+                    group={}
+                    items = []
+                    count=0
+                    sumPrice=0
+                    newPrice=0
+                    for inGoods in inRecord:
+                        item = {}
+                        item['title'] = inGoods['goodName']
+                        item['value'] = inGoods['purchasePrice']
+                        sumPrice=sumPrice+inGoods['purchasePrice']
+                        NewInmoney=newPrice=inGoods['purchasePrice']
+                        count=count+1
+                        querySupName=SupplierDao()
+                        supID = inGoods['supplierId']
+                        querySupNameResult=querySupName.queryName_byId(supID)
+                        print(querySupNameResult[0][0])
+                        item['label'] ='供货商：'+ querySupNameResult[0][0]
+                        item['tag'] = inGoods['date']
+                        items.append(item)
+                    group['title']='商品的进价情况如下'
+                    group['items']=items
+                    allgroups.append(group)
+                    groups.append(group)
+                    averageInmoney=round(sumPrice/count,2)
+                    Price = {'type': 'list-group',
+                               'summary': '商品最新进价为'+str(newPrice)+"元，平均进价为"+str(round(sumPrice/count,2))+"元",
+                               'groups':groups}
+            if nouns == "outPrice" or judge==1:
                 _respOut = requests.post(url='http://127.0.0.1:5000/SellPriceByName', data=data_json, headers=headers)
-                resp_jsonOut = _respOut.content
-                print(resp_jsonOut)
-        # 一段时间的支出
+                inRecords = json.loads(_respOut.content)
+                if inRecords['success'] == True:
+                    inRecord = inRecords['result']
+                    print(inRecord)
+                    groups = []
+                    group = {}
+                    items = []
+                    count = 0
+                    sumPrice = 0
+                    newPrice = 0
+                    for inGoods in inRecord:
+                        item = {}
+                        item['title'] = inGoods['goodsName']
+                        item['value'] = str(round(inGoods['sumprice']/inGoods['number'],2))+"元"
+                        sumPrice = sumPrice + inGoods['sumprice']/inGoods['number']
+                        NewOutmoney=newPrice = inGoods['sumprice']/inGoods['number']
+                        count = count + 1
+                        item['label'] = '客户：' +inGoods['customerName']
+                        item['tag']=inGoods['date']
+                        items.append(item)
+                    group['title'] = '商品的售价情况如下'
+                    group['items'] = items
+                    groups.append(group)
+                    allgroups.append(group)
+                    averageOutmoney=round(sumPrice / count, 2)
+                    Price = {'type': 'list-group',
+                               'summary': '商品最新售价为' + str(newPrice) + "元，平均售价为" + str(round(sumPrice / count, 2)) + "元",
+                               'groups': groups}
+            if nouns == "price":
+                Price = {'type': 'list-group',
+                           'summary': '商品最新售价为' + str(NewOutmoney) + "元，平均售价为" + str(averageOutmoney) + "元 "+' 商品最新进价为' + str(NewInmoney) + "元，平均进价为" + str(averageInmoney) + "元",
+                           'groups': allgroups}
+            print(Price)
+            return json.dumps(Price)
+
+        #### 一段时间的收入或支出####
         if nouns == "money":
             data = {'start': start,
                     'end': end}
             data_json = json.dumps(data, cls=DecimalEncoder)
             _respCash = requests.post(url='http://127.0.0.1:5000/queryCashRecordByDate', data=data_json,
                                       headers=headers)
-            CashResult = _respCash.content
-            print(CashResult)
+            CashResult = json.loads(_respCash.content)
+            inCash = outCash = 0
+            if CashResult['success'] == True:
+                cashResult = CashResult['result']
+                for sinCash in cashResult:
+                    if sinCash['variation'] > 0:
+                        inCash = inCash + sinCash['variation']
+                    else:
+                        outCash = outCash + sinCash['variation']
             _respBank = requests.post(url='http://127.0.0.1:5000/queryBankRecordByDate', data=data_json,
                                       headers=headers)
-            BankResult = _respBank.content
-            print(BankResult)
-            # 一段时期内的收入情况，查询两个表，现金表和银行存款表
+            inBank = outBank = 0
+            BankResult = json.loads(_respBank.content)
+            if BankResult['success'] == True:
+                bankResult = BankResult['result']
+                for sinBank in bankResult:
+                    if sinBank['amount'] > 0:
+                        inBank = inBank + sinBank['amount']
+                    else:
+                        outBank = outBank + sinBank['amount']
             if action == "ac_in_money":
-                print('一段时间内的收入')
+                summary = '现金收入' + str(inCash) + '元，银行存款、转账等收入' + str(inBank) + '元，共计' + str(inBank + inCash) + '元'
+                inMoney = {'type': 'text',
+                           'summary': summary}
+                return json.dumps(inMoney)
             if action == "ac_out_money":
-                print('一段时间内的支出')
+                outBank = abs(outBank)
+                outCash = abs(outCash)
+                summary = '现金支出' + str(outCash) + '元，银行存款、转账等支出' + str(outBank) + '元，共计' + str(outCash + outCash) + '元'
+                outMoney = {'type': 'text',
+                            'summary': summary}
+                return json.dumps(outMoney)
         #####查询顾客信息#####
         if action == "ac_query" and nouns == "customer":
+            name = ''
+            print(final[3])
+            for i in range(2, len(final) - 1):
+                if final[i] != '信息':
+                    name = name + final[i]
+            print(name)
             data = {'companyId': '5',
-                    'name': final[2]}
+                    'name': name}
             data_json = json.dumps(data, cls=DecimalEncoder)
-            _respCash = requests.post(url='http://127.0.0.1:5000/queryCustomer', data=data_json,headers=headers)
+            _respCustomer = requests.post(url='http://127.0.0.1:5000/queryCustomer', data=data_json, headers=headers)
+            CustomerDaoResult = json.loads(_respCustomer.content)
+            if CustomerDaoResult['success'] == True:
+                customerResult = CustomerDaoResult['result']
+                groups = []
+                for supplier in customerResult:
+                    group = {}
+                    items = []
+                    for key in supplier:
+                        res = {}
+                        res['title'] = key
+                        res['value'] = supplier[key]
+                        items.append(res)
+                    group['items'] = items
+                    groups.append(group)
+                print(groups)
+                supplierInfo = {'type': 'list-group',
+                                'summary': '客户' + name + '的信息',
+                                'groups': groups}
+                return json.dumps(supplierInfo)
+            else:
+                return None
             CusResult = _respCash.content
+            customerInfo = {'type': 'list-group',
+                            'summary': '客户' + name + '的信息'}
             print(CusResult)
-         #####查询供应商信息#####
+        #####查询供应商信息#####
         if action == "ac_query" and nouns == "supplier":
+            name = ''
+            for i in range(2, len(final) - 1):
+                if final[i] != '信息':
+                    name = name + final[i]
+            print(name)
             data = {'companyId': '5',
-                    'name': final[2]}
+                    'name': name}
             data_json = json.dumps(data, cls=DecimalEncoder)
-            _respCash = requests.post(url='http://127.0.0.1:5000/querySupplierByName', data=data_json,headers=headers)
-            CashResult = _respCash.content
-            print(CashResult)
+            _respSupplier = requests.post(url='http://127.0.0.1:5000/querySupplierByName', data=data_json,
+                                          headers=headers)
+            SupplierResult = json.loads(_respSupplier.content)
+            if SupplierResult['success'] == True:
+                supplierResult = SupplierResult['result']
+                groups = []
+                for supplier in supplierResult:
+                    group = {}
+                    items = []
+                    for key in supplier:
+                        res = {}
+                        res['title'] = key
+                        res['value'] = supplier[key]
+                        items.append(res)
+                    group['items'] = items
+                    groups.append(group)
+                print(groups)
+                supplierInfo = {'type': 'list-group',
+                                'summary': '供应商' + name + '的信息',
+                                'groups': groups}
+                return json.dumps(supplierInfo)
+            else:
+                return None
         #####查询表格信息#####
         if action == "ac_query" and nouns == "tables":
             data = {'start': start,

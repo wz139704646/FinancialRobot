@@ -32,9 +32,13 @@ class SupplierDao:
         connection = MyHelper()
         return connection.executeQuery("select * from Supplier where id = %s", [id])
 
+    def queryName_byId(self, id):
+        connection = MyHelper()
+        return connection.executeQuery("select name from Supplier where id = %s", [id])
+
     def query_byName(self, name):
         connection = MyHelper()
-        return connection.executeQuery("select * from Supplier where id like %s", [name])
+        return connection.executeQuery("select * from Supplier where name like %s", [name])
 
     def add(self, id, name, phone, site, taxpayerNumber, bankaccount, bankname, companyId):
         conn = MyHelper()
