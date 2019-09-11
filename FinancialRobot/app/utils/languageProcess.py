@@ -139,7 +139,7 @@ def getSellData(SellResult):
                     'groups': groups}
         return json.dumps(return_success(sellInfo))
     else:
-        return json.dumps(return_unsuccess('Sorry,no data'))
+        return json.dumps(return_unsuccess(SellResult['errMsg']))
 
 
 # 获取一定时间内的进货数据
@@ -177,7 +177,7 @@ def getPurchaseData(SellResult):
                     'groups': groups}
         return json.dumps(return_success(sellInfo))
     else:
-        return json.dumps(return_unsuccess('Sorry,no data'))
+        return json.dumps(return_unsuccess(SellResult['errMsg']))
 
 
 # 获取商品库存信息
@@ -224,8 +224,7 @@ def getGoodsStore(final, headers):
             storeInfo = {'type': 'collapse-group',
                          'summary': '所有仓库的库存信息如下：',
                          'groups': groups}
-            print(json.dumps(storeInfo))
-            return json.dumps(storeInfo)
+            return json.dumps(return_success(storeInfo))
         else:
             data = {'companyId': '5',
                     'name': final[1]}
@@ -246,7 +245,7 @@ def getGoodsStore(final, headers):
                              'summary': summary}
                 return json.dumps(return_success(storeInfo))
             else:
-                return json.dumps(return_unsuccess('Sorry,no data'))
+                return json.dumps(return_unsuccess(Goodsstore['errMsg']))
     else:
         data = {'companyId': '5',
                 'name': final[2]}
@@ -266,7 +265,7 @@ def getGoodsStore(final, headers):
                          'summary': summary}
             return json.dumps(return_success(storeInfo))
         else:
-            return json.dumps(return_unsuccess('Sorry,no data'))
+            return json.dumps(return_unsuccess(Goodsstore['errMsg']))
 
 
 # 查询商品价格（进价、售价）
@@ -362,7 +361,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                      'groups': allgroups}
         return json.dumps(return_success(Price))
     else:
-        return json.dumps(return_unsuccess('Sorry,no data'))
+        return json.dumps(return_unsuccess(inRecords['errMsg'] + outRecords['errMsg']))
 
 
 # 获取一段时间内的资金收入/支出
@@ -397,7 +396,7 @@ def getInOutMoney(CashResult, BankResult, action):
                         'summary': summary}
             return json.dumps(return_success(outMoney))
     else:
-        return json.dumps(return_unsuccess('Sorry,no data'))
+        return json.dumps(return_unsuccess(CashResult['errMsg'] + BankResult['errMsg']))
 
 
 # 获取客户信息
@@ -421,7 +420,7 @@ def getCustomerInfo(CustomerDaoResult, name):
                         'groups': groups}
         return json.dumps(return_success(supplierInfo))
     else:
-        return json.dumps(return_unsuccess('Sorry,no data'))
+        return json.dumps(return_unsuccess(CustomerDaoResult['errMsg']))
 
 
 # 获取供应商信息
@@ -445,7 +444,7 @@ def getSupplierInfo(SupplierResult, name):
                         'groups': groups}
         return json.dumps(return_success(supplierInfo))
     else:
-        return json.dumps(return_unsuccess('Sorry,no data'))
+        return json.dumps(return_unsuccess(SupplierResult['errMsg']))
 
 
 # 自然语言处理
@@ -460,7 +459,6 @@ def languageProcess():
     jieba.load_userdict("../app/utils/dict.txt")
     # 去除停用词
     stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下"])
-
     # 精确模式
     segs = jieba.cut(language, cut_all=False)
     final = []
@@ -471,14 +469,14 @@ def languageProcess():
     time = "today"
     action = ""
     nouns = ""
-    computeLanguage(final,time,action,nouns)
+    computeLanguage(final, time, action, nouns)
     headers = {
         'Authorization': token,
         'Content-Type': 'application/json'
     }
     start = ""
     end = ""
-    judgeTime(time,start,end,d)
+    judgeTime(time, start, end, d)
     # 对行为进行判断
     ##### 一段时期内的销售情况 #####
     if action == "ac_in_money" and nouns == "goods":
@@ -488,23 +486,29 @@ def languageProcess():
                 'date': "hh"}
         data_json = json.dumps(data, cls=DecimalEncoder)
         sellRecords = requests.post(url=LOCATE + '/querySell', data=data_json, headers=headers)
-        SellResult = json.loads(sellRecords.content)
-        return getSellData(SellResult)
+        if sellRecords.status_code == 200:
+            SellResult = json.loads(sellRecords.content)
+            return getSellData(SellResult)
+        else:
+            return '不好意思，没有查到相关数据哦', sellRecords.status_code
     ##### 某段时间内进的货物 #####
-    if action == "ac_purchase" and nouns == "goods":
+    elif action == "ac_purchase" and nouns == "goods":
         data = {'companyId': '5',
                 'date': "hh",
                 'start': start,
                 'end': end}
         data_json = json.dumps(data, cls=DecimalEncoder)
         purchaseRecords = requests.post(url=LOCATE + '/queryPurchase', data=data_json, headers=headers)
-        SellResult = json.loads(purchaseRecords.content)
-        return getPurchaseData(SellResult)
+        if purchaseRecords.status_code == 200:
+            SellResult = json.loads(purchaseRecords.content)
+            return getPurchaseData(SellResult)
+        else:
+            return '不好意思，没有查到相关数据哦', purchaseRecords.status_code
     ###### 查商品库存#####
-    if action == "ac_query" and (nouns == "goods" or nouns == "store"):
+    elif action == "ac_query" and (nouns == "goods" or nouns == "store"):
         return getGoodsStore(final, headers)
     # 查询商品的价格
-    if action == "ac_query" and (nouns == "price" or nouns == "inPrice" or nouns == "outPrice"):
+    elif action == "ac_query" and (nouns == "price" or nouns == "inPrice" or nouns == "outPrice"):
         if len(final) == 3:
             data = {'name': final[1]}
         else:
@@ -515,9 +519,14 @@ def languageProcess():
         _respIn = requests.post(url=LOCATE + '/purchasePriceByName', data=data_json,
                                 headers=headers)
         inRecords = json.loads(_respIn.content)
-        return getGoodsPrice(nouns, inRecords, outRecords)
+
+        if _respOut.status_code == 200 and _respIn.status_code == 200:
+            return getGoodsPrice(nouns, inRecords, outRecords)
+        else:
+            return '不好意思，没有查到相关数据哦', _respOut.status_code, _respIn.status_code
+
     #### 一段时间的收入或支出####
-    if nouns == "money":
+    elif nouns == "money":
         data = {'start': start,
                 'end': end}
         data_json = json.dumps(data, cls=DecimalEncoder)
@@ -527,9 +536,12 @@ def languageProcess():
         _respBank = requests.post(url=LOCATE + '/queryBankRecordByDate', data=data_json,
                                   headers=headers)
         BankResult = json.loads(_respBank.content)
-        return getInOutMoney(CashResult, BankResult, action)
+        if _respCash.status_code == 200 and _respBank.status_code == 200:
+            return getInOutMoney(CashResult, BankResult, action)
+        else:
+            return '不好意思，没有查到相关数据哦', _respCash.status_code, _respBank.status_code
     #####查询顾客信息#####
-    if action == "ac_query" and nouns == "customer":
+    elif action == "ac_query" and nouns == "customer":
         name = ''
         print(final[3])
         for i in range(2, len(final) - 1):
@@ -541,9 +553,12 @@ def languageProcess():
         data_json = json.dumps(data, cls=DecimalEncoder)
         _respCustomer = requests.post(url=LOCATE + '/queryCustomer', data=data_json, headers=headers)
         CustomerDaoResult = json.loads(_respCustomer.content)
-        return getCustomerInfo(CustomerDaoResult, name)
+        if _respCustomer.status_code == 200:
+            return getCustomerInfo(CustomerDaoResult, name)
+        else:
+            return '不好意思，没有查到相关数据哦', _respCustomer.status_code
     #####查询供应商信息#####
-    if action == "ac_query" and nouns == "supplier":
+    elif action == "ac_query" and nouns == "supplier":
         name = ''
         for i in range(2, len(final) - 1):
             if final[i] != '信息':
@@ -555,7 +570,12 @@ def languageProcess():
         _respSupplier = requests.post(url=LOCATE + '/querySupplierByName', data=data_json,
                                       headers=headers)
         SupplierResult = json.loads(_respSupplier.content)
-        return getSupplierInfo(SupplierResult, name)
+        if _respSupplier.status_code == 200:
+            return getSupplierInfo(SupplierResult, name)
+        else:
+            return '不好意思，没有查到相关数据哦', _respSupplier.status_code
     #####查询表格信息#####
-    if action == "ac_query" and nouns == "tables":
+    elif action == "ac_query" and nouns == "tables":
         return json.dumps(return_unsuccess('Sorry,no data'))
+    else:
+        return json.dumps(return_unsuccess('不好意思，我听不懂你在说什么'))
