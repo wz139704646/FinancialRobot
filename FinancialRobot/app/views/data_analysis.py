@@ -415,12 +415,13 @@ def analyze_sales_detail_by_category():
     info = DataAnalysisDao().query_sales_info_by_category(category)
     detail = []
     for tu in info:
-        detail.append(str(tu[2]) + ' ' + str(tu[0]) + '向' + str(tu[1]) + '购买了' + str(tu[3]) + str(tu[4]) + str(tu[5]) + '，共计' + str(tu[6]) + '元。')
+        detail.append((str(tu[5]), str(tu[0]), str(tu[1]), str(tu[2]), str(tu[6]), str(round(tu[6] / str[3], 2)), str(tu[4])))
     dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
     if not dict_of_index_and_detail:
         return jsonify(return_unsuccess('无法获取销售信息'))
     return jsonify(return_success(dict_of_index_and_detail))
 
+# 采购 进货来源 采购时间 采购总金额 商品名字 个数 单价
 # 查询返回某类的采购记录
 @analysis_results.route("/data/getPurchaseDetailByCategory", methods=["GET", "POST"])
 def analyze_purchase_detail_by_category():
@@ -429,7 +430,7 @@ def analyze_purchase_detail_by_category():
     info = DataAnalysisDao().query_purchase_info_by_category(category)
     detail = []
     for tu in info:
-        detail.append(str(tu[0]) + ' ' + str(tu[1]))
+        detail.append((str(tu[0]), str(tu[1]), str(tu[2]), str(tu[3]), str(tu[4]), str(tu[5]), str(tu[6])))
     dict_of_index_and_detail = {i: detail[i] for i in range(len(detail))}
     if not dict_of_index_and_detail:
         return jsonify(return_unsuccess('无法获取采购信息'))
