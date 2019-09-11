@@ -12,6 +12,8 @@ from app.dao.WareHouseDao import WareHouseDao
 from app.dao.SupplierDao import SupplierDao
 from app.dao.PurchaseDao import PurchaseDao
 from app.utils.timeProcess import timeProcess
+from app.utils.mongodb_utils import MongodbUtils
+from app.utils.auth import Auth
 
 lanprocess = Blueprint("lanprocess", __name__)
 UPLOAD_FOLDER = '../utils/dict.txt'
@@ -40,6 +42,9 @@ supplier = ['供货商', '供应商', '进货商']
 customer = ['顾客', '客户']
 tables = ['利润表', '资产负债表', '经营日报', '利润分析']
 LOCATE = 'http://47.100.244.29:5000'
+
+mongo = MongodbUtils()
+
 
 
 def computeLanguage(items, time, action, nouns):
@@ -446,6 +451,12 @@ def getSupplierInfo(SupplierResult, name):
     else:
         return json.dumps(return_unsuccess(SupplierResult['errMsg']))
 
+def record_api(data, user):
+    mongo.myclient.record.apirecord.insert({
+        "data":data,
+        "record_time":datetime.datetime.now(),
+        "user":user
+    })
 
 # 自然语言处理
 @lanprocess.route("/languageProcess", methods=["GET", "POST"])
@@ -470,6 +481,19 @@ def languageProcess():
     action = ""
     nouns = ""
     computeLanguage(final, time, action, nouns)
+    try:
+        user_info = Auth.decode_jwt(token)
+    except:
+        return json.dumps({'auth': False, 'errMsg': 'token解码失败'})
+    data = {
+        "company_id":companyId,
+        "time":time,
+        "action":action,
+        "nouns": nouns
+    }
+    record_api(data, user_info)
+
+
     headers = {
         'Authorization': token,
         'Content-Type': 'application/json'
