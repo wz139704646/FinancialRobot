@@ -460,12 +460,12 @@ class Test11(unittest.TestCase):
         customer = ['顾客', '客户']
         tables = ['利润表', '资产负债表', '经营日报', '利润分析']
 
-        text1 = "这一周进了什么货"
+        text1 = "这个月卖了什么货"
         text2 = "这个月挣了多少钱"
         text3 = "查一下商品可口可乐的售价"
         text4 = "这个月挣了多少钱"
         # 精确模式
-        segs = jieba.cut(text1, cut_all=False)
+        segs = jieba.cut(text3, cut_all=False)
         final = []
         for seg in segs:
             if seg not in stopwords:
@@ -523,7 +523,7 @@ class Test11(unittest.TestCase):
             start = d.replace(year=d.year, month=d.month, day=d.day - 1, hour=0, minute=0, second=0)
             end = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
         if time == "this_week":
-            newDay=d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
+            newDay = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
             start = timeProcess.get_current_week(newDay)
             delta = datetime.timedelta(days=7)
             end = start + delta
@@ -557,6 +557,7 @@ class Test11(unittest.TestCase):
                 sellResult = SellResult['result']
                 print(sellResult)
                 groups = []
+                goodsType=[]
                 group = {}
                 activeNames = []
                 items = []
@@ -566,6 +567,11 @@ class Test11(unittest.TestCase):
                     lists = []
                     content = {}
                     for goods in goodsList:
+                        goodsId = goods['goodsId']
+                        queryGoodsType = GoodsDao()
+                        goodType = queryGoodsType.queryType_byId(goodsId)
+                        if goodType[0][0] not in goodsType:
+                            goodsType.append(goodType[0][0])
                         list = {}
                         list['title'] = goods['goodsName']
                         list['value'] = goods['number']
@@ -593,11 +599,20 @@ class Test11(unittest.TestCase):
                     'start': start,
                     'end': end}
             data_json = json.dumps(data, cls=DecimalEncoder)
+            if time=='this_month':
+                queryForPic=PurchaseDao()
+                PicResult= queryForPic.query_ForPic(start,end)
+                datas = {}
+                datas['type'] = 'line_chart',
+                for picData in PicResult:
+                    datas[picData[1]] = picData[0]
+                print(datas)
             purchaseRecords = requests.post(url='http://127.0.0.1:5000/queryPurchase', data=data_json, headers=headers)
             SellResult = json.loads(purchaseRecords.content)
             print(SellResult)
             if SellResult['success'] == True:
                 sellResult = SellResult['result']
+                goodsType = []
                 print(sellResult)
                 groups = []
                 group = {}
@@ -609,9 +624,15 @@ class Test11(unittest.TestCase):
                     lists = []
                     content = {}
                     for goods in goodsList:
+                        goodsId = goods['goodsId']
+                        queryGoodsType = GoodsDao()
+                        goodType = queryGoodsType.queryType_byId(goodsId)
+                        if goodType[0][0] not in goodsType:
+                            goodsType.append(goodType[0][0])
                         list = {}
                         list['title'] = goods['goodsName']
                         list['value'] = goods['number']
+
                         list['label'] = goods['goodsId']
                         lists.append(list)
                     content['type'] = 'list'
@@ -628,6 +649,26 @@ class Test11(unittest.TestCase):
                             'summary': '该段时间的进货信息如下：',
                             'groups': groups}
                 print(json.dumps(sellInfo))
+
+                sumPriceByType = []
+                sumNumByType=[]
+                for gType in goodsType:
+                    sumOneType = 0
+                    sumOneNum=0
+                    for sellRecord in sellResult:
+                        goodsList = sellRecord['goodsList']
+                        for goods in goodsList:
+                            goodsId = goods['goodsId']
+                            queryGoodsType = GoodsDao()
+                            goodType = queryGoodsType.queryType_byId(goodsId)
+                            if goodType[0][0] == gType:
+                                sumOneType = sumOneType+goods['number'] * goods['price']
+                                sumOneNum = sumOneNum + goods['number']
+                    sumPriceByType.append(sumOneType)
+                    sumNumByType.append(sumOneNum)
+                print(goodsType)
+                print(sumPriceByType)
+                print(sumNumByType)
                 return json.dumps(sellInfo)
         ###### 查商品库存#####
         if action == "ac_query" and (nouns == "goods" or nouns == "store"):
@@ -722,49 +763,49 @@ class Test11(unittest.TestCase):
             else:
                 data = {'name': final[2]}
             data_json = json.dumps(data, cls=DecimalEncoder)
-            judge=0
-            allgroups=[]
-            averageInmoney=0
+            judge = 0
+            allgroups = []
+            averageInmoney = 0
             NewInmoney = 0
             averageOutmoney = 0
             NewOutmoney = 0
             if nouns == "price":
-                judge=1
-            if nouns == "inPrice" or judge==1:
+                judge = 1
+            if nouns == "inPrice" or judge == 1:
                 _respIn = requests.post(url='http://127.0.0.1:5000/purchasePriceByName', data=data_json,
                                         headers=headers)
                 inRecords = json.loads(_respIn.content)
                 if inRecords['success'] == True:
                     inRecord = inRecords['result']
-                    groups=[]
-                    group={}
+                    groups = []
+                    group = {}
                     items = []
-                    count=0
-                    sumPrice=0
-                    newPrice=0
+                    count = 0
+                    sumPrice = 0
+                    newPrice = 0
                     for inGoods in inRecord:
                         item = {}
                         item['title'] = inGoods['goodName']
                         item['value'] = inGoods['purchasePrice']
-                        sumPrice=sumPrice+inGoods['purchasePrice']
-                        NewInmoney=newPrice=inGoods['purchasePrice']
-                        count=count+1
-                        querySupName=SupplierDao()
+                        sumPrice = sumPrice + inGoods['purchasePrice']
+                        NewInmoney = newPrice = inGoods['purchasePrice']
+                        count = count + 1
+                        querySupName = SupplierDao()
                         supID = inGoods['supplierId']
-                        querySupNameResult=querySupName.queryName_byId(supID)
+                        querySupNameResult = querySupName.queryName_byId(supID)
                         print(querySupNameResult[0][0])
-                        item['label'] ='供货商：'+ querySupNameResult[0][0]
+                        item['label'] = '供货商：' + querySupNameResult[0][0]
                         item['tag'] = inGoods['date']
                         items.append(item)
-                    group['title']='商品的进价情况如下'
-                    group['items']=items
+                    group['title'] = '商品的进价情况如下'
+                    group['items'] = items
                     allgroups.append(group)
                     groups.append(group)
-                    averageInmoney=round(sumPrice/count,2)
+                    averageInmoney = round(sumPrice / count, 2)
                     Price = {'type': 'list-group',
-                               'summary': '商品最新进价为'+str(newPrice)+"元，平均进价为"+str(round(sumPrice/count,2))+"元",
-                               'groups':groups}
-            if nouns == "outPrice" or judge==1:
+                             'summary': '商品最新进价为' + str(newPrice) + "元，平均进价为" + str(round(sumPrice / count, 2)) + "元",
+                             'groups': groups}
+            if nouns == "outPrice" or judge == 1:
                 _respOut = requests.post(url='http://127.0.0.1:5000/SellPriceByName', data=data_json, headers=headers)
                 inRecords = json.loads(_respOut.content)
                 if inRecords['success'] == True:
@@ -779,25 +820,27 @@ class Test11(unittest.TestCase):
                     for inGoods in inRecord:
                         item = {}
                         item['title'] = inGoods['goodsName']
-                        item['value'] = str(round(inGoods['sumprice']/inGoods['number'],2))+"元"
-                        sumPrice = sumPrice + inGoods['sumprice']/inGoods['number']
-                        NewOutmoney=newPrice = inGoods['sumprice']/inGoods['number']
+                        item['value'] = str(round(inGoods['sumprice'] / inGoods['number'], 2)) + "元"
+                        sumPrice = sumPrice + inGoods['sumprice'] / inGoods['number']
+                        NewOutmoney = newPrice = inGoods['sumprice'] / inGoods['number']
                         count = count + 1
-                        item['label'] = '客户：' +inGoods['customerName']
-                        item['tag']=inGoods['date']
+                        item['label'] = '客户：' + inGoods['customerName']
+                        item['tag'] = inGoods['date']
                         items.append(item)
                     group['title'] = '商品的售价情况如下'
                     group['items'] = items
                     groups.append(group)
                     allgroups.append(group)
-                    averageOutmoney=round(sumPrice / count, 2)
+                    averageOutmoney = round(sumPrice / count, 2)
                     Price = {'type': 'list-group',
-                               'summary': '商品最新售价为' + str(newPrice) + "元，平均售价为" + str(round(sumPrice / count, 2)) + "元",
-                               'groups': groups}
+                             'summary': '商品最新售价为' + str(newPrice) + "元，平均售价为" + str(round(sumPrice / count, 2)) + "元",
+                             'groups': groups}
             if nouns == "price":
                 Price = {'type': 'list-group',
-                           'summary': '商品最新售价为' + str(NewOutmoney) + "元，平均售价为" + str(averageOutmoney) + "元 "+' 商品最新进价为' + str(NewInmoney) + "元，平均进价为" + str(averageInmoney) + "元",
-                           'groups': allgroups}
+                         'summary': '商品最新售价为' + str(NewOutmoney) + "元，平均售价为" + str(
+                             averageOutmoney) + "元 " + ' 商品最新进价为' + str(NewInmoney) + "元，平均进价为" + str(
+                             averageInmoney) + "元",
+                         'groups': allgroups}
             print(Price)
             return json.dumps(Price)
 

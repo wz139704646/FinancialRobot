@@ -30,6 +30,10 @@ class GoodsDao:
         conn = MyHelper()
         return conn.executeQuery("select * from Goods where id = %s", [id])
 
+    def queryType_byId(self, id):
+        conn = MyHelper()
+        return conn.executeQuery("select type from Goods where id = %s", [id])
+
     def add(self, name, sellprice, companyId, type, unitInfo, barcode):
         id = uuid.uuid3(uuid.NAMESPACE_OID, str(time()))
         connection = MyHelper()

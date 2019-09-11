@@ -72,6 +72,11 @@ class SellDao:
             [id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, unitInfo])
         return row
 
+    def query_ForPic(self, start, end):
+        connection = MyHelper()
+        return connection.executeQuery(
+            "select SUM(sumPrice),date from Sell where date >= %s and date <%s group by date ",
+            [start, end])
     def SellPriceByName(self, name):
         connection = MyHelper()
         return connection.executeQuery(

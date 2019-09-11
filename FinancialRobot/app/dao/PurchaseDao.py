@@ -57,6 +57,12 @@ class PurchaseDao:
         connection = MyHelper()
         return connection.executeQuery("select * from Purchase where id = %s", [id])
 
+    def query_ForPic(self, start, end):
+        connection = MyHelper()
+        return connection.executeQuery(
+            "select SUM(number*purchasePrice),date from Purchase where date >= %s and date <%s group by date ",
+            [start, end])
+
     def purchasePriceByName(self, name):
         connection = MyHelper()
         return connection.executeQuery(
