@@ -164,7 +164,7 @@ def getSellData(SellResult,time,start,end):
                     'summary': '该段时间共卖出'+str(GetPicSellPriceResult[1])+'种商品，共计'+str(GetPicSellPriceResult[2])+'元',
                     'groups': groups}
         finalResult.append(sellInfo)
-        return json.dumps(finalResult)
+        return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess(SellResult['errMsg']))
 
@@ -265,7 +265,7 @@ def getGoodsStore(final, headers):
             storeInfo = {'type': 'collapse-group',
                          'summary': '所有仓库的库存信息如下：',
                          'groups': groups}
-            return json.dumps(return_success(storeInfo))
+            return json.dumps(return_success(storeInfo), ensure_ascii=False, cls=DecimalEncoder)
         else:
             data = {'companyId': '5',
                     'name': final[1]}
@@ -284,7 +284,7 @@ def getGoodsStore(final, headers):
                 print(summary)
                 storeInfo = {'type': 'text',
                              'summary': summary}
-                return json.dumps(return_success(storeInfo))
+                return json.dumps(return_success(storeInfo), ensure_ascii=False, cls=DecimalEncoder)
             else:
                 return json.dumps(return_unsuccess(Goodsstore['errMsg']))
     else:
@@ -304,7 +304,7 @@ def getGoodsStore(final, headers):
             print(summary)
             storeInfo = {'type': 'text',
                          'summary': summary}
-            return json.dumps(return_success(storeInfo))
+            return json.dumps(return_success(storeInfo), ensure_ascii=False, cls=DecimalEncoder)
         else:
             return json.dumps(return_unsuccess(Goodsstore['errMsg']))
 
@@ -407,7 +407,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                          averageInmoney) + "元",
                      'groups': allgroups}
         finalResult.append(Price)
-        return json.dumps(return_success(finalResult))
+        return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess(inRecords['errMsg'] + outRecords['errMsg']))
 
@@ -437,7 +437,7 @@ def getInOutMoney(CashResult, BankResult, action):
             inMoney = {'type': 'text',
                        'summary': summary}
             finalResult.append(inMoney)
-            return json.dumps(return_success(finalResult))
+            return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
         if action == "ac_out_money":
             outBank = abs(outBank)
             outCash = abs(outCash)
@@ -445,7 +445,7 @@ def getInOutMoney(CashResult, BankResult, action):
             outMoney = {'type': 'text',
                         'summary': summary}
             finalResult.append(finalResult)
-            return json.dumps(return_success(finalResult))
+            return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess(CashResult['errMsg'] + BankResult['errMsg']))
 
@@ -471,7 +471,7 @@ def getCustomerInfo(CustomerDaoResult, name):
                         'summary': '客户' + name + '的信息',
                         'groups': groups}
         finalResult.append(supplierInfo)
-        return json.dumps(return_success(finalResult))
+        return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess(CustomerDaoResult['errMsg']))
 
@@ -497,7 +497,7 @@ def getSupplierInfo(SupplierResult, name):
                         'summary': '供应商' + name + '的信息',
                         'groups': groups}
         finalResult.append(supplierInfo)
-        return json.dumps(return_success(finalResult))
+        return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess(SupplierResult['errMsg']))
 
