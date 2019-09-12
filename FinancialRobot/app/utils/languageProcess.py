@@ -587,7 +587,7 @@ def languageProcess():
     language = _json.get('language')
     token = request.headers.get('Authorization')
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
-    jieba.load_userdict("../app/utils/dict.txt")
+    # jieba.load_userdict("../app/utils/dict.txt")
     # 去除停用词
     stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下"])
     # 精确模式
