@@ -328,6 +328,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 # 画图数据
                 datas1 ={}
                 datas1['type']='line'
+                datas1['summary'] = '商品进价折线图'
                 ah={}
                 # 表格数据
                 groups = []
@@ -369,6 +370,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 inRecord = outRecords['result']
                 datas2 = {}
                 datas2['type'] = 'line'
+                datas2['summary'] = '商品售价折线图'
                 print(inRecord)
                 groups = []
                 group = {}
@@ -513,6 +515,7 @@ def GetPicturePurchaseData(start, end):
     PicResult = queryForPic.query_ForPic(start, end)
     datas = {}
     datas['type'] = 'line'
+    datas['summary']='商品进货折线图'
     ah={}
     for picData in PicResult:
         ah[str(picData[1])] = picData[0]
@@ -526,6 +529,7 @@ def GetPictureSellData(start, end):
     datas = {}
     ah={}
     datas['type'] = 'line'
+    datas['summary'] = '商品销售折线图'
     for picData in PicResult:
         print(picData[1])
         ah[str(picData[1])] = picData[0]
@@ -555,6 +559,7 @@ def GetPicSellPrice(goodsType, sellResult):
     datas = {}
     ah={}
     datas['type'] = 'pie'
+    datas['summary'] = '销售状况饼状图'
     for i in range(0, len(sumPriceByType)):
         ah[goodsType[i]] = sumPriceByType[i]
     datas['diagram'] = ah
@@ -583,6 +588,7 @@ def GetPicPurchasePrice(goodsType, purchaseResult):
     datas = {}
     ah={}
     datas['type'] = 'pie'
+    datas['summary'] = '进货状况饼状图'
     print(len(goodsType))
     for i in range(0, len(sumPriceByType)):
         ah[goodsType[i]] = sumPriceByType[i]
