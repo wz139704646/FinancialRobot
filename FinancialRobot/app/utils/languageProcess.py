@@ -164,7 +164,7 @@ def getSellData(SellResult,time,start,end):
                     'summary': '该段时间共卖出'+str(GetPicSellPriceResult[1])+'种商品，共计'+str(GetPicSellPriceResult[2])+'元',
                     'groups': groups}
         finalResult.append(sellInfo)
-        return json.dumps(return_success(finalResult))
+        return json.dumps(finalResult)
     else:
         return json.dumps(return_unsuccess(SellResult['errMsg']))
 
@@ -215,7 +215,8 @@ def getPurchaseData(Purchase,time,start,end):
                     'summary': '该段时间共进了'+str(GetPicPurchasePriceResult[1])+'种货物，共计'+str(GetPicPurchasePriceResult[2])+'元',
                     'groups': groups}
         finalResult.append(sellInfo)
-        return json.dumps(return_success(finalResult))
+        print(finalResult)
+        return json.dumps(return_success(finalResult),ensure_ascii=False,cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess(Purchase['errMsg']))
 
@@ -337,7 +338,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 newPrice = 0
                 for inGoods in inRecord:
                     # data 画图数据
-                    ah[inGoods['date']] = inGoods['purchasePrice']
+                    ah[str(inGoods['date'])] = inGoods['purchasePrice']
                     # item 表格数据
                     item = {}
                     item['title'] = inGoods['goodName']
@@ -377,7 +378,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 newPrice = 0
                 ah={}
                 for inGoods in inRecord:
-                    ah[inGoods['date']] = inGoods['purchasePrice']
+                    ah[str(inGoods['date'])] = inGoods['purchasePrice']
                     item = {}
                     item['title'] = inGoods['goodsName']
                     item['value'] = str(round(inGoods['sumprice'] / inGoods['number'], 2)) + "元"
@@ -411,6 +412,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
 
 # 获取一段时间内的资金收入/支出
 def getInOutMoney(CashResult, BankResult, action):
+    finalResult=[]
     inBank = outBank = 0
     inCash = outCash = 0
     if CashResult['success'] == True and BankResult['success'] == True:
@@ -432,20 +434,23 @@ def getInOutMoney(CashResult, BankResult, action):
             summary = '现金收入' + str(inCash) + '元，银行存款、转账等收入' + str(inBank) + '元，共计' + str(inBank + inCash) + '元'
             inMoney = {'type': 'text',
                        'summary': summary}
-            return json.dumps(return_success(inMoney))
+            finalResult.append(inMoney)
+            return json.dumps(return_success(finalResult))
         if action == "ac_out_money":
             outBank = abs(outBank)
             outCash = abs(outCash)
             summary = '现金支出' + str(outCash) + '元，银行存款、转账等支出' + str(outBank) + '元，共计' + str(outCash + outCash) + '元'
             outMoney = {'type': 'text',
                         'summary': summary}
-            return json.dumps(return_success(outMoney))
+            finalResult.append(finalResult)
+            return json.dumps(return_success(finalResult))
     else:
         return json.dumps(return_unsuccess(CashResult['errMsg'] + BankResult['errMsg']))
 
 
 # 获取客户信息
 def getCustomerInfo(CustomerDaoResult, name):
+    finalResult=[]
     if CustomerDaoResult['success'] == True:
         customerResult = CustomerDaoResult['result']
         groups = []
@@ -463,13 +468,15 @@ def getCustomerInfo(CustomerDaoResult, name):
         supplierInfo = {'type': 'list-group',
                         'summary': '客户' + name + '的信息',
                         'groups': groups}
-        return json.dumps(return_success(supplierInfo))
+        finalResult.append(supplierInfo)
+        return json.dumps(return_success(finalResult))
     else:
         return json.dumps(return_unsuccess(CustomerDaoResult['errMsg']))
 
 
 # 获取供应商信息
 def getSupplierInfo(SupplierResult, name):
+    finalResult=[]
     if SupplierResult['success'] == True:
         supplierResult = SupplierResult['result']
         groups = []
@@ -487,7 +494,8 @@ def getSupplierInfo(SupplierResult, name):
         supplierInfo = {'type': 'list-group',
                         'summary': '供应商' + name + '的信息',
                         'groups': groups}
-        return json.dumps(return_success(supplierInfo))
+        finalResult.append(supplierInfo)
+        return json.dumps(return_success(finalResult))
     else:
         return json.dumps(return_unsuccess(SupplierResult['errMsg']))
 
@@ -507,7 +515,7 @@ def GetPicturePurchaseData(start, end):
     datas['type'] = 'line'
     ah={}
     for picData in PicResult:
-        ah[picData[1]] = picData[0]
+        ah[str(picData[1])] = picData[0]
     datas['diagram']=ah
     return datas
 
@@ -519,7 +527,8 @@ def GetPictureSellData(start, end):
     ah={}
     datas['type'] = 'line'
     for picData in PicResult:
-        ah[picData[1]] = picData[0]
+        print(picData[1])
+        ah[str(picData[1])] = picData[0]
     datas['diagram'] = ah
     return datas
 
@@ -574,6 +583,7 @@ def GetPicPurchasePrice(goodsType, purchaseResult):
     datas = {}
     ah={}
     datas['type'] = 'pie'
+    print(len(goodsType))
     for i in range(0, len(sumPriceByType)):
         ah[goodsType[i]] = sumPriceByType[i]
     datas['diagram']=ah
@@ -591,7 +601,7 @@ def languageProcess():
     language = _json.get('language')
     token = request.headers.get('Authorization')
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
-    # jieba.load_userdict("../app/utils/dict.txt")
+
     # 去除停用词
     stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下"])
     # 精确模式
