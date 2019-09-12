@@ -44,7 +44,7 @@ store = ['库存']
 supplier = ['供货商', '供应商', '进货商']
 customer = ['顾客', '客户']
 tables = ['利润表', '资产负债表', '经营日报', '利润分析']
-LOCATE = 'http://127.0.0.1:5000'
+LOCATE = 'http://127.0.0.1:9160'
 
 mongo = MongodbUtils()
 
