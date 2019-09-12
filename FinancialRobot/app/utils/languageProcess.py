@@ -51,17 +51,19 @@ tables = ['利润表', '资产负债表', '经营日报', '利润分析']
 mongo = MongodbUtils()
 
 
-def computeLanguage(items, time):
+def computeLanguage(items, Time):
+    action=""
+    nouns=""
     for item in items:
-        if time == "today":
+        if Time == "today":
             if item in yesterday:
-                time = "yesterday"
+                Time = "yesterday"
             if item in this_week:
-                time = "this_week"
+                Time = "this_week"
             if item in last_week:
-                time = "last_week"
+                Time = "last_week"
             if item in this_month:
-                time = "this_month"
+                Time = "this_month"
         if item in ac_in_money:
             action = "ac_in_money"
         if item in ac_purchase:
@@ -88,11 +90,13 @@ def computeLanguage(items, time):
             nouns = "customer"
         if item in tables:
             nouns = "tables"
-    return time,action,nouns
+    return Time,action,nouns
 
 
 # 对时间进行判断
 def judgeTime(time,d):
+    start = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
+    end = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
     if time == "today":
         start = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
         end = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
