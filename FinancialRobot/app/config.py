@@ -5,7 +5,7 @@ port = 3306
 user = "root"
 password = "Wdrs14569*"
 charset = "utf8"
-
+LOCATE = 'http://127.0.0.1:9160'
 dbname = "financialrobot"
 
 redis_port = 6379

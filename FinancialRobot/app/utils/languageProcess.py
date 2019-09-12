@@ -17,11 +17,13 @@ from app.dao.PurchaseDao import PurchaseDao
 from app.utils.timeProcess import timeProcess
 from app.utils.mongodb_utils import MongodbUtils
 from app.utils.auth import Auth
+from app.config import LOCATE
 
 lanprocess = Blueprint("lanprocess", __name__)
 UPLOAD_FOLDER = 'dict.txt'
 basedir = os.path.abspath(os.path.dirname(__file__))
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
+print(file_dir)
 jieba.load_userdict(file_dir)
 
 today = ['今天', '这一天']
@@ -44,7 +46,7 @@ store = ['库存']
 supplier = ['供货商', '供应商', '进货商']
 customer = ['顾客', '客户']
 tables = ['利润表', '资产负债表', '经营日报', '利润分析']
-LOCATE = 'http://127.0.0.1:9160'
+
 
 mongo = MongodbUtils()
 
