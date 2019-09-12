@@ -576,8 +576,6 @@ def GetPicPurchasePrice(goodsType, purchaseResult):
     return datas,len(goodsType),sumPrice
 
 
-def getGoodsPricePic():
-    print('caonima')
 
 
 # 自然语言处理
