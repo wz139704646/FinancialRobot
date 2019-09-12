@@ -20,8 +20,8 @@ from app.utils.auth import Auth
 from app.config import LOCATE
 
 lanprocess = Blueprint("lanprocess", __name__)
-UPLOAD_FOLDER = 'dict.txt'
-basedir = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER = 'app/utils/dict.txt'
+basedir = os.getcwd()
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
 print(file_dir)
 jieba.load_userdict(file_dir)
@@ -591,7 +591,7 @@ def languageProcess():
     language = _json.get('language')
     token = request.headers.get('Authorization')
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
-    jieba.load_userdict("../app/utils/dict.txt")
+    # jieba.load_userdict("../app/utils/dict.txt")
     # 去除停用词
     stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下"])
     # 精确模式
@@ -607,7 +607,7 @@ def languageProcess():
     action=computeResult[1]
     nouns=computeResult[2]
     try:
-        user_info = Auth.decode_jwt(token)
+        user_info = Auth.decode_jwt(token.split(" ")[1])
     except:
         return json.dumps({'auth': False, 'errMsg': 'token解码失败'})
     data = {
