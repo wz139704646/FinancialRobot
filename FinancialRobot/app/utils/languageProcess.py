@@ -19,7 +19,7 @@ from app.utils.mongodb_utils import MongodbUtils
 from app.utils.auth import Auth
 
 lanprocess = Blueprint("lanprocess", __name__)
-UPLOAD_FOLDER = '../utils/dict.txt'
+UPLOAD_FOLDER = '../dict.txt'
 basedir = os.path.abspath(os.path.dirname(__file__))
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
 jieba.load_userdict(file_dir)

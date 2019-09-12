@@ -3,6 +3,7 @@
 import unittest
 import requests
 import time
+import os
 import uuid
 import json
 import jieba
@@ -425,12 +426,12 @@ class Test11(unittest.TestCase):
         print(final[a])
 
     def test31(self):
-
         a=0
         for i in range(1,5):
             a=a+i
         print(a)
-
+        basedir = os.path.abspath(os.path.dirname('sell.py'))
+        print(basedir)
         result = []
         nowTime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         #nowTime=time.localtime(time.time())
@@ -440,6 +441,7 @@ class Test11(unittest.TestCase):
         # print(result)
 
     def test12(self):
+
         companyId = "5"
         date1 = "2019-07-24 19:11:03"
         date = "2019-07-24"
