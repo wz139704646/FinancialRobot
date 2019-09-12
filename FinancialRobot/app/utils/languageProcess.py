@@ -3,6 +3,7 @@
 import uuid
 import json
 import jieba
+import time
 import os
 import requests
 import datetime
@@ -48,7 +49,7 @@ LOCATE = 'http://47.100.244.29:5000'
 mongo = MongodbUtils()
 
 
-def computeLanguage(items, time, action, nouns):
+def computeLanguage(items, time):
     for item in items:
         if time == "today":
             if item in yesterday:
@@ -85,10 +86,11 @@ def computeLanguage(items, time, action, nouns):
             nouns = "customer"
         if item in tables:
             nouns = "tables"
+    return time,action,nouns
 
 
 # 对时间进行判断
-def judgeTime(time, start, end, d):
+def judgeTime(time,d):
     if time == "today":
         start = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
         end = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
@@ -108,6 +110,7 @@ def judgeTime(time, start, end, d):
     if time == "this_month":
         start = d.replace(year=d.year, month=d.month, day=1, hour=0, minute=0, second=0)
         end = d.replace(year=d.year, month=d.month + 1, day=1, hour=0, minute=0, second=0)
+    return start,end
 
 
 # 获取一定时间内的销售数据
@@ -149,9 +152,10 @@ def getSellData(SellResult,time,start,end):
         groups.append(group)
         if time == 'this_month':
             finalResult.append(GetPictureSellData(start, end))
-        finalResult.append(GetPicSellPrice(goodsType, sellResult))
+        GetPicSellPriceResult=GetPicSellPrice(goodsType, sellResult)
+        finalResult.append(GetPicSellPriceResult[0])
         sellInfo = {'type': 'collapse-group',
-                    'summary': '该段时间的销售信息如下：',
+                    'summary': '该段时间共卖出'+str(GetPicSellPriceResult[1])+'种商品，共计'+str(GetPicSellPriceResult[2])+'元',
                     'groups': groups}
         finalResult.append(sellInfo)
         return json.dumps(return_success(finalResult))
@@ -196,12 +200,13 @@ def getPurchaseData(Purchase,time,start,end):
         group['activeNames'] = activeNames
         group['items'] = items
         # 调用获取图片信息的函数
-        finalResult.append(GetPicPurchasePrice(goodsType, purchaseResult))
+        GetPicPurchasePriceResult=GetPicPurchasePrice(goodsType, purchaseResult)
+        finalResult.append(GetPicPurchasePriceResult[0])
         if time=='this_month':
             finalResult.append(GetPicturePurchaseData(start,end))
         groups.append(group)
         sellInfo = {'type': 'collapse-group',
-                    'summary': '该段时间的进货信息如下：',
+                    'summary': '该段时间共进了'+str(GetPicPurchasePriceResult[1])+'种货物，共计'+str(GetPicPurchasePriceResult[2])+'元',
                     'groups': groups}
         finalResult.append(sellInfo)
         return json.dumps(return_success(finalResult))
@@ -315,7 +320,8 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 inRecord = inRecords['result']
                 # 画图数据
                 datas1 ={}
-                datas1['type']='line_chart'
+                datas1['type']='line'
+                ah={}
                 # 表格数据
                 groups = []
                 group = {}
@@ -325,7 +331,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 newPrice = 0
                 for inGoods in inRecord:
                     # data 画图数据
-                    datas1[inGoods['date']] = inGoods['purchasePrice']
+                    ah[inGoods['date']] = inGoods['purchasePrice']
                     # item 表格数据
                     item = {}
                     item['title'] = inGoods['goodName']
@@ -340,9 +346,10 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                     item['label'] = '供货商：' + querySupNameResult[0][0]
                     item['tag'] = inGoods['date']
                     items.append(item)
-                group['title'] = '商品的进价情况如下'
+                group['title'] = '商品的进价情况'
                 group['items'] = items
                 allgroups.append(group)
+                datas1['diagram']=ah
                 Picturedata.append(datas1)
                 groups.append(group)
                 averageInmoney = round(sumPrice / count, 2)
@@ -354,7 +361,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
             if outRecords['success'] == True:
                 inRecord = outRecords['result']
                 datas2 = {}
-                datas2['type'] = 'line_chart'
+                datas2['type'] = 'line'
                 print(inRecord)
                 groups = []
                 group = {}
@@ -362,8 +369,9 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 count = 0
                 sumPrice = 0
                 newPrice = 0
+                ah={}
                 for inGoods in inRecord:
-                    datas2[inGoods['date']] = inGoods['purchasePrice']
+                    ah[inGoods['date']] = inGoods['purchasePrice']
                     item = {}
                     item['title'] = inGoods['goodsName']
                     item['value'] = str(round(inGoods['sumprice'] / inGoods['number'], 2)) + "元"
@@ -373,7 +381,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                     item['label'] = '客户：' + inGoods['customerName']
                     item['tag'] = inGoods['date']
                     items.append(item)
-                group['title'] = '商品的售价情况如下'
+                group['title'] = '商品的售价情况'
                 group['items'] = items
                 groups.append(group)
                 allgroups.append(group)
@@ -381,6 +389,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 Price = {'type': 'list-group',
                          'summary': '商品最新售价为' + str(newPrice) + "元，平均售价为" + str(round(sumPrice / count, 2)) + "元",
                          'groups': groups}
+                datas2['diagram'] = ah
                 finalResult.append(datas2)
         if nouns == "price":
             Price = {'type': 'list-group',
@@ -489,9 +498,11 @@ def GetPicturePurchaseData(start, end):
     queryForPic = PurchaseDao()
     PicResult = queryForPic.query_ForPic(start, end)
     datas = {}
-    datas['type'] = 'line_chart'
+    datas['type'] = 'line'
+    ah={}
     for picData in PicResult:
-        datas[picData[1]] = picData[0]
+        ah[picData[1]] = picData[0]
+    datas['diagram']=ah
     return datas
 
 
@@ -499,9 +510,11 @@ def GetPictureSellData(start, end):
     queryForPic = SellDao()
     PicResult = queryForPic.query_ForPic(start, end)
     datas = {}
-    datas['type'] = 'line_chart'
+    ah={}
+    datas['type'] = 'line'
     for picData in PicResult:
-        datas[picData[1]] = picData[0]
+        ah[picData[1]] = picData[0]
+    datas['diagram'] = ah
     return datas
 
 
@@ -511,11 +524,13 @@ def GetPicSellPrice(goodsType, sellResult):
     for gType in goodsType:
         sumOneType = 0
         sumOneNum = 0
+        sumPrice=0
         for sellRecord in sellResult:
             goodsList = sellRecord['goodsList']
             for goods in goodsList:
                 goodsId = goods['goodsId']
                 queryGoodsType = GoodsDao()
+                sumPrice=sumPrice+goods['sumprice']
                 goodType = queryGoodsType.queryType_byId(goodsId)
                 if goodType[0][0] == gType:
                     sumOneType = sumOneType + goods['sumprice']
@@ -523,10 +538,12 @@ def GetPicSellPrice(goodsType, sellResult):
         sumPriceByType.append(sumOneType)
         sumNumByType.append(sumOneNum)
     datas = {}
-    datas['type'] = 'Piechart'
+    ah={}
+    datas['type'] = 'pie'
     for i in range(0, len(sumPriceByType)):
-        datas[goodsType[i]] = sumPriceByType[i]
-    return datas
+        ah[goodsType[i]] = sumPriceByType[i]
+    datas['diagram'] = ah
+    return datas,len(goodsType),sumPrice
 
 
 def GetPicPurchasePrice(goodsType, purchaseResult):
@@ -535,11 +552,13 @@ def GetPicPurchasePrice(goodsType, purchaseResult):
     for gType in goodsType:
         sumOneType = 0
         sumOneNum = 0
+        sumPrice=0
         for sellRecord in purchaseResult:
             goodsList = sellRecord['goodsList']
             for goods in goodsList:
                 goodsId = goods['goodsId']
                 queryGoodsType = GoodsDao()
+                sumPrice=sumPrice+goods['number'] * goods['price']
                 goodType = queryGoodsType.queryType_byId(goodsId)
                 if goodType[0][0] == gType:
                     sumOneType = sumOneType + goods['number'] * goods['price']
@@ -547,10 +566,12 @@ def GetPicPurchasePrice(goodsType, purchaseResult):
         sumPriceByType.append(sumOneType)
         sumNumByType.append(sumOneNum)
     datas = {}
-    datas['type'] = 'Piechart'
+    ah={}
+    datas['type'] = 'pie'
     for i in range(0, len(sumPriceByType)):
-        datas[goodsType[i]] = sumPriceByType[i]
-    return datas
+        ah[goodsType[i]] = sumPriceByType[i]
+    datas['diagram']=ah
+    return datas,len(goodsType),sumPrice
 
 
 def getGoodsPricePic():
@@ -561,8 +582,8 @@ def getGoodsPricePic():
 @lanprocess.route("/languageProcess", methods=["GET", "POST"])
 def languageProcess():
     _json = request.json
+    date=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     companyId = _json.get('companyId')
-    date = _json.get('time')
     language = _json.get('language')
     token = request.headers.get('Authorization')
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
@@ -576,17 +597,18 @@ def languageProcess():
         if seg not in stopwords:
             final.append(seg)
     print(final)
-    time = "today"
-    action = ""
-    nouns = ""
-    computeLanguage(final, time, action, nouns)
+    Time = "today"
+    computeResult=computeLanguage(final, Time)
+    Time=computeResult[0]
+    action=computeResult[1]
+    nouns=computeResult[2]
     try:
         user_info = Auth.decode_jwt(token)
     except:
         return json.dumps({'auth': False, 'errMsg': 'token解码失败'})
     data = {
         "company_id": companyId,
-        "time": time,
+        "time": Time,
         "action": action,
         "nouns": nouns
     }
@@ -596,9 +618,9 @@ def languageProcess():
         'Authorization': token,
         'Content-Type': 'application/json'
     }
-    start = ""
-    end = ""
-    judgeTime(time, start, end, d)
+    timeResult=judgeTime(Time,  d)
+    start=timeResult[0]
+    end=timeResult[1]
     # 对行为进行判断
     ##### 一段时期内的销售情况 #####
     if action == "ac_in_money" and nouns == "goods":
@@ -610,7 +632,7 @@ def languageProcess():
         sellRecords = requests.post(url=LOCATE + '/querySell', data=data_json, headers=headers)
         if sellRecords.status_code == 200:
             SellResult = json.loads(sellRecords.content)
-            return getSellData(SellResult,time,start,end)
+            return getSellData(SellResult,Time,start,end)
         else:
             return '不好意思，没有查到相关数据哦', sellRecords.status_code
     ##### 某段时间内进的货物 #####
@@ -623,7 +645,7 @@ def languageProcess():
         purchaseRecords = requests.post(url=LOCATE + '/queryPurchase', data=data_json, headers=headers)
         if purchaseRecords.status_code == 200:
             SellResult = json.loads(purchaseRecords.content)
-            return getPurchaseData(SellResult,time,start,end)
+            return getPurchaseData(SellResult,Time,start,end)
         else:
             return '不好意思，没有查到相关数据哦', purchaseRecords.status_code
     ###### 查商品库存#####

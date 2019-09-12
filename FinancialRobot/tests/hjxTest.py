@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 import unittest
 import requests
+import time
 import uuid
 import json
 import jieba
@@ -424,8 +425,16 @@ class Test11(unittest.TestCase):
         print(final[a])
 
     def test31(self):
+
+        a=0
+        for i in range(1,5):
+            a=a+i
+        print(a)
+
         result = []
-        print(len(result))
+        nowTime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        #nowTime=time.localtime(time.time())
+        print(nowTime)
         # query = SellDao()
         # result = query.query_byId("96277eb0-79a8-36b9-9b4a-f95d7b6055d0")
         # print(result)
