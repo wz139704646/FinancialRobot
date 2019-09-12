@@ -603,7 +603,7 @@ def languageProcess():
     action=computeResult[1]
     nouns=computeResult[2]
     try:
-        user_info = Auth.decode_jwt(token)
+        user_info = Auth.decode_jwt(token.split(" ")[1])
     except:
         return json.dumps({'auth': False, 'errMsg': 'token解码失败'})
     data = {
