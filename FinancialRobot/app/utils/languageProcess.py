@@ -18,13 +18,13 @@ from app.utils.timeProcess import timeProcess
 from app.utils.mongodb_utils import MongodbUtils
 from app.utils.auth import Auth
 from app.config import LOCATE
-
+#LOCATE='http://127.0.0.1:5000'
 lanprocess = Blueprint("lanprocess", __name__)
-UPLOAD_FOLDER = 'app/utils/dict.txt'
+UPLOAD_FOLDER = 'app\\utils\\dict.txt'
 basedir = os.getcwd()
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
 print(file_dir)
-#jieba.load_userdict(file_dir)
+jieba.load_userdict(file_dir)
 
 today = ['今天', '这一天']
 yesterday = ['昨天', '上一天']
@@ -253,7 +253,7 @@ def getGoodsStore(final, headers):
                         list['label'] = goods['id']
                         lists.append(list)
                 content['type'] = 'list'
-                content[lists] = lists
+                content['lists'] = lists
                 item['content'] = content
                 item['title'] = cusresult[1]
                 item['value'] = cusresult[2]
@@ -287,7 +287,7 @@ def getGoodsStore(final, headers):
                 return json.dumps(return_success(storeInfo), ensure_ascii=False, cls=DecimalEncoder)
             else:
                 return json.dumps(return_unsuccess(Goodsstore['errMsg']))
-    else:
+    elif len(final)>3:
         data = {'companyId': '5',
                 'name': final[2]}
         data_json = json.dumps(data, cls=DecimalEncoder)
@@ -307,6 +307,8 @@ def getGoodsStore(final, headers):
             return json.dumps(return_success(storeInfo), ensure_ascii=False, cls=DecimalEncoder)
         else:
             return json.dumps(return_unsuccess(Goodsstore['errMsg']))
+    else:
+        return json.dumps(return_unsuccess('不好意思，没有明白您的意思'))
 
 
 # 查询商品价格（进价、售价）
@@ -380,7 +382,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 newPrice = 0
                 ah={}
                 for inGoods in inRecord:
-                    ah[str(inGoods['date'])] = inGoods['purchasePrice']
+                    ah[str(inGoods['date'])] = round(inGoods['sumprice'] / inGoods['number'], 2)
                     item = {}
                     item['title'] = inGoods['goodsName']
                     item['value'] = str(round(inGoods['sumprice'] / inGoods['number'], 2)) + "元"
@@ -444,7 +446,7 @@ def getInOutMoney(CashResult, BankResult, action):
             summary = '现金支出' + str(outCash) + '元，银行存款、转账等支出' + str(outBank) + '元，共计' + str(outCash + outCash) + '元'
             outMoney = {'type': 'text',
                         'summary': summary}
-            finalResult.append(finalResult)
+            finalResult.append(outMoney)
             return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess(CashResult['errMsg'] + BankResult['errMsg']))
@@ -606,10 +608,11 @@ def languageProcess():
     companyId = _json.get('companyId')
     language = _json.get('language')
     token = request.headers.get('Authorization')
+    #token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
 
     # 去除停用词
-    stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下"])
+    stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下",'什么'])
     # 精确模式
     segs = jieba.cut(language, cut_all=False)
     final = []
