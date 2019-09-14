@@ -47,7 +47,7 @@ def queryCompany():
 @company.route("/query_CompanyName", methods=["GET"])
 def queryCompanyName():
     query = CompanyDao()
-    _json = request.json
+    _json = request.args
     id = _json.get('id')
     result = query.queryNameById(id)
     return json.dumps(return_success(result[0][0]), ensure_ascii=False)
