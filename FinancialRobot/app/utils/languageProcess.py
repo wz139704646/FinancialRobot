@@ -21,6 +21,7 @@ from app.config import LOCATE
 #LOCATE='http://127.0.0.1:5000'
 lanprocess = Blueprint("lanprocess", __name__)
 UPLOAD_FOLDER = 'app/utils/dict.txt'
+#UPLOAD_FOLDER = 'app\\utils\\dict.txt'
 basedir = os.getcwd()
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
 print(file_dir)
@@ -224,6 +225,7 @@ def getPurchaseData(Purchase,time,start,end):
 # 获取商品库存信息
 def getGoodsStore(final, headers):
     queryWare = WareHouseDao()
+
     Cusresult = queryWare.query_byCompanyId('5')
     print(Cusresult)
     if len(final) == 3:
@@ -265,7 +267,9 @@ def getGoodsStore(final, headers):
             storeInfo = {'type': 'collapse-group',
                          'summary': '所有仓库的库存信息如下：',
                          'groups': groups}
-            return json.dumps(return_success(storeInfo), ensure_ascii=False, cls=DecimalEncoder)
+            finalResult = []
+            finalResult.append(storeInfo)
+            return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
         else:
             data = {'companyId': '5',
                     'name': final[1]}
@@ -284,7 +288,9 @@ def getGoodsStore(final, headers):
                 print(summary)
                 storeInfo = {'type': 'text',
                              'summary': summary}
-                return json.dumps(return_success(storeInfo), ensure_ascii=False, cls=DecimalEncoder)
+                finalResult = []
+                finalResult.append(storeInfo)
+                return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
             else:
                 return json.dumps(return_unsuccess(Goodsstore['errMsg']))
     elif len(final)>3:
@@ -302,9 +308,11 @@ def getGoodsStore(final, headers):
                 summary = summary + "商品" + goodResult['name'] + "当前库存为：" + str(int(goodResult['amount'])) + \
                           goodResult['unitInfo'] + '\n'
             print(summary)
+            finalResult = []
             storeInfo = {'type': 'text',
                          'summary': summary}
-            return json.dumps(return_success(storeInfo), ensure_ascii=False, cls=DecimalEncoder)
+            finalResult.append(storeInfo)
+            return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
         else:
             return json.dumps(return_unsuccess(Goodsstore['errMsg']))
     else:
