@@ -20,7 +20,7 @@ from app.utils.auth import Auth
 from app.config import LOCATE
 #LOCATE='http://127.0.0.1:5000'
 lanprocess = Blueprint("lanprocess", __name__)
-UPLOAD_FOLDER = 'app\\utils\\dict.txt'
+UPLOAD_FOLDER = 'app/utils/dict.txt'
 basedir = os.getcwd()
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
 print(file_dir)
