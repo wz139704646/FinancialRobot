@@ -4,6 +4,9 @@ import unittest
 import requests
 import time
 import os
+import urllib.request
+from bs4 import BeautifulSoup
+import re
 import uuid
 import json
 import jieba
@@ -439,6 +442,26 @@ class Test11(unittest.TestCase):
         # query = SellDao()
         # result = query.query_byId("96277eb0-79a8-36b9-9b4a-f95d7b6055d0")
         # print(result)
+    def test32(self):
+        url = r'http://www.whalebj.com/xzjc/default.aspx'
+        html = urllib.request.urlopen(url).read().decode('utf-8')
+
+        soup = BeautifulSoup(html,features='lxml')
+
+        temp = soup.find_all(
+            'span'
+        )[0]
+
+        temp = str(temp)
+        time = re.findall(r'\d+-\d+-\d+ \d+:\d+:\d+', temp)
+
+        daiyun_car = re.findall(r'待运车辆数为：\d+', temp)
+
+        jinchang_car = re.findall(r'进场车辆数为：\d+', temp)
+
+        lichang_car = re.findall(r'离场车辆数为：\d+', temp)
+
+        print(time[0], daiyun_car[0][7:], jinchang_car[0][7:], lichang_car[0][7:])
 
     def test12(self):
 

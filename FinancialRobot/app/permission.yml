@@ -51,6 +51,7 @@ parts:
     - company.CompanyRegister
     - company.queryCompany
     - company.queryCompanyName
+    - company.query_CompanyName
   inout_money: &inout_money
     - inout_Money.addCashRecord
     - inout_Money.addBankRecord
