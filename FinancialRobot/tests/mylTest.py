@@ -1,21 +1,14 @@
-import time
+
 import unittest
 import base64
 import binascii
-import json
-import uuid
-import http.client
 import jieba
 from hashlib import sha1
-
 from app.config import redis_store
 from app.dao.BankStatementDao import BankStatementDao
 from app.dao.CompanyDao import CompanyDao
 from app.dao.GoodsDao import GoodsDao
 from app.dao.UserDao import UserDao
-from app.dao.WareHouseDao import WareHouseDao
-from app.utils.BigchainUtils import BigchainUtils
-from app.utils.DBHelper import MyHelper
 from app.utils.json_util import *
 import requests
 
@@ -135,3 +128,7 @@ class MylTest(unittest.TestCase):
     def test19(self):
         res = BankStatementDao().update("9f4bd060-85fa-3f47-b1f6-6d9e1ed1ffc9")
         print(res)
+
+    def test20(self):
+        res = datetime.datetime.now()
+        print(str(res))

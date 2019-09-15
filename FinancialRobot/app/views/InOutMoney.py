@@ -222,7 +222,7 @@ def queryBankRecordByDate():
 @inout_Money.route("/queryBankRecordByOption", methods=["GET", "POST"])
 def queryBankRecordByOption():
     _json = request.json
-    if _json.get('start') == None:
+    if _json.get('start') is None:
         date = _json.get('date')
         option = int(_json.get('option'))
         d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
@@ -238,7 +238,7 @@ def queryBankRecordByOption():
             if option == 3:
                 start = d.replace(year=d.year, month=d.month, day=1, hour=0, minute=0, second=0)
                 end = d.replace(year=d.year, month=d.month + 1, day=1, hour=0, minute=0, second=0)
-            result = queryBank(start, end)
+            result = queryBank(str(start), str(end))
             print(start, end)
             if len(result) >= 1:
                 return json.dumps(return_success(BankStatementDao.to_dict(result)), ensure_ascii=False,

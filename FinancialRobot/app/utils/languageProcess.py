@@ -19,11 +19,14 @@ from app.utils.mongodb_utils import MongodbUtils
 from app.utils.auth import Auth
 from app.config import LOCATE
 from .recommend import recommend
-#LOCATE='http://127.0.0.1:5000'
+
+# LOCATE='http://127.0.0.1:5000'
 lanprocess = Blueprint("lanprocess", __name__)
-UPLOAD_FOLDER = 'app/utils/dict.txt'
-#UPLOAD_FOLDER = 'app\\utils\\dict.txt'
-basedir = os.getcwd()
+# UPLOAD_FOLDER = 'app/utils/dict.txt'
+# UPLOAD_FOLDER = 'app\\utils\\dict.txt'
+UPLOAD_FOLDER = 'dict.txt'
+# basedir = os.getcwd()
+basedir = os.path.abspath(os.path.dirname(__file__))
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
 print(file_dir)
 jieba.load_userdict(file_dir)
@@ -49,13 +52,12 @@ supplier = ['供货商', '供应商', '进货商']
 customer = ['顾客', '客户']
 tables = ['利润表', '资产负债表', '经营日报', '利润分析']
 
-
 mongo = MongodbUtils()
 
 
 def computeLanguage(items, Time):
-    action=""
-    nouns=""
+    action = ""
+    nouns = ""
     for item in items:
         if Time == "today":
             if item in yesterday:
@@ -92,11 +94,11 @@ def computeLanguage(items, Time):
             nouns = "customer"
         if item in tables:
             nouns = "tables"
-    return Time,action,nouns
+    return Time, action, nouns
 
 
 # 对时间进行判断
-def judgeTime(time,d):
+def judgeTime(time, d):
     start = d.replace(year=d.year, month=d.month, day=d.day, hour=0, minute=0, second=0)
     end = d.replace(year=d.year, month=d.month, day=d.day + 1, hour=0, minute=0, second=0)
     if time == "today":
@@ -118,12 +120,12 @@ def judgeTime(time,d):
     if time == "this_month":
         start = d.replace(year=d.year, month=d.month, day=1, hour=0, minute=0, second=0)
         end = d.replace(year=d.year, month=d.month + 1, day=1, hour=0, minute=0, second=0)
-    return start,end
+    return start, end
 
 
 # 获取一定时间内的销售数据
-def getSellData(SellResult,time,start,end):
-    finalResult=[]
+def getSellData(SellResult, time, start, end):
+    finalResult = []
     if SellResult['success'] == True:
         sellResult = SellResult['result']
         print(sellResult)
@@ -160,10 +162,11 @@ def getSellData(SellResult,time,start,end):
         groups.append(group)
         if time == 'this_month':
             finalResult.append(GetPictureSellData(start, end))
-        GetPicSellPriceResult=GetPicSellPrice(goodsType, sellResult)
+        GetPicSellPriceResult = GetPicSellPrice(goodsType, sellResult)
         finalResult.append(GetPicSellPriceResult[0])
         sellInfo = {'type': 'collapse-group',
-                    'summary': '该段时间共卖出'+str(GetPicSellPriceResult[1])+'种商品，共计'+str(GetPicSellPriceResult[2])+'元',
+                    'summary': '该段时间共卖出' + str(GetPicSellPriceResult[1]) + '种商品，共计' + str(
+                        GetPicSellPriceResult[2]) + '元',
                     'groups': groups}
         finalResult.append(sellInfo)
         return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
@@ -172,8 +175,8 @@ def getSellData(SellResult,time,start,end):
 
 
 # 获取一定时间内的进货数据
-def getPurchaseData(Purchase,time,start,end):
-    finalResult=[]
+def getPurchaseData(Purchase, time, start, end):
+    finalResult = []
     if Purchase['success'] == True:
         purchaseResult = Purchase['result']
         print(purchaseResult)
@@ -208,17 +211,18 @@ def getPurchaseData(Purchase,time,start,end):
         group['activeNames'] = activeNames
         group['items'] = items
         # 调用获取图片信息的函数
-        GetPicPurchasePriceResult=GetPicPurchasePrice(goodsType, purchaseResult)
+        GetPicPurchasePriceResult = GetPicPurchasePrice(goodsType, purchaseResult)
         finalResult.append(GetPicPurchasePriceResult[0])
-        if time=='this_month':
-            finalResult.append(GetPicturePurchaseData(start,end))
+        if time == 'this_month':
+            finalResult.append(GetPicturePurchaseData(start, end))
         groups.append(group)
         sellInfo = {'type': 'collapse-group',
-                    'summary': '该段时间共进了'+str(GetPicPurchasePriceResult[1])+'种货物，共计'+str(GetPicPurchasePriceResult[2])+'元',
+                    'summary': '该段时间共进了' + str(GetPicPurchasePriceResult[1]) + '种货物，共计' + str(
+                        GetPicPurchasePriceResult[2]) + '元',
                     'groups': groups}
         finalResult.append(sellInfo)
         print(finalResult)
-        return json.dumps(return_success(finalResult),ensure_ascii=False,cls=DecimalEncoder)
+        return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess(Purchase['errMsg']))
 
@@ -294,7 +298,7 @@ def getGoodsStore(final, headers):
                 return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
             else:
                 return json.dumps(return_unsuccess(Goodsstore['errMsg']))
-    elif len(final)>3:
+    elif len(final) > 3:
         data = {'companyId': '5',
                 'name': final[2]}
         data_json = json.dumps(data, cls=DecimalEncoder)
@@ -322,7 +326,7 @@ def getGoodsStore(final, headers):
 
 # 查询商品价格（进价、售价）
 def getGoodsPrice(nouns, inRecords, outRecords):
-    finalResult=[]
+    finalResult = []
     judge = 0
     allgroups = []
     Picturedata = []
@@ -337,10 +341,10 @@ def getGoodsPrice(nouns, inRecords, outRecords):
             if inRecords['success'] == True:
                 inRecord = inRecords['result']
                 # 画图数据
-                datas1 ={}
-                datas1['type']='line'
+                datas1 = {}
+                datas1['type'] = 'line'
                 datas1['summary'] = '商品进价折线图'
-                ah={}
+                ah = {}
                 # 表格数据
                 groups = []
                 group = {}
@@ -368,7 +372,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 group['title'] = '商品的进价情况'
                 group['items'] = items
                 allgroups.append(group)
-                datas1['diagram']=ah
+                datas1['diagram'] = ah
                 Picturedata.append(datas1)
                 groups.append(group)
                 averageInmoney = round(sumPrice / count, 2)
@@ -389,7 +393,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
                 count = 0
                 sumPrice = 0
                 newPrice = 0
-                ah={}
+                ah = {}
                 for inGoods in inRecord:
                     ah[str(inGoods['date'])] = round(inGoods['sumprice'] / inGoods['number'], 2)
                     item = {}
@@ -425,7 +429,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
 
 # 获取一段时间内的资金收入/支出
 def getInOutMoney(CashResult, BankResult, action):
-    finalResult=[]
+    finalResult = []
     inBank = outBank = 0
     inCash = outCash = 0
     if CashResult['success'] == True and BankResult['success'] == True:
@@ -463,7 +467,7 @@ def getInOutMoney(CashResult, BankResult, action):
 
 # 获取客户信息
 def getCustomerInfo(CustomerDaoResult, name):
-    finalResult=[]
+    finalResult = []
     if CustomerDaoResult['success'] == True:
         customerResult = CustomerDaoResult['result']
         groups = []
@@ -489,7 +493,7 @@ def getCustomerInfo(CustomerDaoResult, name):
 
 # 获取供应商信息
 def getSupplierInfo(SupplierResult, name):
-    finalResult=[]
+    finalResult = []
     if SupplierResult['success'] == True:
         supplierResult = SupplierResult['result']
         groups = []
@@ -526,11 +530,11 @@ def GetPicturePurchaseData(start, end):
     PicResult = queryForPic.query_ForPic(start, end)
     datas = {}
     datas['type'] = 'line'
-    datas['summary']='商品进货折线图'
-    ah={}
+    datas['summary'] = '商品进货折线图'
+    ah = {}
     for picData in PicResult:
         ah[str(picData[1])] = picData[0]
-    datas['diagram']=ah
+    datas['diagram'] = ah
     return datas
 
 
@@ -538,7 +542,7 @@ def GetPictureSellData(start, end):
     queryForPic = SellDao()
     PicResult = queryForPic.query_ForPic(start, end)
     datas = {}
-    ah={}
+    ah = {}
     datas['type'] = 'line'
     datas['summary'] = '商品销售折线图'
     for picData in PicResult:
@@ -554,13 +558,13 @@ def GetPicSellPrice(goodsType, sellResult):
     for gType in goodsType:
         sumOneType = 0
         sumOneNum = 0
-        sumPrice=0
+        sumPrice = 0
         for sellRecord in sellResult:
             goodsList = sellRecord['goodsList']
             for goods in goodsList:
                 goodsId = goods['goodsId']
                 queryGoodsType = GoodsDao()
-                sumPrice=sumPrice+goods['sumprice']
+                sumPrice = sumPrice + goods['sumprice']
                 goodType = queryGoodsType.queryType_byId(goodsId)
                 if goodType[0][0] == gType:
                     sumOneType = sumOneType + goods['sumprice']
@@ -568,13 +572,13 @@ def GetPicSellPrice(goodsType, sellResult):
         sumPriceByType.append(sumOneType)
         sumNumByType.append(sumOneNum)
     datas = {}
-    ah={}
+    ah = {}
     datas['type'] = 'pie'
     datas['summary'] = '销售状况饼状图'
     for i in range(0, len(sumPriceByType)):
         ah[goodsType[i]] = sumPriceByType[i]
     datas['diagram'] = ah
-    return datas,len(goodsType),sumPrice
+    return datas, len(goodsType), sumPrice
 
 
 def GetPicPurchasePrice(goodsType, purchaseResult):
@@ -583,13 +587,13 @@ def GetPicPurchasePrice(goodsType, purchaseResult):
     for gType in goodsType:
         sumOneType = 0
         sumOneNum = 0
-        sumPrice=0
+        sumPrice = 0
         for sellRecord in purchaseResult:
             goodsList = sellRecord['goodsList']
             for goods in goodsList:
                 goodsId = goods['goodsId']
                 queryGoodsType = GoodsDao()
-                sumPrice=sumPrice+goods['number'] * goods['price']
+                sumPrice = sumPrice + goods['number'] * goods['price']
                 goodType = queryGoodsType.queryType_byId(goodsId)
                 if goodType[0][0] == gType:
                     sumOneType = sumOneType + goods['number'] * goods['price']
@@ -597,31 +601,29 @@ def GetPicPurchasePrice(goodsType, purchaseResult):
         sumPriceByType.append(sumOneType)
         sumNumByType.append(sumOneNum)
     datas = {}
-    ah={}
+    ah = {}
     datas['type'] = 'pie'
     datas['summary'] = '进货状况饼状图'
     print(len(goodsType))
     for i in range(0, len(sumPriceByType)):
         ah[goodsType[i]] = sumPriceByType[i]
-    datas['diagram']=ah
-    return datas,len(goodsType),sumPrice
-
-
+    datas['diagram'] = ah
+    return datas, len(goodsType), sumPrice
 
 
 # 自然语言处理
 @lanprocess.route("/languageProcess", methods=["GET", "POST"])
 def languageProcess():
     _json = request.json
-    date=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     companyId = _json.get('companyId')
     language = _json.get('language')
     token = request.headers.get('Authorization')
-    #token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
+    # token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
 
     # 去除停用词
-    stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下",'什么'])
+    stopwords = {}.fromkeys(['的', '包括', '等', '是', '多少', "所有", "一下", '什么'])
     # 精确模式
     segs = jieba.cut(language, cut_all=False)
     final = []
@@ -630,10 +632,10 @@ def languageProcess():
             final.append(seg)
     print(final)
     Time = "today"
-    computeResult=computeLanguage(final, Time)
-    Time=computeResult[0]
-    action=computeResult[1]
-    nouns=computeResult[2]
+    computeResult = computeLanguage(final, Time)
+    Time = computeResult[0]
+    action = computeResult[1]
+    nouns = computeResult[2]
     try:
         user_info = Auth.decode_jwt(token.split(" ")[1])
     except:
@@ -643,7 +645,7 @@ def languageProcess():
         "time": Time,
         "action": action,
         "nouns": nouns,
-        "language":language
+        "language": language
     }
     record_api(data, user_info)
 
@@ -651,9 +653,9 @@ def languageProcess():
         'Authorization': token,
         'Content-Type': 'application/json'
     }
-    timeResult=judgeTime(Time,  d)
-    start=timeResult[0]
-    end=timeResult[1]
+    timeResult = judgeTime(Time, d)
+    start = timeResult[0]
+    end = timeResult[1]
     # 对行为进行判断
     ##### 一段时期内的销售情况 #####
     if action == "ac_in_money" and nouns == "goods":
@@ -665,7 +667,7 @@ def languageProcess():
         sellRecords = requests.post(url=LOCATE + '/querySell', data=data_json, headers=headers)
         if sellRecords.status_code == 200:
             SellResult = json.loads(sellRecords.content)
-            return getSellData(SellResult,Time,start,end)
+            return getSellData(SellResult, Time, start, end)
         else:
             return '不好意思，没有查到相关数据哦', sellRecords.status_code
     ##### 某段时间内进的货物 #####
@@ -678,7 +680,7 @@ def languageProcess():
         purchaseRecords = requests.post(url=LOCATE + '/queryPurchase', data=data_json, headers=headers)
         if purchaseRecords.status_code == 200:
             SellResult = json.loads(purchaseRecords.content)
-            return getPurchaseData(SellResult,Time,start,end)
+            return getPurchaseData(SellResult, Time, start, end)
         else:
             return '不好意思，没有查到相关数据哦', purchaseRecords.status_code
     ###### 查商品库存#####
@@ -756,6 +758,7 @@ def languageProcess():
         return json.dumps(return_unsuccess('Sorry,no data'))
     else:
         return json.dumps(return_unsuccess('不好意思，我听不懂你在说什么'))
+
 
 @lanprocess.route("/recommend", methods=["GET", "POST"])
 def languageProcessRecommend():
