@@ -758,7 +758,7 @@ def languageProcess():
         return json.dumps(return_unsuccess('不好意思，我听不懂你在说什么'))
 
 @lanprocess.route("/recommend", methods=["GET", "POST"])
-def languageProcess():
+def languageProcessRecommend():
     token = request.headers.get('Authorization')
     try:
         user_info = Auth.decode_jwt(token.split(" ")[1])["data"]
