@@ -765,4 +765,4 @@ def languageProcessRecommend():
     except:
         return json.dumps({'auth': False, 'errMsg': 'token解码失败'})
     res = recommend(user_info["account"])
-    return json.dumps(return_unsuccess(res))
+    return json.dumps(return_success(res))
