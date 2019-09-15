@@ -36,14 +36,15 @@ def recommend(uid):
     result = []
     if len(record_aggregate_list) > 0:
         for i in record_aggregate_list[:3]:
-             record_list = list(mongo.myclient.record.apirecord.find({
+            record_list = list(mongo.myclient.record.apirecord.find({
                 "data.time":i["_id"]["time"],
                 "data.action":i["_id"]["action"],
-                "data.nouns":i["_id"]["time"],
+                "data.nouns":i["_id"]["nouns"],
                 "data.language":{"$exists":True}
-             }))
-             if len(record_list) > 0:
-                 result.append(record_list[-1]["data"]["language"])
+            }))
+
+            if len(record_list) > 0:
+                result.append(record_list[-1]["data"]["language"])
 
     return result
 
