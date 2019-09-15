@@ -18,6 +18,7 @@ from app.utils.timeProcess import timeProcess
 from app.utils.mongodb_utils import MongodbUtils
 from app.utils.auth import Auth
 from app.config import LOCATE
+from .recommend import recommend
 #LOCATE='http://127.0.0.1:5000'
 lanprocess = Blueprint("lanprocess", __name__)
 UPLOAD_FOLDER = 'app/utils/dict.txt'
@@ -641,7 +642,8 @@ def languageProcess():
         "company_id": companyId,
         "time": Time,
         "action": action,
-        "nouns": nouns
+        "nouns": nouns,
+        "language":language
     }
     record_api(data, user_info)
 
@@ -754,3 +756,13 @@ def languageProcess():
         return json.dumps(return_unsuccess('Sorry,no data'))
     else:
         return json.dumps(return_unsuccess('不好意思，我听不懂你在说什么'))
+
+@lanprocess.route("/recommend", methods=["GET", "POST"])
+def languageProcess():
+    token = request.headers.get('Authorization')
+    try:
+        user_info = Auth.decode_jwt(token.split(" ")[1])["data"]
+    except:
+        return json.dumps({'auth': False, 'errMsg': 'token解码失败'})
+    res = recommend(user_info["account"])
+    return json.dumps(return_unsuccess(res))
