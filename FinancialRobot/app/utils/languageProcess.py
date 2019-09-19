@@ -18,10 +18,10 @@ from app.utils.timeProcess import timeProcess
 from app.utils.mongodb_utils import MongodbUtils
 from app.utils.auth import Auth
 from app.config import LOCATE
-#LOCATE='http://127.0.0.1:5000'
+LOCATE='http://127.0.0.1:5000'
 lanprocess = Blueprint("lanprocess", __name__)
-UPLOAD_FOLDER = 'app/utils/dict.txt'
-#UPLOAD_FOLDER = 'app\\utils\\dict.txt'
+#UPLOAD_FOLDER = 'app/utils/dict.txt'
+UPLOAD_FOLDER = 'app\\utils\\dict.txt'
 basedir = os.getcwd()
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
 print(file_dir)
@@ -29,17 +29,17 @@ jieba.load_userdict(file_dir)
 
 today = ['今天', '这一天']
 yesterday = ['昨天', '上一天']
-this_week = ['这周', '这一周']
+this_week = ['这周', '这一周','本周']
 last_week = ['上周', '上一周']
-this_month = ['这个月']
+this_month = ['这个月','本月']
 
-ac_in_money = ['赚', '挣', '卖', '收入', '盈利', '进账']
+ac_in_money = ['赚', '挣', '卖', '盈利', '进账']
 ac_purchase = ['进', '买', "进了", "买了"]
 ac_query = ['查', '看', '查看', "查询"]
 ac_out_money = ['花', '消费', '支出']
 
 goods = ['东西', '商品', '货', "货物"]
-money = ['钱']
+money = ['钱','收入']
 price = ['价格']
 inPrice = ['进价']
 outPrice = ['售价']
@@ -167,7 +167,7 @@ def getSellData(SellResult,time,start,end):
         finalResult.append(sellInfo)
         return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_unsuccess(SellResult['errMsg']))
+        return json.dumps(return_unsuccess('不好意思，没有查到相关数据哦'))
 
 
 # 获取一定时间内的进货数据
@@ -219,7 +219,7 @@ def getPurchaseData(Purchase,time,start,end):
         print(finalResult)
         return json.dumps(return_success(finalResult),ensure_ascii=False,cls=DecimalEncoder)
     else:
-        return json.dumps(return_unsuccess(Purchase['errMsg']))
+        return json.dumps(return_unsuccess('不好意思，没有查到相关数据哦'))
 
 
 # 获取商品库存信息
@@ -292,7 +292,7 @@ def getGoodsStore(final, headers):
                 finalResult.append(storeInfo)
                 return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
             else:
-                return json.dumps(return_unsuccess(Goodsstore['errMsg']))
+                return json.dumps(return_unsuccess('不好意思，没有查到相关数据哦'))
     elif len(final)>3:
         data = {'companyId': '5',
                 'name': final[2]}
@@ -314,7 +314,7 @@ def getGoodsStore(final, headers):
             finalResult.append(storeInfo)
             return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
         else:
-            return json.dumps(return_unsuccess(Goodsstore['errMsg']))
+            return json.dumps(return_unsuccess('不好意思，没有查到相关数据哦'))
     else:
         return json.dumps(return_unsuccess('不好意思，没有明白您的意思'))
 
@@ -419,7 +419,7 @@ def getGoodsPrice(nouns, inRecords, outRecords):
         finalResult.append(Price)
         return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_unsuccess(inRecords['errMsg'] + outRecords['errMsg']))
+        return json.dumps(return_unsuccess('不好意思，没有查到相关数据哦'))
 
 
 # 获取一段时间内的资金收入/支出
@@ -457,7 +457,7 @@ def getInOutMoney(CashResult, BankResult, action):
             finalResult.append(outMoney)
             return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_unsuccess(CashResult['errMsg'] + BankResult['errMsg']))
+        return json.dumps(return_unsuccess('不好意思，没有查到相关数据哦'))
 
 
 # 获取客户信息
@@ -483,7 +483,7 @@ def getCustomerInfo(CustomerDaoResult, name):
         finalResult.append(supplierInfo)
         return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_unsuccess(CustomerDaoResult['errMsg']))
+        return json.dumps(return_unsuccess('不好意思，没有查到相关数据哦'))
 
 
 # 获取供应商信息
@@ -509,7 +509,7 @@ def getSupplierInfo(SupplierResult, name):
         finalResult.append(supplierInfo)
         return json.dumps(return_success(finalResult), ensure_ascii=False, cls=DecimalEncoder)
     else:
-        return json.dumps(return_unsuccess(SupplierResult['errMsg']))
+        return json.dumps(return_unsuccess('不好意思，没有查到相关数据哦'))
 
 
 def record_api(data, user):
@@ -615,8 +615,8 @@ def languageProcess():
     date=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     companyId = _json.get('companyId')
     language = _json.get('language')
-    token = request.headers.get('Authorization')
-    #token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
+    #token = request.headers.get('Authorization')
+    token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
 
     # 去除停用词
@@ -701,7 +701,7 @@ def languageProcess():
             return '不好意思，没有查到相关数据哦', _respOut.status_code, _respIn.status_code
 
     #### 一段时间的收入或支出####
-    elif nouns == "money":
+    elif nouns == "money"and action == "ac_query":
         data = {'start': start,
                 'end': end}
         data_json = json.dumps(data, cls=DecimalEncoder)
