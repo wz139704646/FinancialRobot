@@ -184,7 +184,7 @@ def queryCashRecordByOption():
         if option == 3:
             start = d.replace(year=d.year, month=d.month, day=1, hour=0, minute=0, second=0)
             end = d.replace(year=d.year, month=d.month + 1, day=1, hour=0, minute=0, second=0)
-        result = queryCash(start, end)
+        result = queryCash(str(start), str(end))
         print(start, end)
         if len(result) >= 1:
             return json.dumps(return_success(COHDao.to_dict(result)), ensure_ascii=False, cls=DecimalEncoder)
