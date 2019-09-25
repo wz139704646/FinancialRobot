@@ -17,7 +17,8 @@ class MylTest(unittest.TestCase):
     def test1(self):
         userdao = UserDao()
         result = userdao.query_all()
-        j = json.dumps(return_success(""))
+        print(result)
+        j = json.dumps(return_success(UserDao.to_dict(result)))
         print(j)
 
     def test2(self):

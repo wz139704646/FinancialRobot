@@ -1,30 +1,57 @@
 import pymysql
 import threading
 from app import config
-
+from DBUtils.PooledDB import PooledDB
 
 class MyHelper(object):
-    _instance_lock = threading.Lock()
+    # _instance_lock = threading.Lock()
+    __pool = None
 
     def __init__(self):
-        pass
+        self.pool = PooledDB(
+            # 使用链接数据库的模块import pymysql
+            creator=pymysql,
+            # 连接池允许的最大连接数，0和None表示不限制连接数
+            maxconnections=6,
+            # 初始化时，链接池中至少创建的空闲的链接，0表示不创建
+            mincached=2,
+            # 链接池中最多闲置的链接，0和None不限制
+            maxcached=5,
+            # 链接池中最多共享的链接数量，0和None表示全部共享。
+            # 因为pymysql和MySQLdb等模块的 threadsafety都为1，
+            # 所有值无论设置为多少，maxcached永远为0，所以永远是所有链接都共享。
+            maxshared=3,
+            # 连接池中如果没有可用连接后，是否阻塞等待。True，等待；False，不等待然后报错
+            blocking=True,
+            # 一个链接最多被重复使用的次数，None表示无限制
+            maxusage=None,
+            # 开始会话前执行的命令列表。如：["set datestyle to ...", "set time zone ..."]
+            setsession=[],
+            # ping MySQL服务端，检查是否服务可用。
+            #  如：0 = None = never, 1 = default = whenever it is requested,
+            # 2 = when a cursor is created, 4 = when a query is executed, 7 = always
+            ping=0,
+
+            # 数据库信息
+            host=config.host,
+            port=config.port,
+            user=config.user,
+            password=config.password,
+            database=config.dbname,
+            charset=config.charset
+        )
 
     # x线程安全的单例模式
-    def __new__(cls, *args, **kwargs):
-        if not hasattr(MyHelper, "_instance"):
-            with MyHelper._instance_lock:
-                if not hasattr(MyHelper, "_instance"):
-                    MyHelper._instance = object.__new__(cls)
-        return MyHelper._instance
+    # def __new__(cls, *args, **kwargs):
+    #     if not hasattr(MyHelper, "_instance"):
+    #         with MyHelper._instance_lock:
+    #             if not hasattr(MyHelper, "_instance"):
+    #                 MyHelper._instance = object.__new__(cls)
+    #     return MyHelper._instance
 
     def connection(self):
         try:
-            self.conn = pymysql.connect(host=config.host,
-                                        port=config.port,
-                                        user=config.user,
-                                        passwd=config.password,
-                                        db=config.dbname,
-                                        charset=config.charset)
+            self.conn = self.pool.connection()
             self.cls = self.conn.cursor()
         except Exception as e:
             print(e)
