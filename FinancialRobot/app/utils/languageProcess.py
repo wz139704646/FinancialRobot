@@ -20,12 +20,12 @@ from app.utils.auth import Auth
 from app.config import LOCATE
 from .recommend import recommend
 
-# LOCATE='http://127.0.0.1:5000'
+#LOCATE='http://127.0.0.1:5000'
 lanprocess = Blueprint("lanprocess", __name__)
 # UPLOAD_FOLDER = 'app/utils/dict.txt'
-# UPLOAD_FOLDER = 'app\\utils\\dict.txt'
+#UPLOAD_FOLDER = 'app\\utils\\dict.txt'
 UPLOAD_FOLDER = 'dict.txt'
-# basedir = os.getcwd()
+#basedir = os.getcwd()
 basedir = os.path.abspath(os.path.dirname(__file__))
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
 print(file_dir)
@@ -58,16 +58,17 @@ mongo = MongodbUtils()
 def computeLanguage(items, Time):
     action = ""
     nouns = ""
+    newTime=""
     for item in items:
         if Time == "today":
             if item in yesterday:
-                Time = "yesterday"
+                newTime = "yesterday"
             if item in this_week:
-                Time = "this_week"
+                newTime = "this_week"
             if item in last_week:
-                Time = "last_week"
+                newTime = "last_week"
             if item in this_month:
-                Time = "this_month"
+                newTime = "this_month"
         if item in ac_in_money:
             action = "ac_in_money"
         if item in ac_purchase:
@@ -94,7 +95,7 @@ def computeLanguage(items, Time):
             nouns = "customer"
         if item in tables:
             nouns = "tables"
-    return Time, action, nouns
+    return newTime, action, nouns
 
 
 # 对时间进行判断
@@ -619,7 +620,7 @@ def languageProcess():
     companyId = _json.get('companyId')
     language = _json.get('language')
     token = request.headers.get('Authorization')
-    # token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
+    #token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
 
     # 去除停用词
@@ -636,6 +637,7 @@ def languageProcess():
     Time = computeResult[0]
     action = computeResult[1]
     nouns = computeResult[2]
+    print(Time,action,nouns)
     try:
         user_info = Auth.decode_jwt(token.split(" ")[1])
     except:
@@ -705,7 +707,7 @@ def languageProcess():
             return '不好意思，没有查到相关数据哦', _respOut.status_code, _respIn.status_code
 
     #### 一段时间的收入或支出####
-    elif nouns == "money"and action == "ac_query":
+    elif nouns == "money"and (action == "ac_query"or action=='ac_in_money'or action=='ac_out_money'):
         data = {'start': start,
                 'end': end}
         data_json = json.dumps(data, cls=DecimalEncoder)
