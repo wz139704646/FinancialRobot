@@ -106,7 +106,7 @@ def getAccToken():
     r = requests.post(url, data=payload, headers=headers)
 
     dic = json.loads(r.text)
-    # print(dic)
+    print(dic)
     redis_store.set('access_token', dic['access_token'], ex=dic['expires_in'])
     redis_store.set('refresh_token', dic['refresh_token'], ex=dic['refresh_token_expires_in'])
 
@@ -170,10 +170,8 @@ def getCardsInfo():
 @citi_api.route('/getAccountsInfo', methods=["POST", "GET"])
 def getAccountsInfo():
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts?nextStartIndex=1"
-
     r = requests.get(url, headers=get_headers())
-
-    dic = json.loads(r.text)
+    # dic = json.loads(r.text)
     # print(dic)
     return r.text
 
@@ -183,7 +181,17 @@ def getAccountsInfo():
 def getCustomerProfile():
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/customers/profiles"
     r = requests.get(url, headers=get_headers())
-    dic = json.loads(r.text)
+    # dic = json.loads(r.text)
+    # print(dic)
+    return r.text
+
+
+# 获取账号信息
+@citi_api.route('/getAccounts', methods=['POST', 'GET'])
+def get_accounts():
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts"
+    r = requests.get(url, headers=get_headers())
+    # dic = json.loads(r.text)
     # print(dic)
     return r.text
 
@@ -193,7 +201,7 @@ def getCustomerProfile():
 def getAccountById(account_id):
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/" + account_id
     r = requests.get(url, headers=get_headers())
-    dic = json.loads(r.text)
+    # dic = json.loads(r.text)
     # print(dic)
     return r.text
 
@@ -202,8 +210,8 @@ def getAccountById(account_id):
 @citi_api.route('/getAccounts/transactions/<string:account_id>', methods=["POST", "GET"])
 def getAccountTransactions(account_id):
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/{0}/transactions".format(account_id)
-    print(url)
+    # print(url)
     r = requests.get(url, headers=get_headers())
-    dic = json.loads(r.text)
+    # dic = json.loads(r.text)
     # print(dic)
     return r.text
