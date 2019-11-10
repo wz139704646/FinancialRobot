@@ -4,10 +4,12 @@ import uuid
 import requests
 import json
 
+from app.utils.auth import check_token
 from app.utils.json_util import *
 from flask import Blueprint, render_template, request, session, jsonify, redirect
 from urllib import parse
 from app.config import redis_store
+from app.views.wx import decode_token
 
 citi_api = Blueprint("citi_api", __name__)
 citi_api.secret_key = 'secret_key_citi_api'
@@ -19,7 +21,7 @@ SCOPE = "pay_with_points accounts_details_transactions customers_profiles payees
         "onboarding reference_data reset_atm_pin statements_and_advices meta_data "
 STATE = "12321"
 REDIRECT_URI = "https://www.fibot.cn/getAccToken"
-INDEX = "https://www.fibot.cn"
+INDEX = "https://web.fibot.cn"
 
 
 def get_url(url, parameters):
@@ -64,6 +66,11 @@ def get_headers():
     return headers
 
 
+# @citi_api.before_request
+# @check_token
+# def res():
+#     pass
+
 # 获取授权码
 @citi_api.route("/getAuthCode", methods=["GET"])
 def getAuthCode():
@@ -106,7 +113,7 @@ def getAccToken():
     r = requests.post(url, data=payload, headers=headers)
 
     dic = json.loads(r.text)
-    print(dic)
+    # print(dic)
     redis_store.set('access_token', dic['access_token'], ex=dic['expires_in'])
     redis_store.set('refresh_token', dic['refresh_token'], ex=dic['refresh_token_expires_in'])
 
@@ -116,6 +123,11 @@ def getAccToken():
 # 更新access token
 @citi_api.route('/refreshAccToken', methods=['POST', 'GET'])
 def refreshAccToken():
+    # res = json.loads(decode_token()).get('result')
+    # try:
+    #     account = res[0]['companyId']
+    # except Exception as e:
+    #     return jsonify(return_unsuccess('Query Failed :' + str(e)))
     url = "https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/refresh"
 
     payload = "grant_type=refresh_token&refresh_token={0}".format(redis_store.get('refresh_token'))
@@ -152,8 +164,10 @@ def revokeAcc():
     }
 
     r = requests.post(url, data=payload, headers=headers)
-
-    return r.text
+    if r.status_code == 200:
+        return redirect(INDEX)
+    else:
+        return "<h1>Revoke authorization grant failed !!</h1>"
 
 
 # 获取卡的信息
