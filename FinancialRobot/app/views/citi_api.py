@@ -1,15 +1,11 @@
 import base64
-import http.client
 import uuid
 import requests
-import json
 
-from app.utils.auth import check_token
 from app.utils.json_util import *
 from flask import Blueprint, render_template, request, session, jsonify, redirect
 from urllib import parse
 from app.config import redis_store
-from app.views.wx import decode_token
 
 citi_api = Blueprint("citi_api", __name__)
 citi_api.secret_key = 'secret_key_citi_api'
@@ -65,11 +61,6 @@ def get_headers():
     }
     return headers
 
-
-# @citi_api.before_request
-# @check_token
-# def res():
-#     pass
 
 # 获取授权码
 @citi_api.route("/getAuthCode", methods=["GET"])
@@ -223,7 +214,11 @@ def getAccountById(account_id):
 # 获取account交易信息
 @citi_api.route('/getAccounts/transactions/<string:account_id>', methods=["POST", "GET"])
 def getAccountTransactions(account_id):
-    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/{0}/transactions".format(account_id)
+    nextStartIndex = request.args.get("nextStartIndex")
+    if nextStartIndex:
+        url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/{0}/transactions?nextStartIndex={1}".format(account_id,nextStartIndex)
+    else:
+        url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/{0}/transactions".format(account_id)
     # print(url)
     r = requests.get(url, headers=get_headers())
     # dic = json.loads(r.text)
