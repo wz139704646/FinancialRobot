@@ -167,7 +167,7 @@ def analyze_operating_income_by_year():
         else:
             days[i] = str(days[i])
     for d in days:
-        for t in ['食品类', '日用品类', '其他类', '电子类']:
+        for t in ['食品类', '日用品类', '童装类', '营养品类', '玩具类',  '其他类']:
             dict_of_day_type_and_operating_income[d + t] = 0
     for tu in info:
         if int(tu[0]) < 10:
@@ -183,7 +183,7 @@ def analyze_operating_income_by_year():
 @analysis_results.route("/data/getTotalOperatingIncome", methods=["GET", "POST"])
 def analyze_total_operating_income():
     info = DataAnalysisDao().query_total_operating_income()
-    dict_of_type_and_total_operating_income = {t: float(0) for t in ['食品类', '日用品类', '其他类', '电子类']}
+    dict_of_type_and_total_operating_income = {t: float(0) for t in ['食品类', '日用品类', '童装类', '营养品类', '玩具类',  '其他类']}
     for tu in info:
         dict_of_type_and_total_operating_income[str(tu[0])] = float(tu[1])
     if not dict_of_type_and_total_operating_income:
@@ -206,7 +206,7 @@ def analyze_operating_expenditures_by_year_and_month():
         else:
             days[i] = str(days[i])
     for d in days:
-        for t in ['食品类', '日用品类', '其他类', '电子类']:
+        for t in ['食品类', '日用品类', '童装类', '营养品类', '玩具类',  '其他类']:
             dict_of_day_type_and_operating_expenditure[d + t] = 0
     for tu in info:
         if int(tu[0]) < 10:
@@ -238,7 +238,7 @@ def analyze_operating_expenditures_by_year():
 @analysis_results.route("/data/getTotalOperatingExpenditure", methods=["GET", "POST"])
 def analyze_total_operating_expenditure():
     info = DataAnalysisDao().query_total_operating_expenditure()
-    dict_of_type_and_total_operating_expenditure = {t: float(0) for t in ['食品类', '日用品类', '其他类', '电子类']}
+    dict_of_type_and_total_operating_expenditure = {t: float(0) for t in ['食品类', '日用品类', '童装类', '营养品类', '玩具类',  '其他类']}
     for tu in info:
         dict_of_type_and_total_operating_expenditure[str(tu[0])] = float(tu[1])
     if not dict_of_type_and_total_operating_expenditure:
@@ -366,7 +366,7 @@ def getData():
 @analysis_results.route("/data/getRatioOfGoodsInWarehouse", methods=["GET", "POST"])
 def analyze_goods_ratio():
     info = DataAnalysisDao().query_goods_in_warehouse()
-    dict_of_type_and_ratio = {t: float(0) for t in ['食品类', '日用品类', '其他类', '电子类']}
+    dict_of_type_and_ratio = {t: float(0) for t in ['食品类', '日用品类', '童装类', '营养品类', '玩具类',  '其他类']}
     for tu in info:
         dict_of_type_and_ratio[str(tu[0])] = float(tu[1])
     if not dict_of_type_and_ratio:
