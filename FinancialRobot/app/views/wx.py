@@ -193,8 +193,8 @@ def getVerification():
     phonenumber = request.json.get('account')
     type = request.json.get('type')
     ssender = SmsSingleSender(appid, appkey)
-    template_id = 363932
-    sms_sign = 'Fibot小程序 '
+    template_id = 469134
+    sms_sign = 'Finbot小程序'
 
     if type == 0:
         stype = '登录'

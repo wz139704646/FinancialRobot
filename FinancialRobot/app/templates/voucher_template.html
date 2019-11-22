@@ -117,9 +117,9 @@
                     <td class="mintd-blue">千</td>
                     <td class="mintd" style="border-left: 0px;">百</td>
                     <td class="mintd">十</td>
-                    <td class="mintd">元</td>
-                    <td class="mintd-red">角</td>
-                    <td class="mintd" style="border-left: 0px;">分</td>
+                    <td class="mintd-red">元</td>
+                    <td class="mintd" style="border-left: 0px;">角</td>
+                    <td class="mintd">分</td>
 
                     <td class="mintd">亿</td>
                     <td class="mintd">千</td>
@@ -129,9 +129,9 @@
                     <td class="mintd-blue">千</td>
                     <td class="mintd" style="border-left: 0px;">百</td>
                     <td class="mintd">十</td>
-                    <td class="mintd">元</td>
-                    <td class="mintd-red">角</td>
-                    <td class="mintd" style="border-left: 0px;">分</td>
+                    <td class="mintd-red">元</td>
+                    <td class="mintd" style="border-left: 0px;">角</td>
+                    <td class="mintd">分</td>
                 </tr>
                 {% for entry in entries %}
                     <tr>
@@ -147,9 +147,9 @@
                             <td class="mintd-blue">{{ entry.total | magnitude_digit(3) }}</td>
                             <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(2) }}</td>
                             <td class="mintd">{{ entry.total | magnitude_digit(1) }}</td>
-                            <td class="mintd">{{ entry.total | magnitude_digit(0) }}</td>
-                            <td class="mintd-red">{{ entry.total | magnitude_digit(-1) }}</td>
-                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(-2) }}</td>
+                            <td class="mintd-red">{{ entry.total | magnitude_digit(0) }}</td>
+                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(-1) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(-2) }}</td>
 
                             <td class="mintd"></td>
                             <td class="mintd"></td>
@@ -159,9 +159,9 @@
                             <td class="mintd-blue"></td>
                             <td class="mintd" style="border-left: 0px;"></td>
                             <td class="mintd"></td>
-                            <td class="mintd"></td>
                             <td class="mintd-red"></td>
                             <td class="mintd" style="border-left: 0px;"></td>
+                            <td class="mintd"></td>
                         {% else %}
                             <td class="mintd"></td>
                             <td class="mintd"></td>
@@ -171,9 +171,9 @@
                             <td class="mintd-blue"></td>
                             <td class="mintd" style="border-left: 0px;"></td>
                             <td class="mintd"></td>
-                            <td class="mintd"></td>
                             <td class="mintd-red"></td>
                             <td class="mintd" style="border-left: 0px;"></td>
+                            <td class="mintd"></td>
 
                             <td class="mintd">{{ entry.total | magnitude_digit(8) }}</td>
                             <td class="mintd">{{ entry.total | magnitude_digit(7) }}</td>
@@ -183,9 +183,9 @@
                             <td class="mintd-blue">{{ entry.total | magnitude_digit(3) }}</td>
                             <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(2) }}</td>
                             <td class="mintd">{{ entry.total | magnitude_digit(1) }}</td>
-                            <td class="mintd">{{ entry.total | magnitude_digit(0) }}</td>
-                            <td class="mintd-red">{{ entry.total | magnitude_digit(-1) }}</td>
-                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(-2) }}</td>
+                            <td class="mintd-red">{{ entry.total | magnitude_digit(0) }}</td>
+                            <td class="mintd" style="border-left: 0px;">{{ entry.total | magnitude_digit(-1) }}</td>
+                            <td class="mintd">{{ entry.total | magnitude_digit(-2) }}</td>
                         {% endif %}
                     </tr>
                 {% endfor %}
@@ -204,9 +204,9 @@
                             <td class="mintd-blue"></td>
                             <td class="mintd" style="border-left: 0px;"></td>
                             <td class="mintd"></td>
-                            <td class="mintd"></td>
                             <td class="mintd-red"></td>
                             <td class="mintd" style="border-left: 0px;"></td>
+                            <td class="mintd"></td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -223,9 +223,9 @@
                     <td class="mintd-blue">{{ credit_total | magnitude_digit(3) }}</td>
                     <td class="mintd" style="border-left: 0px;">{{ credit_total | magnitude_digit(2) }}</td>
                     <td class="mintd">{{ credit_total | magnitude_digit(1) }}</td>
-                    <td class="mintd">{{ credit_total | magnitude_digit(0) }}</td>
-                    <td class="mintd-red">{{ credit_total | magnitude_digit(-1) }}</td>
-                    <td class="mintd" style="border-left: 0px;">{{ credit_total | magnitude_digit(-2) }}</td>
+                    <td class="mintd-red">{{ credit_total | magnitude_digit(0) }}</td>
+                    <td class="mintd" style="border-left: 0px;">{{ credit_total | magnitude_digit(-1) }}</td>
+                    <td class="mintd">{{ credit_total | magnitude_digit(-2) }}</td>
 
                     <td class="mintd">{{ debit_total | magnitude_digit(8) }}</td>
                     <td class="mintd">{{ debit_total | magnitude_digit(7) }}</td>
@@ -235,9 +235,9 @@
                     <td class="mintd-blue">{{ debit_total | magnitude_digit(3) }}</td>
                     <td class="mintd" style="border-left: 0px;">{{ debit_total | magnitude_digit(2) }}</td>
                     <td class="mintd">{{ debit_total | magnitude_digit(1) }}</td>
-                    <td class="mintd">{{ debit_total | magnitude_digit(0) }}</td>
-                    <td class="mintd-red">{{ debit_total | magnitude_digit(-1) }}</td>
-                    <td class="mintd" style="border-left: 0px;">{{ debit_total | magnitude_digit(-2) }}</td>
+                    <td class="mintd-red">{{ debit_total | magnitude_digit(0) }}</td>
+                    <td class="mintd" style="border-left: 0px;">{{ debit_total | magnitude_digit(-1) }}</td>
+                    <td class="mintd">{{ debit_total | magnitude_digit(-2) }}</td>
                 </tr>
             </table>
         </td>

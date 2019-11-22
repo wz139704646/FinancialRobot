@@ -1,8 +1,6 @@
 import base64
-import http.client
 import uuid
 import requests
-import json
 
 from app.utils.json_util import *
 from flask import Blueprint, render_template, request, session, jsonify, redirect
@@ -19,7 +17,7 @@ SCOPE = "pay_with_points accounts_details_transactions customers_profiles payees
         "onboarding reference_data reset_atm_pin statements_and_advices meta_data "
 STATE = "12321"
 REDIRECT_URI = "https://www.fibot.cn/getAccToken"
-INDEX = "https://www.fibot.cn"
+INDEX = "https://web.fibot.cn"
 
 
 def get_url(url, parameters):
@@ -116,6 +114,11 @@ def getAccToken():
 # 更新access token
 @citi_api.route('/refreshAccToken', methods=['POST', 'GET'])
 def refreshAccToken():
+    # res = json.loads(decode_token()).get('result')
+    # try:
+    #     account = res[0]['companyId']
+    # except Exception as e:
+    #     return jsonify(return_unsuccess('Query Failed :' + str(e)))
     url = "https://sandbox.apihub.citi.com/gcb/api/authCode/oauth2/refresh"
 
     payload = "grant_type=refresh_token&refresh_token={0}".format(redis_store.get('refresh_token'))
@@ -152,8 +155,10 @@ def revokeAcc():
     }
 
     r = requests.post(url, data=payload, headers=headers)
-
-    return r.text
+    if r.status_code == 200:
+        return redirect(INDEX)
+    else:
+        return "<h1>Revoke authorization grant failed !!</h1>"
 
 
 # 获取卡的信息
@@ -170,10 +175,8 @@ def getCardsInfo():
 @citi_api.route('/getAccountsInfo', methods=["POST", "GET"])
 def getAccountsInfo():
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts?nextStartIndex=1"
-
     r = requests.get(url, headers=get_headers())
-
-    dic = json.loads(r.text)
+    # dic = json.loads(r.text)
     # print(dic)
     return r.text
 
@@ -183,7 +186,17 @@ def getAccountsInfo():
 def getCustomerProfile():
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/customers/profiles"
     r = requests.get(url, headers=get_headers())
-    dic = json.loads(r.text)
+    # dic = json.loads(r.text)
+    # print(dic)
+    return r.text
+
+
+# 获取账号信息
+@citi_api.route('/getAccounts', methods=['POST', 'GET'])
+def get_accounts():
+    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts"
+    r = requests.get(url, headers=get_headers())
+    # dic = json.loads(r.text)
     # print(dic)
     return r.text
 
@@ -193,7 +206,7 @@ def getCustomerProfile():
 def getAccountById(account_id):
     url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/" + account_id
     r = requests.get(url, headers=get_headers())
-    dic = json.loads(r.text)
+    # dic = json.loads(r.text)
     # print(dic)
     return r.text
 
@@ -201,9 +214,13 @@ def getAccountById(account_id):
 # 获取account交易信息
 @citi_api.route('/getAccounts/transactions/<string:account_id>', methods=["POST", "GET"])
 def getAccountTransactions(account_id):
-    url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/{0}/transactions".format(account_id)
-    print(url)
+    nextStartIndex = request.args.get("nextStartIndex")
+    if nextStartIndex:
+        url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/{0}/transactions?nextStartIndex={1}".format(account_id,nextStartIndex)
+    else:
+        url = "https://sandbox.apihub.citi.com/gcb/api/v1/accounts/{0}/transactions".format(account_id)
+    # print(url)
     r = requests.get(url, headers=get_headers())
-    dic = json.loads(r.text)
+    # dic = json.loads(r.text)
     # print(dic)
     return r.text
