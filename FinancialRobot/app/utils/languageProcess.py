@@ -20,11 +20,11 @@ from app.utils.auth import Auth
 from app.config import LOCATE
 from .recommend import recommend
 
-#LOCATE='http://127.0.0.1:5000'
+LOCATE='http://127.0.0.1:5000'
 lanprocess = Blueprint("lanprocess", __name__)
-# UPLOAD_FOLDER = 'app/utils/dict.txt'
-#UPLOAD_FOLDER = 'app\\utils\\dict.txt'
-UPLOAD_FOLDER = 'dict.txt'
+
+#UPLOAD_FOLDER = 'app\\utils\\dict.txt'#服务器端
+UPLOAD_FOLDER = 'dict.txt'#电脑端
 #basedir = os.getcwd()
 basedir = os.path.abspath(os.path.dirname(__file__))
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
@@ -619,8 +619,8 @@ def languageProcess():
     date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     companyId = _json.get('companyId')
     language = _json.get('language')
-    token = request.headers.get('Authorization')
-    #token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
+    #token = request.headers.get('Authorization')
+    token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9token.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
 
     # 去除停用词
@@ -717,6 +717,7 @@ def languageProcess():
         _respBank = requests.post(url=LOCATE + '/queryBankRecordByDate', data=data_json,
                                   headers=headers)
         BankResult = json.loads(_respBank.content)
+        print(BankResult,CashResult)
         if _respCash.status_code == 200 and _respBank.status_code == 200:
             return getInOutMoney(CashResult, BankResult, action)
         else:

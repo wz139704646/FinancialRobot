@@ -25,6 +25,7 @@ def hello():
 
 @wx.route("/decodeToken", methods=["POST"])
 def decode_token():
+    #token = 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9token.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
     token = request.headers.get('Authorization')
     if not token:
         _json = request.json

@@ -462,6 +462,14 @@ class Test11(unittest.TestCase):
         lichang_car = re.findall(r'离场车辆数为：\d+', temp)
 
         print(time[0], daiyun_car[0][7:], jinchang_car[0][7:], lichang_car[0][7:])
+    def test36(self):
+        query = COHDao()
+        result = query.query_by_date('2019-10-01 00:00:00', '2019-11-01 00:00:00')
+        print(result)
+    def test37(self):
+        query=SellDao()
+        InfoResult=query.queryGoodsIdByPage(20,0);
+        print(InfoResult)
 
     def test12(self):
 

@@ -36,8 +36,9 @@ def queryGoods():
     companyId = _json.get('companyId')
     name = _json.get('name')
     type = _json.get('type')
+    id=_json.get('id')
     goods_dao = GoodsDao()
-    result = goods_dao.query_by_companyId(companyId, name, type)
+    result = goods_dao.query_by_companyId(companyId, name, type,id)
     size = len(result)
     if size >= 0:
         return json.dumps(return_success({'goodsList': GoodsDao.to_dict(result)}),

@@ -60,9 +60,12 @@ class GoodsDao:
         row = connection.executeQuery("select purchasePrice from Purchase where goodId = %s", [id])
         return row[0][0]
 
-    def query_by_companyId(self, companyId, name, type):
+    def query_by_companyId(self, companyId, name, type,id):
         _param = [companyId]
         _sql = "select * from Goods where companyId = %s"
+        if id:
+            _sql += " and id=  %s"
+            _param.append(id)
         if name:
             _sql += " and name like %s"
             _param.append('%' + name + '%')

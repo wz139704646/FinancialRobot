@@ -26,7 +26,7 @@ class SellDao:
             res['customerName'] = row[2]
             res['date'] = row[3]
             res['status'] = row[5]
-            goodslist=[]
+            goodslist = []
             for good in row[4]:
                 goods = {}
                 goods['goodsId'] = good[0]
@@ -36,7 +36,7 @@ class SellDao:
                 goods['goodsName'] = good[3]
                 goods['goodsPhoto'] = good[4]
                 goodslist.append(goods)
-            res['goodsList'] =goodslist
+            res['goodsList'] = goodslist
             result.append(res)
         return result
 
@@ -48,13 +48,22 @@ class SellDao:
         conn = MyHelper()
         return conn.executeQuery("select distinct (id),date from Sell ORDER BY date")
 
-    def queryGoodsInfo(self,id):
-        conn=MyHelper()
-        return conn.executeQuery("select sumprice,goodsId,number,goodsName from Sell where id=%s",[id])
+    def queryGoodsInfo(self, id):
+        conn = MyHelper()
+        return conn.executeQuery("select sumprice,goodsId,number,goodsName from Sell where id=%s", [id])
 
     def query_byId(self, id):
         connection = MyHelper()
         return connection.executeQuery("select * from Sell where id = %s", [id])
+
+    def queryGoodsAllInfo(self):
+        connection = MyHelper()
+        return connection.executeQuery("select * from Goods,Sell where Sell.goodsId=Goods.id ")
+
+    def queryGoodsIdByPage(self, limit, offset):
+        connection = MyHelper()
+        # return connection.executeQuery("select distinct id,date from Sell order by date limit {} offset {}".format(limit,offset))
+        return connection.executeQuery("select distinct id,date from Sell order by date")
 
     def query_byCid(self, companyId):
         connection = MyHelper()
@@ -62,8 +71,9 @@ class SellDao:
 
     def query_byDate(self, companyId, start, end):
         connection = MyHelper()
-        return connection.executeQuery("select distinct (id),date from Sell where companyId=%s and date >= %s and date <%s  order by date desc",
-                                       [companyId, start, end])
+        return connection.executeQuery(
+            "select distinct (id),date from Sell where companyId=%s and date >= %s and date <%s  order by date desc",
+            [companyId, start, end])
 
     def add(self, id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, unitInfo):
         connection = MyHelper()
@@ -77,7 +87,9 @@ class SellDao:
         return connection.executeQuery(
             "select SUM(sumPrice),date from Sell where date >= %s and date <%s group by date ",
             [start, end])
+
     def SellPriceByName(self, name):
         connection = MyHelper()
         return connection.executeQuery(
-            "SELECT number ,sumprice, date,goodsName,customerName FROM Sell WHERE goodsName LIKE %s ORDER BY date", [name])
+            "SELECT number ,sumprice, date,goodsName,customerName FROM Sell WHERE goodsName LIKE %s ORDER BY date",
+            [name])
