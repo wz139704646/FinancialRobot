@@ -470,7 +470,7 @@ def analyze_purchase_detail_by_category():
 def analyze_BackorderGoods():
     _json = request.json
     number = str(_json.get('number'))
-    info = DataAnalysisDao().query_purchase_info_by_category(number)
+    info = DataAnalysisDao().query_backorder_goods(number)
     goods = []
     for tu in info:
         goods.append((str(tu[0]), str(tu[1]), str(tu[2])))
