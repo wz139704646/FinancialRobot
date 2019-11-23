@@ -29,7 +29,7 @@ UPLOAD_FOLDER = 'app/utils/dict.txt'#服务器端
 #UPLOAD_FOLDER = 'dict.txt'#电脑端
 basedir = os.getcwd()
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
-#jieba.load_userdict(file_dir)
+jieba.load_userdict(file_dir)
 
 today = ['今天', '这一天']
 yesterday = ['昨天', '上一天']
