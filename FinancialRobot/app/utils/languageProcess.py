@@ -20,7 +20,7 @@ from app.utils.auth import Auth
 from app.config import LOCATE
 from .recommend import recommend
 
-LOCATE='http://127.0.0.1:5000'
+#LOCATE='http://127.0.0.1:5000' #电脑端
 lanprocess = Blueprint("lanprocess", __name__)
 
 UPLOAD_FOLDER = 'app\\utils\\dict.txt'#服务器端
