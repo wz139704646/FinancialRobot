@@ -475,6 +475,7 @@ def analyze_BackorderGoods():
     for tu in info:
         goods.append((str(tu[0]), str(tu[1]), str(tu[2])))
     dict_of_index_and_goods = {i: goods[i] for i in range(len(goods))}
+    print(dict_of_index_and_goods)
     if not dict_of_index_and_goods:
         return jsonify(return_unsuccess('无法获取低库存商品信息'))
     return jsonify(return_success(dict_of_index_and_goods))
