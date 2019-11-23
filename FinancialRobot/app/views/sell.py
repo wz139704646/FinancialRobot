@@ -66,41 +66,46 @@ def addSell():
 @sell.route("/querySell", methods=["POST"])
 def querySell():
     query = SellDao()
-
     _json = request.json
     companyId = _json.get('companyId')
     results = []
     if _json.get('date') == None:
         if _json.get('id') == None:
-            idresult = query.queryAllId()
-            if len(idresult) != 0:
-                for j in range(0, len(idresult)):
-                    result = []
-                    id = idresult[j][0]
-                    customerName = ""
-                    customerId = ""
-                    date = ""
-                    goodslist = []
-                    goodsResult = query.queryGoodsAllInfo()
-                    for i in range(0, len(goodsResult)):
-                        customerName = goodsResult[i][17]
-                        sellStatus = goodsResult[i][20]
-                        customerId = goodsResult[i][11]
-                        date = goodsResult[i][16]
-                        goods = []
-                        goods.append(goodsResult[i][12])
-                        goods.append(goodsResult[i][15])
-                        goods.append(goodsResult[i][14])
-                        goods.append(goodsResult[i][18])
-                        goods.append(goodsResult[i][7])
-                        goodslist.append(goods)
-                    result.append(id)
-                    result.append(customerId)
-                    result.append(customerName)
-                    result.append(date)
-                    result.append(goodslist)
-                    result.append(sellStatus)
-                    results.append(result)
+            if _json.get('page') == None:
+                return json.dumps(return_unsuccess('Error: Please send page'))
+            else:
+                page=_json.get('page')
+                limit=page*20
+                offset=(page-1)*20
+                idresult = query.queryGoodsIdByPage(limit,offset)
+                if len(idresult) != 0:
+                    for j in range(0, len(idresult)):
+                        result = []
+                        id = idresult[j][0]
+                        customerName = ""
+                        customerId = ""
+                        date = ""
+                        goodslist = []
+                        goodsResult = query.queryGoodsAllInfo(id)
+                        for i in range(0, len(goodsResult)):
+                            customerName = goodsResult[i][17]
+                            sellStatus = goodsResult[i][20]
+                            customerId = goodsResult[i][11]
+                            date = goodsResult[i][16]
+                            goods = []
+                            goods.append(goodsResult[i][12])
+                            goods.append(goodsResult[i][15])
+                            goods.append(goodsResult[i][14])
+                            goods.append(goodsResult[i][18])
+                            goods.append(goodsResult[i][7])
+                            goodslist.append(goods)
+                        result.append(id)
+                        result.append(customerId)
+                        result.append(customerName)
+                        result.append(date)
+                        result.append(goodslist)
+                        result.append(sellStatus)
+                        results.append(result)
         else:
             id = _json.get('id')
             result = []
@@ -237,6 +242,8 @@ def querySellByDate():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(SellDao.to_dict(results)), ensure_ascii=False, cls=DecimalEncoder)
+
+
 # 查询商品进货价格
 @sell.route("/SellPriceByName", methods=["POST"])
 def SellPriceByName():

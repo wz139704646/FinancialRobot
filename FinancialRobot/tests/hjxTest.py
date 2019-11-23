@@ -305,9 +305,8 @@ class Test11(unittest.TestCase):
         print(date_tomorrow.strftime('%Y-%m-%d %H:%M:%S'))
 
     def test23(self):
-
         query = SellDao()
-        result = query.query_all()
+        result = query.queryGoodsAllInfo('d6c4af7e-786a-3ce2-891c-96d8d031f579')
         print(result)
 
     def test24(self):

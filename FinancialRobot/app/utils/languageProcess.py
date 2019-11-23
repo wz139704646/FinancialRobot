@@ -23,12 +23,12 @@ from .recommend import recommend
 #LOCATE='http://127.0.0.1:5000' #电脑端
 lanprocess = Blueprint("lanprocess", __name__)
 
-UPLOAD_FOLDER = 'app\\utils\\dict.txt'#服务器端
+UPLOAD_FOLDER = 'app/utils/dict.txt'#服务器端
+#UPLOAD_FOLDER = 'app\\utils\\dict.txt'#电脑端
 #UPLOAD_FOLDER = 'dict.txt'#电脑端
 basedir = os.getcwd()
-#basedir = os.path.abspath(os.path.dirname(__file__))
 file_dir = os.path.join(basedir, UPLOAD_FOLDER)
-print(file_dir)
+
 jieba.load_userdict(file_dir)
 
 today = ['今天', '这一天']

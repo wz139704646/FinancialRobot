@@ -56,14 +56,14 @@ class SellDao:
         connection = MyHelper()
         return connection.executeQuery("select * from Sell where id = %s", [id])
 
-    def queryGoodsAllInfo(self):
+    def queryGoodsAllInfo(self,id):
         connection = MyHelper()
-        return connection.executeQuery("select * from Goods,Sell where Sell.goodsId=Goods.id ")
+        return connection.executeQuery("select * from Goods,Sell where Sell.id=%s and Sell.goodsId=Goods.id ",[id])
 
     def queryGoodsIdByPage(self, limit, offset):
         connection = MyHelper()
-        # return connection.executeQuery("select distinct id,date from Sell order by date limit {} offset {}".format(limit,offset))
-        return connection.executeQuery("select distinct id,date from Sell order by date")
+        return connection.executeQuery("select distinct id,date from Sell order by date desc limit %s offset %s",[limit,offset])
+        #return connection.executeQuery("select distinct id,date from Sell order by date")
 
     def query_byCid(self, companyId):
         connection = MyHelper()
