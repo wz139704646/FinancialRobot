@@ -85,7 +85,7 @@ class MylTest(unittest.TestCase):
         print(res)
 
     def test10_1(self):
-        res = UserDao().add_permission_by_role('15927601190', 'admin')
+        res = UserDao().add_permission_by_role('13474709706', 'admin')
         print(res)
 
     def test11(self):
