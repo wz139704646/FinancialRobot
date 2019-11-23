@@ -467,7 +467,7 @@ def analyze_purchase_detail_by_category():
 
 # 查询返回number个低库存商品
 @analysis_results.route("/data/getBackorderGoods", methods=["GET", "POST"])
-def analyze_purchase_detail_by_category():
+def analyze_BackorderGoods():
     _json = request.json
     number = str(_json.get('number'))
     info = DataAnalysisDao().query_purchase_info_by_category(number)
