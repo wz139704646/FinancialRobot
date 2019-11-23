@@ -76,4 +76,4 @@ class DataAnalysisDao:
         return MyHelper().executeQuery("select c1.name, CONCAT(c2.name, s.name), date, p.number * p.purchasePrice, p.goodName, p.number, p.purchasePrice, p.status from Purchase as p, Supplier as s, Company as c1, Company as c2, Goods as g where c1.id = p.companyId and p.supplierId = s.id and c2.id = s.companyId and p.goodname = g.name and g.type = '"+ category + "' and number <> 0 order by date;")
 
     def query_backorder_goods(self, number):
-        return MyHelper().executeQuery("select g.name, gs.number, g.photo from Goods as g, GoodsStore as gs where g.id = gs.goodsId and gs.wareId = 1 ORDER BY gs.number limit 0, " + number)
+        return MyHelper().executeQuery("select g.name, gs.number, g.photo from Goods as g, GoodsStore as gs where g.id = gs.goodsId and gs.wareId = 1 ORDER BY gs.number limit 0, " + str(number) + "")
