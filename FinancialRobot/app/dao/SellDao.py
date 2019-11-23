@@ -31,8 +31,8 @@ class SellDao:
             for good in row[5]:
                 goods = {}
                 goods['goodsId'] = good[0]
-                goods['sumprice'] = good[1]
-                goods['price'] = good[1]
+                goods['sumprice'] = round(good[1],2)
+                goods['price'] = round(good[1],2)
                 goods['number'] = good[2]
                 goods['goodsName'] = good[3]
                 goods['goodsPhoto'] = good[4]
