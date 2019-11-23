@@ -75,7 +75,7 @@ def querySell():
                 return json.dumps(return_unsuccess('Error: Please send page'))
             else:
                 page=_json.get('page')
-                limit=page*20
+                limit=20
                 offset=(page-1)*20
                 sumCount=len(query.queryAllId())
                 idresult = query.queryGoodsIdByPage(limit,offset)
