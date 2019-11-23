@@ -21,7 +21,7 @@ class DataAnalysisDao:
         return MyHelper().executeQuery("select type from Goods;")
 
     def query_operating_expenditure_by_year(self, year):
-        return MyHelper().executeQuery("select month(date), sum(number*purchasePrice) from Purchase where year(date) = " + str(year) + " group by month(date);")
+        return MyHelper().executeQuery("select month(date), type, sum(number*purchasePrice) from Purchase, Goods where year(date) = " + str(year) + " group by month(date);")
 
     def query_operating_profits(self):
         return MyHelper().executeQuery("select * from Profit_01 where row_info = '营业利润';")
@@ -74,3 +74,6 @@ class DataAnalysisDao:
 
     def query_purchase_info_by_category(self, category):
         return MyHelper().executeQuery("select c1.name, CONCAT(c2.name, s.name), date, p.number * p.purchasePrice, p.goodName, p.number, p.purchasePrice, p.status from Purchase as p, Supplier as s, Company as c1, Company as c2, Goods as g where c1.id = p.companyId and p.supplierId = s.id and c2.id = s.companyId and p.goodname = g.name and g.type = '"+ category + "' and number <> 0 order by date;")
+
+    def query_backorder_goods(self, number):
+        return MyHelper().executeQuery("select g.name, gs.number, g.photo from Goods as g, GoodsStore as gs where g.id = gs.goodsId and gs.wareId = 1 ORDER BY gs.number limit 0, " + number)
