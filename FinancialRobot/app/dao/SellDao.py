@@ -25,9 +25,10 @@ class SellDao:
             res['customerId'] = row[1]
             res['customerName'] = row[2]
             res['date'] = row[3]
-            res['status'] = row[5]
+            res['sumCount'] = row[4]
+            res['status'] = row[6]
             goodslist = []
-            for good in row[4]:
+            for good in row[5]:
                 goods = {}
                 goods['goodsId'] = good[0]
                 goods['sumprice'] = good[1]

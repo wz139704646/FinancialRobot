@@ -77,6 +77,7 @@ def querySell():
                 page=_json.get('page')
                 limit=page*20
                 offset=(page-1)*20
+                sumCount=len(query.queryAllId())
                 idresult = query.queryGoodsIdByPage(limit,offset)
                 if len(idresult) != 0:
                     for j in range(0, len(idresult)):
@@ -103,11 +104,13 @@ def querySell():
                         result.append(customerId)
                         result.append(customerName)
                         result.append(date)
+                        result.append(sumCount)
                         result.append(goodslist)
                         result.append(sellStatus)
                         results.append(result)
         else:
             id = _json.get('id')
+            sumCount = 1
             result = []
             customerName = ""
             customerId = ""
@@ -130,6 +133,7 @@ def querySell():
             result.append(customerId)
             result.append(customerName)
             result.append(date)
+            result.append(sumCount)
             result.append(goodslist)
             result.append(sellStatus)
             results.append(result)
@@ -144,8 +148,9 @@ def querySell():
             start = _json.get('start')
             end = _json.get('end')
         idresult = query.query_byDate(companyId, start, end)
-        size = len(idresult)
-        if size == 0:
+        sumCount = len(idresult)
+
+        if sumCount == 0:
             return json.dumps(return_unsuccess('Error: No data'))
         else:
             for j in range(0, len(idresult)):
@@ -172,6 +177,7 @@ def querySell():
                 result.append(customerId)
                 result.append(customerName)
                 result.append(date)
+                result.append(sumCount)
                 result.append(goodslist)
                 result.append(sellStatus)
                 results.append(result)
