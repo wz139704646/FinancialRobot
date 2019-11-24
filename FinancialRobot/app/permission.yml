@@ -164,6 +164,7 @@ features:
       - *purchase
       - *supplier
       - goods.queryGoods
+      - data_analysis.analyze_BackorderGoods
   - name: &Warehouse_Management Warehouse Mangement # 仓库管理
     api:
       - *warehouse
