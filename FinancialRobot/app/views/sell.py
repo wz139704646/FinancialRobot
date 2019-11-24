@@ -108,7 +108,7 @@ def querySell():
                         result.append(goodslist)
                         result.append(sellStatus)
                         results.append(result)
-        else:
+        elif _json.get('id') != None:
             id = _json.get('id')
             sumCount = 1
             result = []
@@ -116,7 +116,7 @@ def querySell():
             customerId = ""
             date = ""
             goodslist = []
-            goodsResult = query.queryGoodsAllInfoById(id)
+            goodsResult = query.queryGoodsAllInfo(id)
             for i in range(0, len(goodsResult)):
                 customerName = goodsResult[i][17]
                 sellStatus = goodsResult[i][20]
@@ -137,7 +137,7 @@ def querySell():
             result.append(goodslist)
             result.append(sellStatus)
             results.append(result)
-    else:
+    elif _json.get('date') != None:
         if _json.get('start') == None:
             date = _json.get('date')
             start = datetime.datetime.strptime(date, '%Y-%m-%d')
