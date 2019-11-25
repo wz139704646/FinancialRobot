@@ -49,9 +49,9 @@ class SellDao:
         conn = MyHelper()
         return conn.executeQuery("select distinct (id),date from Sell ORDER BY date")
 
-    def queryIdByName(self,name):
+    def queryIdByName(self,name,limit,offset):
         conn = MyHelper()
-        return conn.executeQuery("select distinct id from Sell where customerName like %s",[name])
+        return conn.executeQuery("select distinct id from Sell where customerName like %s limit %s offset %s",[name,limit,offset])
     def queryGoodsInfo(self, id):
         conn = MyHelper()
         return conn.executeQuery("select sumprice,goodsId,number,goodsName from Sell where id=%s", [id])
@@ -73,11 +73,11 @@ class SellDao:
         connection = MyHelper()
         return connection.executeQuery("select * from Sell where companyId=%s  order by date desc", [companyId])
 
-    def query_byDate(self, companyId, start, end):
+    def query_byDate(self, companyId, start, end,limit,offset):
         connection = MyHelper()
         return connection.executeQuery(
-            "select distinct (id),date from Sell where companyId=%s and date >= %s and date <%s  order by date desc",
-            [companyId, start, end])
+            "select distinct (id),date from Sell where companyId=%s and date >= %s and date <%s  order by date desc limit %s offset %s",
+            [companyId, start, end,limit,offset])
 
     def add(self, id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, unitInfo):
         connection = MyHelper()
