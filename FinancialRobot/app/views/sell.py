@@ -160,7 +160,7 @@ def querySell():
                 customerId = ""
                 date = ""
                 goodslist = []
-                goodsResult = query.query_byId(id)
+                goodsResult = query.queryGoodsAllInfo(id)
                 for i in range(0, len(goodsResult)):
                     customerName = goodsResult[i][17]
                     sellStatus = goodsResult[i][20]
