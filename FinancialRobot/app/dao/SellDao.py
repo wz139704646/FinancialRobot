@@ -97,3 +97,34 @@ class SellDao:
         return connection.executeQuery(
             "SELECT number ,sumprice, date,goodsName,customerName FROM Sell WHERE goodsName LIKE %s ORDER BY date",
             [name])
+
+    def sellRecommendList(self):
+        connection = MyHelper()
+        return connection.executeQuery(
+            """select customerId,goodsId,min(t) as T from  (
+                SELECT a.customerId,a.customerName,a.goodsId,a.goodsName,TIMESTAMPDIFF(DAY,b.date,a.date) as t
+                From Sell as a left join Sell as b on a.customerId = b.customerId
+                where  DATE (a.date) > DATE(b.date) AND a.goodsName = b.goodsName
+                ) as Temp
+            group by customerId,goodsId
+            """
+        )
+
+    def sellRecommendByUserGoods(self,uid,gid):
+        connection = MyHelper()
+        return connection.executeQuery("""
+            select  customerId,customerName,goodsId,goodsName,date from Sell 
+            where customerId = %s and goodsId = %s order by date desc limit 1
+        """,[uid,gid])
+
+    def sellRecommendUser(self):
+        connection = MyHelper()
+        return connection.executeQuery(
+            """select customerId,goodsId,min(t) as T from  (
+                SELECT a.customerId,a.customerName,a.goodsId,a.goodsName,TIMESTAMPDIFF(DAY,b.date,a.date) as t
+                From Sell as a left join Sell as b on a.customerId = b.customerId
+                where  DATE (a.date) > DATE(b.date) AND a.goodsName = b.goodsName
+                ) as Temp
+            group by customerId,goodsId
+            """
+        )
