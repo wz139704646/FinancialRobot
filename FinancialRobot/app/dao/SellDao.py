@@ -49,6 +49,9 @@ class SellDao:
         conn = MyHelper()
         return conn.executeQuery("select distinct (id),date from Sell ORDER BY date")
 
+    def queryIdByName(self,name):
+        conn = MyHelper()
+        return conn.executeQuery("select distinct id from Sell where customerName like %s",[name])
     def queryGoodsInfo(self, id):
         conn = MyHelper()
         return conn.executeQuery("select sumprice,goodsId,number,goodsName from Sell where id=%s", [id])

@@ -72,13 +72,48 @@ def querySell():
     if _json.get('date') == None:
         if _json.get('id') == None:
             if _json.get('page') == None:
-                return json.dumps(return_unsuccess('Error: Please send page'))
+                if _json.get('name') != None:
+                    Name = _json.get('name')
+                    newname = '%' + Name + '%'
+                    idResult = query.queryIdByName(newname)
+                    sumCount = len(idResult)
+                    if len(idResult) != 0:
+                        for j in range(0, len(idResult)):
+                            result = []
+                            id = idResult[j][0]
+                            customerName = ""
+                            customerId = ""
+                            date = ""
+                            goodslist = []
+                            goodsResult = query.queryGoodsAllInfo(id)
+                            for i in range(0, len(goodsResult)):
+                                customerName = goodsResult[i][17]
+                                sellStatus = goodsResult[i][20]
+                                customerId = goodsResult[i][11]
+                                date = goodsResult[i][16]
+                                goods = []
+                                goods.append(goodsResult[i][12])
+                                goods.append(goodsResult[i][15])
+                                goods.append(goodsResult[i][14])
+                                goods.append(goodsResult[i][18])
+                                goods.append(goodsResult[i][7])
+                                goodslist.append(goods)
+                            result.append(id)
+                            result.append(customerId)
+                            result.append(customerName)
+                            result.append(date)
+                            result.append(sumCount)
+                            result.append(goodslist)
+                            result.append(sellStatus)
+                            results.append(result)
+                else:
+                    return json.dumps(return_unsuccess('Error: Loss of identifier'))
             else:
-                page=_json.get('page')
-                limit=20
-                offset=(page-1)*20
-                sumCount=len(query.queryAllId())
-                idresult = query.queryGoodsIdByPage(limit,offset)
+                page = _json.get('page')
+                limit = 20
+                offset = (page - 1) * 20
+                sumCount = len(query.queryAllId())
+                idresult = query.queryGoodsIdByPage(limit, offset)
                 if len(idresult) != 0:
                     for j in range(0, len(idresult)):
                         result = []

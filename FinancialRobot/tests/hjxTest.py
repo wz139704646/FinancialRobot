@@ -306,8 +306,8 @@ class Test11(unittest.TestCase):
 
     def test23(self):
         query = SellDao()
-        result = query.queryAllId()
-        print(len(result))
+        result = query.queryIdByName('%黄%')
+        print(result[1][0])
 
     def test24(self):
         data = {"companyId": "5",
