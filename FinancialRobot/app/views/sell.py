@@ -365,6 +365,8 @@ def SellRecommend():
         if from_date and to_date:
             if datetime.datetime.strptime(from_date,"%Y-%m-%d %H:%M:%S").date() <= i["date"] <= datetime.datetime.strptime(to_date,"%Y-%m-%d %H:%M:%S").date():
                 result.append(i)
+        else:
+            result.append(i)
     return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
 
 @sell.route("/sell_recommend_date",methods=["POST"])
