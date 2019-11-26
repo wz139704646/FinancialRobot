@@ -18,7 +18,7 @@ from app.utils.languageProcess import lanprocess
 from app.utils.auth import *
 from app.utils.crawler import *
 from app.utils.RegressionHelper import *
-from app.views.accoutingSubjects import accounting_subjects
+from app.views.accounting_subjects import accounting_subjects
 from app.views.general_voucher import general_voucher
 from app.views.data_analysis import *
 from app.views.fixed_assets import fixed_assets
