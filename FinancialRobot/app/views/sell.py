@@ -347,10 +347,10 @@ def SellRecommend():
         else:
             date = date.date()
         result.append({
-            "customerId":sell_info[0],
-            "customerName":sell_info[1],
-            "goodsId":sell_info[2],
-            "goodsName":sell_info[3],
+            "customerId": sell_info[0][0],
+            "customerName": sell_info[0][1],
+            "goodsId": sell_info[0][2],
+            "goodsName": sell_info[0][3],
             "date":date
         })
     try:
