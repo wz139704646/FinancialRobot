@@ -9,6 +9,13 @@ from app.dao.GoodsDao import GoodsDao
 from app.dao.SellDao import SellDao
 from app.utils.auth import check_token
 from app.utils.json_util import *
+import redis
+
+try:
+    redis_conn =redis.Redis(host="127.0.0.1",port=6379)
+except:
+    redis_conn = None
+
 
 sell = Blueprint("sell", __name__)
 sell.secret_key = 'secret_key_sell'
@@ -318,3 +325,36 @@ def SellPriceByName():
         return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess('Error: No data'))
+
+
+@sell.route("/sell_recommend",methods=["POST"])
+def SellRecommend():
+    try:
+        res = redis_conn.get("sell_recommend")
+        if res:
+            return json.dumps(return_success(res), ensure_ascii=False, cls=DecimalEncoder)
+    except:
+        pass
+    query = SellDao()
+    _json = request.json
+    recommend_list = query.sellRecommendList()
+    result = []
+    for i in recommend_list:
+        sell_info = query.sellRecommendByUserGoods(i[0], i[1])
+        date = (sell_info[0][4] + datetime.timedelta(days=i[2]))
+        if date < datetime.datetime.now():
+            date = datetime.datetime.now().date()
+        else:
+            date = date.date()
+        result.append({
+            "customerId":sell_info[0],
+            "customerName":sell_info[1],
+            "goodsId":sell_info[2],
+            "goodsName":sell_info[3],
+            "date":date
+        })
+    try:
+        redis_conn.set("sell_recommend",result,ex=36000)
+    except:
+        pass
+    return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)

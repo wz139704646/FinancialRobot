@@ -12,6 +12,7 @@ import xlwings as xw
 import numpy as np
 import imgkit
 from app.utils.finance_utils import *
+from app.utils.jinja2_utils import render_without_request
 from app.views.general_voucher import magnitude_digit
 from app.utils.pic_str import *
 
@@ -138,8 +139,16 @@ class ZjjTesst(unittest.TestCase):
     def test_html2img(self):
         path_wk = r'D:\Application\wkhtmltox\bin\wkhtmltoimage.exe'  # 安装位置
         imgkit_config = imgkit.config(wkhtmltoimage=path_wk)
+        rendered = render_without_request(
+            template_name='voucher_template.html', filters={'magnitude_digit': magnitude_digit},
+            voucher_type='记账凭证', num_attachments='',
+            date='', voucher_no='xxxxxxxxx', num_voucher_cur='0',
+            num_vouchers='0', entries=[],
+            total_cap='', credit_total='',
+            debit_total=''
+        )
 
-        imgkit.from_url('http://baidu.com', 'D://out.jpg', config=imgkit_config)
+        imgkit.from_string(rendered, 'D://out.jpg', config=imgkit_config)
 
     def test_money_cap(self):
         money = 1300.8
