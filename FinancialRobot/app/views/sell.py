@@ -368,7 +368,7 @@ def SellRecommend():
     return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
 
 @sell.route("/sell_recommend_date",methods=["POST"])
-def SellRecommend():
+def SellRecommendDate():
     try:
         recommend_list = redis_conn.get("sell_recommend")
         if not recommend_list:
