@@ -12,7 +12,8 @@ from app.utils.json_util import *
 import redis
 
 try:
-    redis_conn =redis.Redis(host="127.0.0.1",port=6379)
+    from app.config import redis_store
+    redis_conn = redis_store
 except:
     redis_conn = None
 
@@ -327,18 +328,8 @@ def SellPriceByName():
         return json.dumps(return_unsuccess('Error: No data'))
 
 
-@sell.route("/sell_recommend",methods=["POST"])
-def SellRecommend():
-    try:
-        res = redis_conn.get("sell_recommend")
-        if res:
-            return json.dumps(return_success(res), ensure_ascii=False, cls=DecimalEncoder)
-    except:
-        pass
+def GetAllSellRecommendData():
     query = SellDao()
-    _json = request.json
-    from_date = _json.get("from_date",None)
-    to_date = _json.get("to_date",None)
     recommend_list = query.sellRecommendList()
     result = []
     for i in recommend_list:
@@ -348,25 +339,46 @@ def SellRecommend():
             date = datetime.datetime.now().date()
         else:
             date = date.date()
-        if from_date and to_date:
-            if from_date.date() <= date <= to_date.date():
-                result.append({
-                    "customerId": sell_info[0][0],
-                    "customerName": sell_info[0][1],
-                    "goodsId": sell_info[0][2],
-                    "goodsName": sell_info[0][3],
-                    "date":date
-                })
-        else:
-            result.append({
-                "customerId": sell_info[0][0],
-                "customerName": sell_info[0][1],
-                "goodsId": sell_info[0][2],
-                "goodsName": sell_info[0][3],
-                "date": date
-            })
+        result.append({
+            "customerId": sell_info[0][0],
+            "customerName": sell_info[0][1],
+            "goodsId": sell_info[0][2],
+            "goodsName": sell_info[0][3],
+            "date": date
+        })
+    return result
+
+@sell.route("/sell_recommend",methods=["POST"])
+def SellRecommend():
     try:
-        redis_conn.set("sell_recommend",result,ex=36000)
+        recommend_list = redis_conn.get("sell_recommend")
+        if not recommend_list:
+            recommend_list = GetAllSellRecommendData()
+            redis_conn.set("sell_recommend", recommend_list, ex=36000)
     except:
-        pass
+        recommend_list = GetAllSellRecommendData()
+    _json = request.json
+    from_date = _json.get("from_date", None)
+    to_date = _json.get("to_date", None)
+    result = []
+    for i in recommend_list:
+        if from_date and to_date:
+            if from_date.date() <= i["date"] <= to_date.date():
+                result.append(i)
+    return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
+
+@sell.route("/sell_recommend_date",methods=["POST"])
+def SellRecommend():
+    try:
+        recommend_list = redis_conn.get("sell_recommend")
+        if not recommend_list:
+            recommend_list = GetAllSellRecommendData()
+            redis_conn.set("sell_recommend", recommend_list, ex=36000)
+    except:
+        recommend_list = GetAllSellRecommendData()
+
+    result = []
+    for i in recommend_list:
+        result.append(i["date"])
+    result = list(set(result))
     return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
