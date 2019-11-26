@@ -232,7 +232,7 @@ def analyze_operating_expenditures_by_year():
                 month = "0" + str(m)
             else:
                 month = str(m)
-            temp_key = month + str(typeOfGoods[0])
+            temp_key = month + str(typeOfGoods)
             dict_keys.append(temp_key)
     dict_of_day_type_and_operating_expenditures = {key: 0 for key in dict_keys}
     for tu in info:
