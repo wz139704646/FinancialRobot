@@ -35,6 +35,9 @@ class DataAnalysisDao:
     def query_total_operating_income(self):
         return MyHelper().executeQuery("select type, sum(sumprice) from Sell, Goods where Sell.goodsId = Goods.id group by type;")
 
+    def query_operating_expenditure_by_year_with_types(self, year):
+        return MyHelper().executeQuery("select MONTH(date), type, sum(purchasePrice*number) from Purchase, Goods where year(date) = " + str(year) + " and Purchase.goodId = Goods.id group by MONTH(date), type;");
+
     def query_operating_expenditure_by_year_and_month(self, year, month):
         return MyHelper().executeQuery("select DAY(date), type, sum(Purchase.number*Purchase.purchasePrice) from Purchase, Goods where year(date) = " + str(year) + " and month(date) = " + str(month) + " and Purchase.goodId = Goods.id group by DAY(date), type;")
 

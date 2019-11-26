@@ -221,39 +221,40 @@ def analyze_operating_expenditures_by_year_and_month():
 # 查看某年的每个月的营业支出
 @analysis_results.route("/data/getOperatingExpenditureByYear", methods=["GET", "POST"])
 def analyze_operating_expenditures_by_year():
-    # _json = request.json
-    # year = int(_json.get('year'))
-    # info = DataAnalysisDao().query_operating_income_by_year_and_month(year, month)
-    # dict_of_day_type_and_operating_income = {}
-    # days = list(range(1, 32))
-    # for i in range(len(days)):
-    #     if days[i] < 10:
-    #         days[i] = '0' + str(days[i])
-    #     else:
-    #         days[i] = str(days[i])
-    # for d in days:
-    #     for t in ['食品类', '日用品类', '童装类', '营养品类', '玩具类',  '其他类']:
-    #         dict_of_day_type_and_operating_income[d + t] = 0
-    # for tu in info:
-    #     if int(tu[0]) < 10:
-    #         dict_of_day_type_and_operating_income['0' + str(tu[0]) + str(tu[1])] = float(tu[2])
-    #     else:
-    #         dict_of_day_type_and_operating_income[str(tu[0]) + str(tu[1])] = float(tu[2])
-    # if not dict_of_day_type_and_operating_income:
-    #     return jsonify(return_unsuccess('无法获取当月营收信息'))
-    # return jsonify(return_success(dict_of_day_type_and_operating_income))
-    #
     _json = request.json
     year = int(_json.get('year'))
-    if not year:
-        return jsonify(return_unsuccess('无法获取年份参数'))
-    info = DataAnalysisDao().query_operating_expenditure_by_year(year)
-    dict_of_month_and_operating_expenditure = {str(month): str(0) for month in range(1, 13)}
+    types = ['食品类', '日用品类', '童装类', '营养品类', '玩具类',  '其他类']
+    dict_keys = []
+    info = DataAnalysisDao.query_operating_expenditure_by_year_with_types(str(year))
+    for m in range(1, 13):
+        for typeOfGoods in types:
+            if m < 10:
+                month = "0" + str(m)
+            else:
+                month = str(m)
+            temp_key = month + str(typeOfGoods[0])
+            dict_keys.append(temp_key)
+    dict_of_day_type_and_operating_expenditures = {key: 0 for key in dict_keys}
     for tu in info:
-        dict_of_month_and_operating_expenditure[str(tu[0])] = str(tu[1])
-    if not dict_of_month_and_operating_expenditure:
-        return jsonify(return_unsuccess('无法获取营业支出信息'))
-    return jsonify(return_success(dict_of_month_and_operating_expenditure))
+        if int(str(tu[0])) < 10:
+            dict_of_day_type_and_operating_expenditures["0" + str(tu[0]) + str(tu[1])] = float(tu[2])
+        else:
+            dict_of_day_type_and_operating_expenditures[str(tu[0]) + str(tu[1])] = float(tu[2])
+    if not dict_of_day_type_and_operating_expenditures:
+        return jsonify(return_unsuccess('无法获取当月营收信息'))
+    return jsonify(return_success(dict_of_day_type_and_operating_expenditures))
+
+    # _json = request.json
+    # year = int(_json.get('year'))
+    # if not year:
+    #     return jsonify(return_unsuccess('无法获取年份参数'))
+    # info = DataAnalysisDao().query_operating_expenditure_by_year(year)
+    # dict_of_month_and_operating_expenditure = {str(month): str(0) for month in range(1, 13)}
+    # for tu in info:
+    #     dict_of_month_and_operating_expenditure[str(tu[0])] = str(tu[1])
+    # if not dict_of_month_and_operating_expenditure:
+    #     return jsonify(return_unsuccess('无法获取营业支出信息'))
+    # return jsonify(return_success(dict_of_month_and_operating_expenditure))
 
 
 # 查看总的营业支出占比
