@@ -9,6 +9,13 @@ from app.dao.GoodsDao import GoodsDao
 from app.dao.SellDao import SellDao
 from app.utils.auth import check_token
 from app.utils.json_util import *
+import redis
+
+try:
+    redis_conn =redis.Redis(host="127.0.0.1",port=6379)
+except:
+    redis_conn = None
+
 
 sell = Blueprint("sell", __name__)
 sell.secret_key = 'secret_key_sell'
@@ -66,49 +73,98 @@ def addSell():
 @sell.route("/querySell", methods=["POST"])
 def querySell():
     query = SellDao()
-
     _json = request.json
     companyId = _json.get('companyId')
     results = []
     if _json.get('date') == None:
         if _json.get('id') == None:
-            idresult = query.queryAllId()
-            if len(idresult) != 0:
-                for j in range(0, len(idresult)):
-                    result = []
-                    id = idresult[j][0]
-                    customerName = ""
-                    customerId = ""
-                    date = ""
-                    goodslist = []
-                    goodsResult = query.queryGoodsAllInfo()
-                    for i in range(0, len(goodsResult)):
-                        customerName = goodsResult[i][17]
-                        sellStatus = goodsResult[i][20]
-                        customerId = goodsResult[i][11]
-                        date = goodsResult[i][16]
-                        goods = []
-                        goods.append(goodsResult[i][12])
-                        goods.append(goodsResult[i][15])
-                        goods.append(goodsResult[i][14])
-                        goods.append(goodsResult[i][18])
-                        goods.append(goodsResult[i][7])
-                        goodslist.append(goods)
-                    result.append(id)
-                    result.append(customerId)
-                    result.append(customerName)
-                    result.append(date)
-                    result.append(goodslist)
-                    result.append(sellStatus)
-                    results.append(result)
-        else:
+                if _json.get('name') == None:
+                    if _json.get('page') == None:
+                        return json.dumps(return_unsuccess('Error: Loss of identifier'))
+                    else:
+                        page = _json.get('page')
+                        limit = 20
+                        offset = (page - 1) * 20
+                        sumCount = len(query.queryAllId())
+                        idresult = query.queryGoodsIdByPage(limit, offset)
+                        if len(idresult) != 0:
+                            for j in range(0, len(idresult)):
+                                result = []
+                                id = idresult[j][0]
+                                customerName = ""
+                                customerId = ""
+                                date = ""
+                                goodslist = []
+                                goodsResult = query.queryGoodsAllInfo(id)
+                                for i in range(0, len(goodsResult)):
+                                    customerName = goodsResult[i][17]
+                                    sellStatus = goodsResult[i][20]
+                                    customerId = goodsResult[i][11]
+                                    date = goodsResult[i][16]
+                                    goods = []
+                                    goods.append(goodsResult[i][12])
+                                    goods.append(goodsResult[i][15])
+                                    goods.append(goodsResult[i][14])
+                                    goods.append(goodsResult[i][18])
+                                    goods.append(goodsResult[i][7])
+                                    goodslist.append(goods)
+                                result.append(id)
+                                result.append(customerId)
+                                result.append(customerName)
+                                result.append(date)
+                                result.append(sumCount)
+                                result.append(goodslist)
+                                result.append(sellStatus)
+                                results.append(result)
+                elif _json.get('name') != None:
+                    if _json.get('page') == None:
+                       page=1
+                    else:
+                        page = _json.get('page')
+                    limit = 20
+                    offset = (page - 1) * 20
+                    Name = _json.get('name')
+                    newname = '%' + Name + '%'
+                    idResult = query.queryIdByName(newname,limit,offset)
+                    sumCount = len(idResult)
+                    if len(idResult) != 0:
+                        for j in range(0, len(idResult)):
+                            result = []
+                            id = idResult[j][0]
+                            customerName = ""
+                            customerId = ""
+                            date = ""
+                            goodslist = []
+                            goodsResult = query.queryGoodsAllInfo(id)
+                            for i in range(0, len(goodsResult)):
+                                customerName = goodsResult[i][17]
+                                sellStatus = goodsResult[i][20]
+                                customerId = goodsResult[i][11]
+                                date = goodsResult[i][16]
+                                goods = []
+                                goods.append(goodsResult[i][12])
+                                goods.append(goodsResult[i][15])
+                                goods.append(goodsResult[i][14])
+                                goods.append(goodsResult[i][18])
+                                goods.append(goodsResult[i][7])
+                                goodslist.append(goods)
+                            result.append(id)
+                            result.append(customerId)
+                            result.append(customerName)
+                            result.append(date)
+                            result.append(sumCount)
+                            result.append(goodslist)
+                            result.append(sellStatus)
+                            results.append(result)
+        elif _json.get('id') != None:
             id = _json.get('id')
+            sumCount = 1
             result = []
             customerName = ""
             customerId = ""
             date = ""
             goodslist = []
-            goodsResult = query.queryGoodsAllInfoById(id)
+            goodsResult = query.queryGoodsAllInfo(id)
             for i in range(0, len(goodsResult)):
                 customerName = goodsResult[i][17]
                 sellStatus = goodsResult[i][20]
@@ -125,10 +181,11 @@ def querySell():
             result.append(customerId)
             result.append(customerName)
             result.append(date)
+            result.append(sumCount)
             result.append(goodslist)
             result.append(sellStatus)
             results.append(result)
-    else:
+    elif _json.get('date') != None:
         if _json.get('start') == None:
             date = _json.get('date')
             start = datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -138,9 +195,15 @@ def querySell():
         else:
             start = _json.get('start')
             end = _json.get('end')
-        idresult = query.query_byDate(companyId, start, end)
-        size = len(idresult)
-        if size == 0:
+        if _json.get('page') == None:
+            page = 1
+        else:
+            page = _json.get('page')
+        limit = 20
+        offset = (page - 1) * 20
+        idresult = query.query_byDate(companyId, start, end,limit,offset)
+        sumCount = len(idresult)
+        if sumCount == 0:
             return json.dumps(return_unsuccess('Error: No data'))
         else:
             for j in range(0, len(idresult)):
@@ -150,7 +213,7 @@ def querySell():
                 customerId = ""
                 date = ""
                 goodslist = []
-                goodsResult = query.query_byId(id)
+                goodsResult = query.queryGoodsAllInfo(id)
                 for i in range(0, len(goodsResult)):
                     customerName = goodsResult[i][17]
                     sellStatus = goodsResult[i][20]
@@ -167,6 +230,7 @@ def querySell():
                 result.append(customerId)
                 result.append(customerName)
                 result.append(date)
+                result.append(sumCount)
                 result.append(goodslist)
                 result.append(sellStatus)
                 results.append(result)
@@ -237,6 +301,8 @@ def querySellByDate():
         return json.dumps(return_unsuccess('Error: No data'))
     else:
         return json.dumps(return_success(SellDao.to_dict(results)), ensure_ascii=False, cls=DecimalEncoder)
+
+
 # 查询商品进货价格
 @sell.route("/SellPriceByName", methods=["POST"])
 def SellPriceByName():
@@ -259,3 +325,36 @@ def SellPriceByName():
         return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
     else:
         return json.dumps(return_unsuccess('Error: No data'))
+
+
+@sell.route("/sell_recommend",methods=["POST"])
+def SellRecommend():
+    try:
+        res = redis_conn.get("sell_recommend")
+        if res:
+            return json.dumps(return_success(res), ensure_ascii=False, cls=DecimalEncoder)
+    except:
+        pass
+    query = SellDao()
+    _json = request.json
+    recommend_list = query.sellRecommendList()
+    result = []
+    for i in recommend_list:
+        sell_info = query.sellRecommendByUserGoods(i[0], i[1])
+        date = (sell_info[0][4] + datetime.timedelta(days=i[2]))
+        if date < datetime.datetime.now():
+            date = datetime.datetime.now().date()
+        else:
+            date = date.date()
+        result.append({
+            "customerId":sell_info[0],
+            "customerName":sell_info[1],
+            "goodsId":sell_info[2],
+            "goodsName":sell_info[3],
+            "date":date
+        })
+    try:
+        redis_conn.set("sell_recommend",result,ex=36000)
+    except:
+        pass
+    return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)

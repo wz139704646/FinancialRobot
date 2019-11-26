@@ -305,10 +305,9 @@ class Test11(unittest.TestCase):
         print(date_tomorrow.strftime('%Y-%m-%d %H:%M:%S'))
 
     def test23(self):
-
         query = SellDao()
-        result = query.query_all()
-        print(result)
+        result = query.queryIdByName('%黄%')
+        print(result[1][0])
 
     def test24(self):
         data = {"companyId": "5",

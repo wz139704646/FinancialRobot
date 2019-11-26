@@ -25,13 +25,14 @@ class SellDao:
             res['customerId'] = row[1]
             res['customerName'] = row[2]
             res['date'] = row[3]
-            res['status'] = row[5]
+            res['sumCount'] = row[4]
+            res['status'] = row[6]
             goodslist = []
-            for good in row[4]:
+            for good in row[5]:
                 goods = {}
                 goods['goodsId'] = good[0]
-                goods['sumprice'] = good[1]
-                goods['price'] = good[1]
+                goods['sumprice'] = decimal.Decimal(good[1]).quantize(decimal.Decimal("0.00"))
+                goods['price'] = decimal.Decimal(good[1]).quantize(decimal.Decimal("0.00"))
                 goods['number'] = good[2]
                 goods['goodsName'] = good[3]
                 goods['goodsPhoto'] = good[4]
@@ -48,6 +49,9 @@ class SellDao:
         conn = MyHelper()
         return conn.executeQuery("select distinct (id),date from Sell ORDER BY date")
 
+    def queryIdByName(self,name,limit,offset):
+        conn = MyHelper()
+        return conn.executeQuery("select distinct id from Sell where customerName like %s limit %s offset %s",[name,limit,offset])
     def queryGoodsInfo(self, id):
         conn = MyHelper()
         return conn.executeQuery("select sumprice,goodsId,number,goodsName from Sell where id=%s", [id])
@@ -56,24 +60,24 @@ class SellDao:
         connection = MyHelper()
         return connection.executeQuery("select * from Sell where id = %s", [id])
 
-    def queryGoodsAllInfo(self):
+    def queryGoodsAllInfo(self,id):
         connection = MyHelper()
-        return connection.executeQuery("select * from Goods,Sell where Sell.goodsId=Goods.id ")
+        return connection.executeQuery("select * from Goods,Sell where Sell.id=%s and Sell.goodsId=Goods.id ",[id])
 
     def queryGoodsIdByPage(self, limit, offset):
         connection = MyHelper()
-        # return connection.executeQuery("select distinct id,date from Sell order by date limit {} offset {}".format(limit,offset))
-        return connection.executeQuery("select distinct id,date from Sell order by date")
+        return connection.executeQuery("select distinct id,date from Sell order by date desc limit %s offset %s",[limit,offset])
+        #return connection.executeQuery("select distinct id,date from Sell order by date")
 
     def query_byCid(self, companyId):
         connection = MyHelper()
         return connection.executeQuery("select * from Sell where companyId=%s  order by date desc", [companyId])
 
-    def query_byDate(self, companyId, start, end):
+    def query_byDate(self, companyId, start, end,limit,offset):
         connection = MyHelper()
         return connection.executeQuery(
-            "select distinct (id),date from Sell where companyId=%s and date >= %s and date <%s  order by date desc",
-            [companyId, start, end])
+            "select distinct (id),date from Sell where companyId=%s and date >= %s and date <%s  order by date desc limit %s offset %s",
+            [companyId, start, end,limit,offset])
 
     def add(self, id, customerId, goodsId, companyId, number, sumprice, date, customerName, goodsName, unitInfo):
         connection = MyHelper()
@@ -93,3 +97,34 @@ class SellDao:
         return connection.executeQuery(
             "SELECT number ,sumprice, date,goodsName,customerName FROM Sell WHERE goodsName LIKE %s ORDER BY date",
             [name])
+
+    def sellRecommendList(self):
+        connection = MyHelper()
+        return connection.executeQuery(
+            """select customerId,goodsId,min(t) as T from  (
+                SELECT a.customerId,a.customerName,a.goodsId,a.goodsName,TIMESTAMPDIFF(DAY,b.date,a.date) as t
+                From Sell as a left join Sell as b on a.customerId = b.customerId
+                where  DATE (a.date) > DATE(b.date) AND a.goodsName = b.goodsName
+                ) as Temp
+            group by customerId,goodsId
+            """
+        )
+
+    def sellRecommendByUserGoods(self,uid,gid):
+        connection = MyHelper()
+        return connection.executeQuery("""
+            select  customerId,customerName,goodsId,goodsName,date from Sell 
+            where customerId = %s and goodsId = %s order by date desc limit 1
+        """,[uid,gid])
+
+    def sellRecommendUser(self):
+        connection = MyHelper()
+        return connection.executeQuery(
+            """select customerId,goodsId,min(t) as T from  (
+                SELECT a.customerId,a.customerName,a.goodsId,a.goodsName,TIMESTAMPDIFF(DAY,b.date,a.date) as t
+                From Sell as a left join Sell as b on a.customerId = b.customerId
+                where  DATE (a.date) > DATE(b.date) AND a.goodsName = b.goodsName
+                ) as Temp
+            group by customerId,goodsId
+            """
+        )
