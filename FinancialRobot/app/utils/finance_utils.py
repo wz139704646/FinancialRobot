@@ -59,14 +59,18 @@ def remove_exponent(num):
 
 
 def magnitude_digit(num, mag):
-    if num < 10**mag:
-        return ''
-    num = remove_exponent(num)
-    num_strs = str(num).split('.')
-    if mag >= 0:
-        return num_strs[0][-(mag+1)]
-    else:
-        if len(num_strs) > 1 and len(num_strs[1]) >= -mag:
-            return num_strs[1][-(mag+1)]
-        else:
+    try:
+        if num < 10 ** mag:
             return ''
+        num = remove_exponent(num)
+        num_strs = str(num).split('.')
+        if mag >= 0:
+            return num_strs[0][-(mag + 1)]
+        else:
+            if len(num_strs) > 1 and len(num_strs[1]) >= -mag:
+                return num_strs[1][-(mag + 1)]
+            else:
+                return ''
+    except Exception as e:
+        print('数值转大写失败', e)
+        return ''

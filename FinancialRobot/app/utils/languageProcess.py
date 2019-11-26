@@ -37,7 +37,7 @@ this_week = ['这周', '这一周','本周']
 last_week = ['上周', '上一周']
 this_month = ['这个月','本月']
 
-ac_in_money = ['赚', '挣', '卖', '盈利', '进账']
+ac_in_money = ['赚','赚了', '挣','挣了', '卖', '盈利', '进账']
 ac_purchase = ['进', '买', "进了", "买了"]
 ac_query = ['查', '看', '查看', "查询"]
 ac_out_money = ['花', '消费', '支出']
@@ -58,7 +58,7 @@ mongo = MongodbUtils()
 def computeLanguage(items, Time):
     action = ""
     nouns = ""
-    newTime=""
+    newTime="today"
     for item in items:
         if Time == "today":
             if item in yesterday:
@@ -121,6 +121,7 @@ def judgeTime(time, d):
     if time == "this_month":
         start = d.replace(year=d.year, month=d.month, day=1, hour=0, minute=0, second=0)
         end = d.replace(year=d.year, month=d.month + 1, day=1, hour=0, minute=0, second=0)
+    print(start,end)
     return start, end
 
 
@@ -433,7 +434,7 @@ def getInOutMoney(CashResult, BankResult, action):
     finalResult = []
     inBank = outBank = 0
     inCash = outCash = 0
-    if CashResult['success'] == True and BankResult['success'] == True:
+    if CashResult['success'] == True or BankResult['success'] == True:
         if CashResult['success'] == True:
             cashResult = CashResult['result']
             for sinCash in cashResult:
@@ -620,7 +621,7 @@ def languageProcess():
     companyId = _json.get('companyId')
     language = _json.get('language')
     token = request.headers.get('Authorization')
-    #token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9token.eyJleHAiOjE1NzI2NzU2NzksImlhdCI6MTU2NzQ5MTY3OSwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTY3NDkxNjc5fX0.kY-_AHxJ7IQ35NJ80IkTr9kDk-LV3wdc6tByVSIQ1KE'
+    #token='JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1Nzk5Mzk5MjIsImlhdCI6MTU3NDc1NTkyMiwiZGF0YSI6eyJhY2NvdW50IjoiMTU3NzEwMDA1ODciLCJsb2dpbl90aW1lIjoxNTc0NzU1OTIyfX0.qRPN5UucKgryTFPGIwGyrQFoqwynXz5UB67xjXWIu4k'
     d = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
 
     # 去除停用词
@@ -658,6 +659,8 @@ def languageProcess():
     timeResult = judgeTime(Time, d)
     start = timeResult[0]
     end = timeResult[1]
+    print(start)
+    print(end)
     # 对行为进行判断
     ##### 一段时期内的销售情况 #####
     if action == "ac_in_money" and nouns == "goods":
@@ -666,6 +669,8 @@ def languageProcess():
                 'companyId': '5',
                 'date': "hh"}
         data_json = json.dumps(data, cls=DecimalEncoder)
+        print(start)
+        print(end)
         sellRecords = requests.post(url=LOCATE + '/querySell', data=data_json, headers=headers)
         if sellRecords.status_code == 200:
             SellResult = json.loads(sellRecords.content)
@@ -718,6 +723,8 @@ def languageProcess():
                                   headers=headers)
         BankResult = json.loads(_respBank.content)
         print(BankResult,CashResult)
+        print(_respCash.status_code)
+        print(_respBank.status_code)
         if _respCash.status_code == 200 and _respBank.status_code == 200:
             return getInOutMoney(CashResult, BankResult, action)
         else:
