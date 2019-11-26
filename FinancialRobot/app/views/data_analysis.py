@@ -225,7 +225,7 @@ def analyze_operating_expenditures_by_year():
     year = int(_json.get('year'))
     types = ['食品类', '日用品类', '童装类', '营养品类', '玩具类',  '其他类']
     dict_keys = []
-    info = DataAnalysisDao.query_operating_expenditure_by_year_with_types(str(year))
+    info = DataAnalysisDao().query_operating_expenditure_by_year_with_types(str(year))
     for m in range(1, 13):
         for typeOfGoods in types:
             if m < 10:
