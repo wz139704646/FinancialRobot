@@ -337,6 +337,8 @@ def SellRecommend():
         pass
     query = SellDao()
     _json = request.json
+    from_date = _json.get("from_date",None)
+    to_date = _json.get("to_date",None)
     recommend_list = query.sellRecommendList()
     result = []
     for i in recommend_list:
@@ -346,13 +348,23 @@ def SellRecommend():
             date = datetime.datetime.now().date()
         else:
             date = date.date()
-        result.append({
-            "customerId": sell_info[0][0],
-            "customerName": sell_info[0][1],
-            "goodsId": sell_info[0][2],
-            "goodsName": sell_info[0][3],
-            "date":date
-        })
+        if from_date and to_date:
+            if from_date.date() <= date <= to_date.date():
+                result.append({
+                    "customerId": sell_info[0][0],
+                    "customerName": sell_info[0][1],
+                    "goodsId": sell_info[0][2],
+                    "goodsName": sell_info[0][3],
+                    "date":date
+                })
+        else:
+            result.append({
+                "customerId": sell_info[0][0],
+                "customerName": sell_info[0][1],
+                "goodsId": sell_info[0][2],
+                "goodsName": sell_info[0][3],
+                "date": date
+            })
     try:
         redis_conn.set("sell_recommend",result,ex=36000)
     except:
