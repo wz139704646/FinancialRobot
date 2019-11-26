@@ -10,6 +10,7 @@ parts:
     - sell.querySellById
     - sell.querySellByDate
     - sell.SellPriceByName
+    - sell.SellRecommend
   customer: &customer
     - customer.addCustomer
     - customer.queryAllCustomer
@@ -210,6 +211,7 @@ roles:
     allow_feature:
       - *Common
       - *Purchase_Management
+      - *Sell_Management
   - name: finance #财务管理人员
     allow_feature:
       - *Common
@@ -224,6 +226,7 @@ roles:
       - *Common
       - *Data_Analysis
       - *Cashing_Management
+      - *Sell_Management
   - name: HR #人力资源管理
     allow_feature:
       - *Common
