@@ -363,7 +363,7 @@ def SellRecommend():
     result = []
     for i in recommend_list:
         if from_date and to_date:
-            if from_date.date() <= i["date"] <= to_date.date():
+            if datetime.datetime.strptime(from_date,"%Y-%m-%d %H:%M:%S").date() <= i["date"] <= datetime.datetime.strptime(to_date,"%Y-%m-%d %H:%M:%S").date():
                 result.append(i)
     return json.dumps(return_success(result), ensure_ascii=False, cls=DecimalEncoder)
 
