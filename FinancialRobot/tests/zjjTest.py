@@ -156,3 +156,9 @@ class ZjjTesst(unittest.TestCase):
         print(magnitude_digit(122.2, -1))
         print(Pic_str().create_uuid())
         print(type(remove_exponent(1.0)))
+
+    def test_datetime_delta(self):
+        delta = datetime.timedelta(days=10)
+        now = datetime.datetime.now()
+        _date = now - delta
+        print(_date)

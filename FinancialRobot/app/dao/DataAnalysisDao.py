@@ -5,6 +5,17 @@ from app.utils.DBHelper import MyHelper
 
 class DataAnalysisDao:
 
+    @classmethod
+    def goods_store_desc_to_dict(cls, data):
+        result = []
+        for row in data:
+            result.append({
+                'name': row[0],
+                'number': row[1],
+                'photo': row[2]
+            })
+        return result
+
     def query_main_indicators(self):
         return MyHelper().executeQuery("select * from main_indicators01;")
 
@@ -80,3 +91,12 @@ class DataAnalysisDao:
 
     def query_backorder_goods(self, number):
         return MyHelper().executeQuery("select g.name, gs.number, g.photo from Goods as g, GoodsStore as gs where g.id = gs.goodsId and gs.wareId = 1 ORDER BY gs.number limit 0, " + str(number) + "")
+
+    def query_sell_well_goods(self, number, low, high):
+        return MyHelper().executeQuery("select Goods.name, sells.num, Goods.photo from"
+                                       " (select goodsId, SUM(number) as num from Sell"
+                                       " where date >= %s and date <= %s"
+                                       " group by goodsId"
+                                       " order by num desc"
+                                       " limit 0, %s) sells, Goods"
+                                       " where Goods.id = sells.goodsId", param=[low, high, number])
