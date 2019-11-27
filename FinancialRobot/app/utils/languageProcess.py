@@ -20,7 +20,7 @@ from app.utils.auth import Auth
 from app.config import LOCATE
 from .recommend import recommend
 
-#LOCATE='http://127.0.0.1:5000' #电脑端
+#='http://127.0.0.1:5000' #电脑端
 lanprocess = Blueprint("lanprocess", __name__)
 
 
@@ -312,8 +312,10 @@ def getGoodsStore(final, headers):
             print(queryGoodsResult)
             summary = ""
             for goodResult in queryGoodsResult:
+                if  goodResult['unitInfo']==None:
+                    goodResult['unitInfo']="()"
                 summary = summary + "商品" + goodResult['name'] + "当前库存为：" + str(int(goodResult['amount'])) + \
-                          goodResult['unitInfo'] + '\n'
+                         str( goodResult['unitInfo']) + '\n'
             print(summary)
             finalResult = []
             storeInfo = {'type': 'text',
