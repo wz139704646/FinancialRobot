@@ -466,7 +466,8 @@ def analyze_purchase_detail_by_category():
     return jsonify(return_success(dict_of_index_and_detail))
 
 
-# 查询返回number个低库存商品
+num_one_page = 5    # 一页中的商品数
+# 分页查询返回低库存商品
 @analysis_results.route("/data/getBackorderGoods", methods=["GET", "POST"])
 def analyze_BackorderGoods():
     _method = request.method
@@ -474,15 +475,16 @@ def analyze_BackorderGoods():
         _data = request.args
     else:
         _data = request.json
-    number = str(_data.get('number'))
-    rows = data_analysis_dao.query_backorder_goods(number)
+    page = int(_data.get('page'))
+    offset = num_one_page * page
+    rows = data_analysis_dao.query_backorder_goods(limit=num_one_page, offset=offset)
     if rows:
-        return jsonify(return_success(DataAnalysisDao.goods_store_desc_to_dict(rows)))
+        return json.dumps(return_success(DataAnalysisDao.goods_store_desc_to_dict(rows)), cls=DecimalEncoder)
     else:
-        return jsonify(return_unsuccess('无法获取低库存商品信息'))
+        return jsonify(return_unsuccess('无更多低库存商品信息'))
 
 
-# 查询返回number个days天内卖得最好的商品
+# 分页查询返回days天内卖得最好的商品
 @analysis_results.route("/data/getSellWellGoods", methods=["GET", "POST"])
 def analyze_SellWellGoods():
     _method = request.method
@@ -490,14 +492,14 @@ def analyze_SellWellGoods():
         _data = request.args
     else:
         _data = request.json
-    # 获取参数中的数量和近期多少天参数，并检查参数格式
+    # 获取参数中的页数和近期多少天参数，并检查参数格式
     try:
-        number = int(_data.get('number'))
+        page = int(_data.get('page'))
         days = int(_data.get('days'))
     except Exception as e:
         print(e)
         return jsonify(return_unsuccess('参数格式有误'))
-    if number <= 0 or days <= 0:
+    if page < 0 or days <= 0:
         return jsonify(return_unsuccess('参数值有误'))
     # 当前日期作为时间区间上界
     high = datetime.datetime.now()
@@ -509,8 +511,9 @@ def analyze_SellWellGoods():
     # 上界减去长度后得到下界
     low = high - delta
     # 查询数据
-    rows = data_analysis_dao.query_sell_well_goods(number, low=low, high=high)
+    offset = page * num_one_page
+    rows = data_analysis_dao.query_sell_well_goods(low=low, high=high, limit=num_one_page, offset=offset)
     if rows:
         return json.dumps(return_success(DataAnalysisDao.goods_store_desc_to_dict(rows)), cls=DecimalEncoder)
     else:
-        return jsonify(return_unsuccess("查询畅销商品信息失败"))
+        return jsonify(return_unsuccess("无更多畅销商品信息"))
