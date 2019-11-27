@@ -113,7 +113,8 @@ class SellDao:
     def sellRecommendByUserGoods(self,uid,gid):
         connection = MyHelper()
         return connection.executeQuery("""
-            select  customerId,customerName,goodsId,goodsName,date from Sell 
+            select  customerId,customerName,goodsId,goodsName,date,photo from Sell 
+            left join Goods on Sell.goodsId = Goods.id
             where customerId = %s and goodsId = %s order by date desc limit 1
         """,[uid,gid])
 

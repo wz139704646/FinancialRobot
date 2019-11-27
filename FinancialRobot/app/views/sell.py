@@ -344,7 +344,8 @@ def GetAllSellRecommendData():
             "customerName": sell_info[0][1],
             "goodsId": sell_info[0][2],
             "goodsName": sell_info[0][3],
-            "date": date
+            "date": date,
+            "photo": sell_info[0][5]
         })
     return result
 
